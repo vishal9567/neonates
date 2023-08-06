@@ -1,0 +1,54 @@
+<!-- Hero -->
+<div class="p-5 text-center bg-image rounded-3" style="
+    background-image: url('/img/img3.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    height: 400px; 
+  ">
+  <div class="mask" style="background-color: rgba(0, 0, 0, 0.6);">
+    <div class="d-flex justify-content-center align-items-center h-100">
+      <div class="text-white">
+        {{!-- <h1 class="mb-3">neonates</h1> --}}
+        {{!-- <h4 class="mb-3">Subheading</h4> --}}
+        {{!-- <a class="btn btn-outline-light btn-lg" href="#!" role="button">Call to action</a> --}}
+      </div>
+    </div>
+  </div>
+</div>
+{{!-- line --}}
+<div class="container-fluid">
+  <hr style="border: 2px solid;">
+</div>
+{{!-- cards--}}
+
+<div class="container">
+  <div class="row row-cols-1 row-cols-md-4 g-4">
+    {{#each product}}
+    <div class="col">
+      <div class="card h-100">
+        <img src="/images/{{this.image}}" class="card-img-top ms-5" alt="..." style="width: 175px;">
+        <div class="card-body">
+          <h5 class="card-title">{{this.brandname}}</h5>
+          <p class="card-text">{{this.price}}</p>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="col">
+
+      <div class="card">
+        <img src="/images/{{this.image}}" class="card-img-top ms-5" alt="Hollywood Sign on The Hill"
+          style="width: 200px;" />
+        <div class="card-body">
+          <h5 class="card-title">{{this.productname}}</h5>
+          <p class="card-text">{{this.brandname}}</p>
+          <p class="card-text">{{this.price}}</p>
+        </div>
+      </div>
+
+    </div> -->
+    {{/each}}
+  </div>
+</div>
+
+<!-- Hero -->

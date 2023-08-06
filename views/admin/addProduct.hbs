@@ -1,0 +1,108 @@
+<nav class="navbar navbar-expand-sm navbar-dark"
+  style="background-image: linear-gradient(rgb(34, 32, 32), rgb(52,74,94), black)">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#" data-toggle="tooltip" data-placement="bottom" title={{adminName}}><img
+        src="/images/manlogo.png" alt="logo"></a><span class="text-light">Admin Panel</span>
+    <a href="/admin/adminLogout" class="btn btn-danger">Log out</a>
+  </div>
+</nav>
+{{!-- <div style="width: 300px; margin: 5px 0px 5px 40vw;" class="bg-warning"> --}}
+  <div style="width: 400px; margin: 50px 0px 0px 37vw; border-radius:10px" class="bg-warning">
+    <form {{#if updating}}action="/admin/updateProduct/{{data._id}}" method="post" enctype="multipart/form-data"
+      {{else}}action="/admin/addProduct" method="post" enctype="multipart/form-data" {{/if}} class="p-3">
+      <!-- 2 column grid layout with text inputs for the first and last names -->
+      <div class="row mb-3">
+        <div class="col">
+          <div class="form-outline">
+            <input type="text" id="form3Example1" class="form-control" name="productname" {{#if updating}}
+              value="{{data.productname}}" {{/if}} />
+            <label class="form-label" for="form3Example1">Product</label>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-outline">
+            <input type="text" id="form3Example2" class="form-control" name="price" {{#if updating}}
+              value="{{data.price}}" {{/if}} />
+            <label class="form-label" for="form3Example2">Price</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Email input -->
+      <div class="form-outline mb-2">
+        <input type="text" id="form3Example3" class="form-control" name="brandname" {{#if updating}}
+          value="{{data.brandname}}" {{/if}} />
+        <label class="form-label" for="form3Example3">Brand</label>
+      </div>
+
+      <!-- Password input -->
+      <div class="form-outline mb-2">
+        <input type="text" id="form3Example4" class="form-control" name="color" {{#if updating}} value="{{data.color}}"
+          {{/if}} />
+        <label class="form-label" for="form3Example4">Color</label>
+      </div>
+
+      <div class="form-outline mb-2">
+        <!--<input type="text" id="form3Example4" class="form-control" name="category" {{#if updating}}
+          value="{{data.category}}" {{/if}} />-->
+        <!-select-->
+          <div class="form-outline mb-2">
+            <select id="cars" name="category" class="form-select">
+              {{#each category}}
+              <option>{{this.category}}</option>
+              {{/each}}
+            </select>
+          </div>
+          <!-select-->
+            <label class="form-label" for="form3Example4">Category</label>
+      </div>
+
+      <div class="form-outline mb-2">
+        <input type="text" id="form3Example4" class="form-control" name="quantity" {{#if updating}}
+          value="{{data.quantity}}" {{/if}} />
+        <label class="form-label" for="form3Example4">Qty</label>
+      </div>
+
+      <div class="form-outline mb-2">
+        <input type="file" name="image" {{#if updating}}accept="{{data.image}}" {{/if}} accept="hlhh">
+      </div>
+      {{#if updating}}
+      <img src="/images/{{data.image}}" alt="" width="30px">
+      {{/if}}
+
+      <!-- Checkbox -->
+      {{!-- <div class="form-check d-flex justify-content-center mb-4">
+        <input class="form-check-input me-2" type="checkbox" value="" id="form2Example33" checked />
+        <label class="form-check-label" for="form2Example33">
+          Subscribe to our newsletter
+        </label>
+      </div> --}}
+
+      <!-- Submit button -->
+      <button type="submit" class="btn btn-primary btn-block mb-3">{{#if updating}}Update{{else}}Add{{/if}}</button>
+      <div class="text-center">
+        <a href="/admin/listProduct">Go to...</a>
+      </div>
+
+      <!-- Register buttons -->
+      {{!-- <div class="text-center">
+        <p>or sign up with:</p>
+        <button type="button" class="btn btn-secondary btn-floating mx-1">
+          <i class="fab fa-facebook-f"></i>
+        </button>
+
+        <button type="button" class="btn btn-secondary btn-floating mx-1">
+          <i class="fab fa-google"></i>
+        </button>
+
+        <button type="button" class="btn btn-secondary btn-floating mx-1">
+          <i class="fab fa-twitter"></i>
+        </button>
+
+        <button type="button" class="btn btn-secondary btn-floating mx-1">
+          <i class="fab fa-github"></i>
+        </button>
+      </div> --}}
+    </form>
+  </div>
+{{!-- </div> --}}
