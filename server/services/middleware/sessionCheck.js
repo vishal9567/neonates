@@ -8,7 +8,6 @@ module.exports = {
     },
     otpAuth:(req,res,next)=>{
         if(req.body){
-            console.log(req.body);
             if(req.body.otp === req.session.otp)
                 next();
             else

@@ -1,5 +1,5 @@
 const userdb = require('../model/userModel')
-const bcrypt= require('bcrypt')
+const bcrypt = require('bcrypt')
 
 //-------------insert a user---------//
 // exports.create = (req, res) => {
@@ -24,17 +24,37 @@ const bcrypt= require('bcrypt')
 module.exports = {
     createUser: (data) => {
         return new Promise(async (resolve, reject) => {
-            pass= await bcrypt.hash(data.password,10)
-            Cpass=await bcrypt.hash(data.Cpassword,10)
+            pass = await bcrypt.hash(data.password, 10)
+            Cpass = await bcrypt.hash(data.Cpassword, 10)
             let doc = await userdb.collection.insertOne({
                 name: data.userName,
                 Email: data.email,
                 password: pass,
-                Cpassword: Cpass    
+                Cpassword: Cpass,
+                status: data.check
             })
-            .then(result=>{
-                resolve(result)
-            })
+                .then(result => {
+                    resolve(result)
+                })
+        })
+    },
+    findUser: (data) => {
+        return new Promise(async (resolve, reject) => {
+            let doc = await userdb.findOne({ Email: data.email }).lean()
+                .then(user => {
+                    if (user) {
+                        bcrypt.compare(data.password, user.password).then(result => {
+                            if (user.status === 'on') {
+                                resolve(result)
+                            }
+                            else
+                                reject(user)
+                        })
+                    }
+                    else {
+                        reject(user)
+                    }
+                })
         })
     }
 }

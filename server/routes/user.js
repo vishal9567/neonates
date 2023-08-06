@@ -12,6 +12,7 @@ router.get('/eachCategory/:id',render.categoryProduct)
 
 router.post('/sendOtp',render.userSignup);
 router.post('/verifyOtp',sessionCheck.otpAuth,redirect.createUser)
+router.post('/loginCheck',redirect.findUser)
 
 
 //-----testing---//

@@ -15,6 +15,10 @@ var userSchema=new mongoose.Schema({
     Cpassword:{
         type:String,
         require:true
+    },
+    status:{
+        type:Boolean,
+        require:true
     }
 })
 const Userdb=mongoose.model('users',userSchema);

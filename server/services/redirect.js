@@ -12,6 +12,20 @@ exports.createUser=(req,res)=>{
         res.send(400,"Not found")
     })
 }
+exports.findUser=(req,res)=>{
+    userController.findUser(req.body).then(result=>{
+        req.session.user=true
+        res.redirect('/')
+    })
+    .catch((err)=>{
+        if(err.status===null){
+            res.send("Invalid user")
+        }
+            
+        else
+            res.send('User name or password incorrect')
+    })
+}
 
 
 //----------------admin--------------------------------------------------admin----------------------------------------------------------*//
