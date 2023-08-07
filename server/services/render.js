@@ -1,14 +1,15 @@
 const categoryController = require('../controller/categoryController')
 const nodemailer = require("nodemailer");
-const secret=require('../../config/secret')
+const secret = require('../../config/secret');
+const userController = require('../controller/userController');
 //const productDb=require('../model/productModel')
 
 //*----------------user---------------------------------------------user----------------------------------------------------------------*//
 exports.landing = (req, res) => {
     categoryController.findCategory()
         .then(category => {
-            categoryController.getItems().then(product=>{
-                res.render('user/landing',{product,category})
+            categoryController.getItems().then(product => {
+                res.render('user/landing', { product, category })
             })
         })
         .catch((err) => {
@@ -59,7 +60,7 @@ exports.userSignup = (req, res) => {
         if (err) {
             console.log('Err', err)
         }
-        else{
+        else {
             res.render('user/otpcard')
             console.log("otp send");
         }
@@ -77,7 +78,9 @@ exports.signUp = (req, res) => {
 }
 exports.home = (req, res) => {
     categoryController.getItems().then(product => {
-        res.render('user/home', { signup: true, product })
+        categoryController.findCategory().then(category => {
+            res.render('user/home', { signup: true, product, category })
+        })
     })
 }
 
@@ -122,8 +125,16 @@ exports.addCategory = (req, res) => {
     res.render('admin/addCategory')
 }
 exports.userList = (req, res) => {
-    res.render('admin/userListTable')
+    userController.getUser().then(user => {
+        categoryController.findCategory().then(category => {
+            res.render('admin/userListTable', { user, category })
+        })
+    })
 }
-exports.categoryList=(req,res)=>{
-    res.render('admin/categoryList')
+exports.categoryList = (req, res) => {
+    categoryController.findCatForTable().then(cat => {
+        categoryController.findCategory().then(category => {
+            res.render('admin/categoryList', { cat, category })
+        })
+    })
 }

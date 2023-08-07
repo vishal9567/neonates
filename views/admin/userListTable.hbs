@@ -41,7 +41,7 @@
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">SERVICES</h6>
                     <a class="collapse-item" href="/admin/listProduct">Product List</a>
-                    <p class="collapse-item" >User List</p>
+                    <a class="collapse-item" href="/admin/userList">User List</a>
                     <a class="collapse-item" href="/admin/categoryList">Category List</a>
                 </div>
             </div>
@@ -291,8 +291,10 @@
                     <li class="nav-item dropdown no-arrow">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
-                            <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">Admin</span>
+                            <span class="material-symbols-outlined">
+                                account_circle
+                            </span>
                         </a>
                         <!-- Dropdown - User Information -->
                         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -334,7 +336,7 @@
                 <!-- DataTales Example -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Neonates users</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">Neonates Users</h6>
                         {{!-- <div class="d-flex justify-content-end"><a href="" class="btn btn-primary">Add User</a>
                         </div> --}}
                     </div>
@@ -344,7 +346,6 @@
                                 <thead>
                                     <tr>
                                         <th>Name</th>
-                                        <th>Gender</th>
                                         <th>Email</th>
                                         <th>Status</th>
                                         <th>Options</th>
@@ -358,22 +359,26 @@
                                         <th>Options</th>
                                     </tr>
                                 </tfoot> --}}
+                                {{#each user}}
                                 <tbody>
                                     <tr>
-                                        <td>Tiger Nixon</td>
-                                        <td>Male</td>
-                                        <td>System Architect</td>
+                                        <td>{{this.name}}</td>
+                                        <td>{{this.Email}}</td>
                                         <td><!-- Default switch -->
                                             <div class="custom-control custom-switch">
-                                                <input type="checkbox" class="custom-control-input" id="customSwitches">
-                                                <label class="custom-control-label" for="customSwitches">Active</label>
+                                                <a {{#if
+                                                    this.status}}href="/admin/desableUser/{{this._id}}/{{this.status}}"
+                                                    class="btn btn-success"
+                                                    {{else}}href="/admin/enableUser/{{this._id}}/{{this.status}}"
+                                                    class="btn btn-danger" {{/if}}>{{#if
+                                                    this.status}}Active{{else}}Disabled{{/if}}</a>
                                             </div>
                                         </td>
                                         <td><a href="/admin/editUser/{{this._id}}"><span
                                                     class="material-symbols-outlined">
                                                     edit
                                                 </span></a><a href="/admin/deleteUser/{{this._id}}"
-                                                onclick="return confirm('Are you want to delete {{this.first_name}} ?')"><span
+                                                onclick="return confirm('Are you want to delete {{this.category}} ?')"><span
                                                     class="material-symbols-outlined">
                                                     delete
                                                 </span></a></td>
@@ -381,6 +386,7 @@
                                     </tr>
 
                                 </tbody>
+                                {{/each}}
                             </table>
                         </div>
                     </div>

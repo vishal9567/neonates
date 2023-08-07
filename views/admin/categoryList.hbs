@@ -291,8 +291,10 @@
                     <li class="nav-item dropdown no-arrow">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
-                            <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">Admin</span>
+                            <span class="material-symbols-outlined">
+                                account_circle
+                            </span>
                         </a>
                         <!-- Dropdown - User Information -->
                         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -356,20 +358,25 @@
                                         <th>Options</th>
                                     </tr>
                                 </tfoot> --}}
+                                {{#each cat}}
                                 <tbody>
                                     <tr>
-                                        <td>Tiger Nixon</td>
+                                        <td>{{this.category}}</td>
                                         <td><!-- Default switch -->
                                             <div class="custom-control custom-switch">
-                                                <input type="checkbox" class="custom-control-input" id="customSwitches" value="" onchange="">
-                                                <label class="custom-control-label" for="customSwitches">Active</label>
+                                                <a {{#if
+                                                    this.status}}href="/admin/disableCat/{{this._id}}/{{this.status}}"
+                                                    class="btn btn-success"
+                                                    {{else}}href="/admin/enableCat/{{this._id}}/{{this.status}}"
+                                                    class="btn btn-danger" {{/if}}>{{#if
+                                                    this.status}}Active{{else}}Disabled{{/if}}</a>
                                             </div>
                                         </td>
                                         <td><a href="/admin/editUser/{{this._id}}"><span
                                                     class="material-symbols-outlined">
                                                     edit
                                                 </span></a><a href="/admin/deleteUser/{{this._id}}"
-                                                onclick="return confirm('Are you want to delete {{this.first_name}} ?')"><span
+                                                onclick="return confirm('Are you want to delete {{this.category}} ?')"><span
                                                     class="material-symbols-outlined">
                                                     delete
                                                 </span></a></td>
@@ -377,6 +384,7 @@
                                     </tr>
 
                                 </tbody>
+                                {{/each}}
                             </table>
                         </div>
                     </div>

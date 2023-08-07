@@ -31,7 +31,7 @@ module.exports = {
                 Email: data.email,
                 password: pass,
                 Cpassword: Cpass,
-                status: data.check
+                status: true
             })
                 .then(result => {
                     resolve(result)
@@ -44,17 +44,44 @@ module.exports = {
                 .then(user => {
                     if (user) {
                         bcrypt.compare(data.password, user.password).then(result => {
-                            if (user.status === 'on') {
+                            if (user.status === true) {
                                 resolve(result)
                             }
                             else
-                                reject(user)
+                                reject()
                         })
                     }
-                    else {
-                        reject(user)
-                    }
+
                 })
+        })
+    },
+    enableOrDesableUser: (data, status) => {
+        if (status == "true") {
+            return new Promise(async(resolve, reject) => {
+                let doc=await userdb.updateOne({_id:data},{$set:{
+                    status:false
+                }}).then(result=>{
+                    resolve(result)
+                })
+            })
+        }
+        else if(status == "false"){
+            return new Promise(async(resolve,reject)=>{
+                let doc=await userdb.updateOne({_id:data},{$set:{
+                    status:true
+                }}).then(result=>{
+                    resolve(result)
+                })
+            })
+        }
+
+    },
+    getUser:()=>{
+        return new Promise(async(resolve,reject)=>{
+            let doc=await userdb.find().lean()
+            .then(result=>{
+                resolve(result)
+            })
         })
     }
 }
