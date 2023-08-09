@@ -1,0 +1,25 @@
+<form action="/verifyMobOtp" method="post">
+    <div class="container d-flex justify-content-center align-items-center mt-5" style="width: 400px;">
+        <div class="card text-center" style="background-color: antiquewhite;">
+            <div class="card-header p-5">
+                <!-- <img src="mobile.png"> -->
+                <h5 class="mb-2">OTP VERIFICATION</h5>
+                <div>
+                    <small>code has been send to ******your email</small>
+                </div>
+            </div>
+            <div class="input-container d-flex flex-row justify-content-center mt-2 ">
+                <input type="text" class="ms-5 me-5 my-2 text-center form-control rounded" maxlength="4" name="otp">
+            </div>
+            <div>
+                <small>
+                    didn't get the otp
+                    <a href="#" class="text-decoration-none">Resend</a>
+                </small>
+            </div>
+            <div class="mt-3 mb-5">
+                <button type="submit" class="btn btn-success px-4 verify-btn">verify</button>
+            </div>
+        </div>
+    </div>
+</form>

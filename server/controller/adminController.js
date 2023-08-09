@@ -1,5 +1,5 @@
-const Admin=require('../model/adminModel')
-const bcrypt= require('bcrypt')
+const Admin = require('../model/adminModel')
+const bcrypt = require('bcrypt')
 
 // module.exports={
 //     findAdmin:(data)=>{
@@ -21,33 +21,33 @@ const bcrypt= require('bcrypt')
 //     }
 // }
 
-exports.findone=async (req,res)=>{
-    const entry=req.body
+exports.findone = async (req, res) => {
+    const entry = req.body
     console.log(entry.email);
-    let doc=await Admin.findOne({email:entry.email}).lean()
-    .then(admin=>{
-        if(admin){
-            bcrypt.compare(entry.password,admin.password).then(status=>{
-                if(status){
-                    req.session.AdminLogIn=true;
-                    res.redirect('/admin')
-                }
-                else
-                    res.redirect('/admin')
-            })
-            .catch(err=>{
-                res.status(500).send({
-                    message: err.message || "Error can not find"
+    let doc = await Admin.findOne({ email: entry.email }).lean()
+        .then(admin => {
+            if (admin) {
+                bcrypt.compare(entry.password, admin.password).then(status => {
+                    if (status) {
+                        req.session.AdminLogIn = true;
+                        res.redirect('/admin')
+                    }
+                    else
+                        res.redirect('/admin')
                 })
-            })
-        }
-        
-    })
-    .catch(err=>{
-        res.status(500).send({
-            message: err.message || "Error can not find"
+                    .catch(err => {
+                        res.status(500).send({
+                            message: err.message || "Error can not find"
+                        })
+                    })
+            }
+
         })
-    })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Error can not find"
+            })
+        })
 }
 
 

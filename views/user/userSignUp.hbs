@@ -30,7 +30,7 @@
                   <div class="d-flex flex-row align-items-center mb-3">
                     <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                      <input type="password" id="form3Example4c" class="form-control" name="password"/>
+                      <input type="password" id="form3Example4c" class="form-control" name="password" />
                       <label class="form-label" for="form3Example4c">Password</label>
                     </div>
                   </div>
@@ -38,12 +38,14 @@
                   <div class="d-flex flex-row align-items-center mb-3">
                     <i class="fas fa-key fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                      <input type="password" id="form3Example4cd" class="form-control" name="Cpassword"/>
+                      <input type="password" id="form3Example4cd" class="form-control" name="Cpassword" />
                       <label class="form-label" for="form3Example4cd">Repeat your password</label>
                     </div>
                   </div>
 
-                  
+                  <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                    <p id="error" class="text-danger"></p>
+                  </div>
 
                   <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                     <button type="submit" class="btn btn-primary btn-lg">Register</button>
@@ -54,8 +56,7 @@
               </div>
               <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
 
-                <img src="/img/imgForLogin.webp"
-                  class="img-fluid" alt="Sample image">
+                <img src="/img/imgForLogin.webp" class="img-fluid" alt="Sample image">
 
               </div>
             </div>
@@ -65,3 +66,44 @@
     </div>
   </div>
 </section>
+<script>
+  const userName = document.getElementById('form3Example1c')
+  const email = document.getElementById('form3Example3c')
+  const pass = document.getElementById('form3Example4c')
+  const Cpass = document.getElementById('form3Example4cd')
+  const error = document.getElementById('error')
+  const form = document.querySelector('form')
+
+  form.addEventListener('submit', validate)
+
+  function validate(event) {
+    if (!nameReg.test(userName.value)) {
+      if (userName.value == "") {
+        event.preventDefault();
+        error.innerText = "Enter the Name"
+      }
+      else{
+        event.preventDefault();
+        error.innerText="Start with Capital letter"
+      }
+    }
+    else if (!emailReg.test(email.value)) {
+      if (email.value == "") {
+        event.preventDefault();
+        error.innerText = "Enter Email"
+      }
+      else{
+        event.preventDefault();
+        error.innerText="Enter Valid Email"
+      }
+    }
+    else if(pass.value !== Cpass.value){
+      event.preventDefault();
+      error.innerText="Enter password correctly"
+    }
+  }
+  const nameReg = /^[A-Z][a-z]?/
+  const emailReg = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/
+  const genderReg = /.*[Male].*[Female]/
+  const passwordReg = /(?=.*[0-9])(?=.*[a-z]).{5,8}$/
+</script>

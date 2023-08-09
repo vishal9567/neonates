@@ -38,51 +38,103 @@ module.exports = {
                 })
         })
     },
-    findUser: (data) => {
+    enableOrDesableUser: (data, status) => {
+        if (status == "true") {
+            return new Promise(async (resolve, reject) => {
+                let doc = await userdb.updateOne({ _id: data }, {
+                    $set: {
+                        status: false
+                    }
+                }).then(result => {
+                    resolve(result)
+                })
+            })
+        }
+        else if (status == "false") {
+            return new Promise(async (resolve, reject) => {
+                let doc = await userdb.updateOne({ _id: data }, {
+                    $set: {
+                        status: true
+                    }
+                }).then(result => {
+                    resolve(result)
+                })
+            })
+        }
+
+    },
+    getUser: () => {
         return new Promise(async (resolve, reject) => {
-            let doc = await userdb.findOne({ Email: data.email }).lean()
-                .then(user => {
-                    if (user) {
-                        bcrypt.compare(data.password, user.password).then(result => {
-                            if (user.status === true) {
+            let doc = await userdb.find().lean()
+                .then(result => {
+                    resolve(result)
+                })
+        })
+    },
+    updateUserPassword: (email,password) => {
+        console.log(password);
+        return new Promise(async (resolve, reject) => {
+            pass = await bcrypt.hash(password, 10)
+            console.log(pass);
+            let doc = await userdb.updateOne({ Email: email }, {
+                $set:
+                {
+                    password: pass
+                }
+            }).then(result=>{
+                resolve(result)
+            })
+
+        })
+    },
+    validateUser:(data)=>{
+        try{
+            console.log(data.email);
+            return new Promise(async(resolve,reject)=>{
+                let doc=await userdb.findOne({Email:data.email}).lean()
+                .then(user=>{
+                    
+                    if(user){
+                        bcrypt.compare(data.password,user.password).then(result=>{
+                            console.log(result);
+                            if(user.status === true && result)
                                 resolve(result)
-                            }
                             else
                                 reject()
                         })
                     }
-
-                })
-        })
-    },
-    enableOrDesableUser: (data, status) => {
-        if (status == "true") {
-            return new Promise(async(resolve, reject) => {
-                let doc=await userdb.updateOne({_id:data},{$set:{
-                    status:false
-                }}).then(result=>{
-                    resolve(result)
+                    else{
+                        reject()
+                    }
                 })
             })
         }
-        else if(status == "false"){
-            return new Promise(async(resolve,reject)=>{
-                let doc=await userdb.updateOne({_id:data},{$set:{
-                    status:true
-                }}).then(result=>{
-                    resolve(result)
-                })
-            })
-        }
-
-    },
-    getUser:()=>{
-        return new Promise(async(resolve,reject)=>{
-            let doc=await userdb.find().lean()
-            .then(result=>{
-                resolve(result)
-            })
-        })
+           
+    catch(err){
+        console.log(err);
+    }
+        
     }
 }
 
+//findUser: (data) => {
+    //     return new Promise(async (resolve, reject) => {
+    //         let doc = await userdb.findOne({ Email: data.email }).lean()
+    //             .then(user => {
+    //                 if (user) {
+    //                     bcrypt.compare(data.password, user.password).then(result => {
+    //                         console.log(data.password);
+    //                         if (user.status === true) {
+    //                             resolve(result)
+    //                         }
+    //                         else
+    //                             reject()
+    //                     })
+    //                 }
+    //                 else {
+    //                     reject()
+    //                 }
+
+    //             })
+    //     })
+    // }

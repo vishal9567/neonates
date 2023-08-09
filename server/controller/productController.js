@@ -11,7 +11,7 @@ exports.create = (req, res) => {
         color: req.body.color,
         price: req.body.price,
         quantity: req.body.quantity,
-        image: req.file.filename
+        image: [req.files[0].filename,req.files[1].filename]
     })
     product
         .save()
@@ -44,8 +44,10 @@ exports.findone = async (req, res) => {
     const id = req.params.id
     let doc = await productDb.findOne({ _id: id }).lean()
         .then(products => {
+            categoryController.findCategory().then(category=>{
+                res.render('admin/addProduct', { updating: true, data: products, category })
+            })
             
-            res.render('admin/addProduct', { updating: true, data: products })
         })
         .catch(err => {
             res.status(500).send({
@@ -67,7 +69,7 @@ exports.update = async (req, res) => {
                 color: data.color,
                 price: data.price,
                 quantity: data.quantity,
-                image: req.file.filename
+                image: [req.files[0].filename]
 
             }
         })

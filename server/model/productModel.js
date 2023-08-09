@@ -1,4 +1,5 @@
-const mongoose=require('mongoose')
+const mongoose=require('mongoose');
+const { array } = require('../services/middleware/multer');
 
 var productSchema=new mongoose.Schema({
     productname:{
@@ -20,7 +21,7 @@ var productSchema=new mongoose.Schema({
         type:Number
     },
     image:{
-        type:String
+        type:Array
     }
 })
 const productsDb=mongoose.model('products',productSchema);

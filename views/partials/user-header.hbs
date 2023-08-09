@@ -35,8 +35,15 @@
               <a href="#" class="nav-link dropdown-toggle btn btn-success rounded-pill text-light"
                 data-bs-toggle="dropdown">Options</a>
               <div class="dropdown-menu">
-                <a href="#" class="dropdown-item">SignUp</a>
-                <a href="#" class="dropdown-item">Login</a>
+                <a href="/signUp" class="dropdown-item">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  SignUp</a>
+                <a class="dropdown-item" {{#if user}}href="/logout" data-toggle="modal" data-target="#logoutModal"
+                  {{else}}href="/userLogin" {{/if}}>
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  {{#if user}}Logout{{else}}Login{{/if}}
+                </a>
+                
               </div>
             </div>
           </div>

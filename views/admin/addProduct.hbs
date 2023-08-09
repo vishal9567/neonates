@@ -1,15 +1,8 @@
-<nav class="navbar navbar-expand-sm navbar-dark"
-  style="background-image: linear-gradient(rgb(34, 32, 32), rgb(52,74,94), black)">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#" data-toggle="tooltip" data-placement="bottom" title={{adminName}}><img
-        src="/images/manlogo.png" alt="logo"></a><span class="text-light">Admin Panel</span>
-    <a href="/admin/adminLogout" class="btn btn-danger">Log out</a>
-  </div>
-</nav>
+<center class="text-danger"><h3>Add Product</h3></center>
 {{!-- <div style="width: 300px; margin: 5px 0px 5px 40vw;" class="bg-warning"> --}}
-  <div style="width: 400px; margin: 50px 0px 0px 37vw; border-radius:10px" class="bg-warning">
+  <div style="width: 400px; margin: 50px 0px 0px 37vw; border-radius:10px; background-color:rgb(201, 190, 164)">
     <form {{#if updating}}action="/admin/updateProduct/{{data._id}}" method="post" enctype="multipart/form-data"
-      {{else}}action="/admin/addProduct" method="post" enctype="multipart/form-data" {{/if}} class="p-3">
+      {{else}}action="/admin/addProduct" method="post" enctype="multipart/form-data" {{/if}} class="p-5">
       <!-- 2 column grid layout with text inputs for the first and last names -->
       <div class="row mb-3">
         <div class="col">
@@ -64,10 +57,10 @@
       </div>
 
       <div class="form-outline mb-2">
-        <input type="file" name="image" {{#if updating}}accept="{{data.image}}" {{/if}} accept="hlhh">
+        <input type="file" name="image"  multiple>
       </div>
       {{#if updating}}
-      <img src="/images/{{data.image}}" alt="" width="30px">
+      <img src="/images/{{data.image.[0]}}" alt="" width="30px">
       {{/if}}
 
       <!-- Checkbox -->
