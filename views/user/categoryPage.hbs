@@ -338,8 +338,8 @@
                     {{#each product}}
                     <div class="col">
                         <div class="card h-100">
-                            <img src="/images/{{this.image}}" class="card-img-top ms-5" alt="..."
-                                style="width: 200px;">
+                            <a href="/productView/{{this._id}}"><img src="/images/{{this.image.[0]}}" class="card-img-top ms-5" alt="..."
+                                style="width: 200px;"></a>
                             <div class="card-body">
                                 <h5 class="card-title">{{this.productname}}</h5>
                                 <h6 class="card-title">{{this.brandname}}</h6>

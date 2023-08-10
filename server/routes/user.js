@@ -2,6 +2,9 @@ const router=require('express').Router();
 const render=require('../services/render')
 const redirect=require('../services/redirect')
 const sessionCheck=require('../services/middleware/sessionCheck')
+const categoryController=require('../controller/cartController');
+const cartController = require('../controller/cartController');
+
 
 
 
@@ -22,6 +25,22 @@ router.post('/loginCheck',redirect.findUser)
 router.post('/sendMobOtp',render.sendTwillio)
 router.post('/verifyMobOtp',sessionCheck.mobOtpAuth,redirect.UserRedirect) 
 
+
+
+//--------testing--
+router.get('/productView/:id',render.showProductDetail)
+router.get('/addToCart/:id',sessionCheck.userAuth,(req,res)=>{
+    //res.render('user/cartPage',{product})
+    let val=req.session.userId
+    cartController.addToCart(req.params.id,val._id).then(result=>{
+        if(result)
+            res.redirect('/')
+    })
+    console.log(req.params.id);
+    
+
+   
+})
 
 module.exports=router;
 

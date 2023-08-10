@@ -87,7 +87,7 @@ module.exports = {
 
         })
     },
-    validateUser:(data)=>{
+        validateUser:(data)=>{
         try{
             console.log(data.email);
             return new Promise(async(resolve,reject)=>{
@@ -98,7 +98,7 @@ module.exports = {
                         bcrypt.compare(data.password,user.password).then(result=>{
                             console.log(result);
                             if(user.status === true && result)
-                                resolve(result)
+                                resolve(user)
                             else
                                 reject()
                         })

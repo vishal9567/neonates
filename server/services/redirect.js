@@ -17,6 +17,7 @@ exports.findUser = (req, res) => {
     userController.validateUser(req.body).then(result => {
         if(result){
             req.session.user = true
+            req.session.userId=result
             res.redirect('/')
         }
        

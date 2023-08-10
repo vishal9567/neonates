@@ -27,8 +27,8 @@
     {{#each product}}
     <div class="col">
       <div class="card h-100">
-        <a href=""><img src="/images/{{this.image}}" class="card-img-top ms-5" alt="..." style="width: 175px;">
-        <a href="#myModal" role="button" class="btn btn-lg btn-primary" data-bs-toggle="modal">{{this.brandname}}</a></a>
+        <a href="/productView/{{this._id}}"><img src="/images/{{this.image.[0]}}" class="card-img-top ms-5" alt="..." style="width: 175px;">
+        <a role="button" class="btn btn-lg btn-primary" data-bs-toggle="modal">{{this.brandname}}</a></a>
         <div class="card-body">
           <h5 class="card-title">{{this.productname}}</h5>
           <p class="card-text">{{this.price}}</p>

@@ -3,11 +3,12 @@ const nodemailer = require("nodemailer");
 const secret = require('../../config/secret');
 const userController = require('../controller/userController');
 const userdb = require('../model/userModel')
+const productHelper = require('../controller/productHelper')
 
 
 //*----------------user---------------------------------------------user----------------------------------------------------------------*//
 exports.landing = (req, res) => {
-    let user=req.session.user
+    let user = req.session.user
     categoryController.findCategory()
         .then(category => {
             categoryController.getItems().then(product => {
@@ -24,7 +25,7 @@ exports.landing = (req, res) => {
 //-----------------catergory wise page rendering--------//
 exports.categoryProduct = (req, res) => {
     let data = req.params.id
-    let user=req.session.user
+    let user = req.session.user
     categoryController.findCategoryItems(data).then(product => {
         let cat = product.category
         categoryController.findCategoryProduct(product).then(product => {
@@ -77,7 +78,7 @@ exports.userSignup = (req, res) => {
             otp = Math.floor(1000 + Math.random() * 9000).toString()
             console.log(otp);
             req.session.newPassword = req.body.password;
-            req.session.Email=req.body.email
+            req.session.Email = req.body.email
             req.session.otpMob = otp;
             req.session.mobNumber = req.body.mobNumber;
             const accountSid = secret.TWILIO_SID;
@@ -93,7 +94,7 @@ exports.userSignup = (req, res) => {
                     console.log("otp send");
                     res.render('user/mobOtpCard')
                 })
-                .catch(message=>{
+                .catch(message => {
                     res.send("Netwok issue")
                 })
         }
@@ -111,14 +112,24 @@ exports.signUp = (req, res) => {
     res.render('user/userSignUp')
 }
 exports.home = (req, res) => {
-    let user=req.session.user
+    let user = req.session.user
     categoryController.getItems().then(product => {
         categoryController.findCategory().then(category => {
             res.render('user/home', { signup: true, product, category, user })
         })
     })
 }
-
+exports.showProductDetail = (req, res) => {
+    let id = req.params.id
+    let user = req.session.user
+    productHelper.showProductDetail(id).then(product => {
+        categoryController.findCategory().then(category => {
+            res.render('user/productPage', { signup: true, product, productDetail: true, user, category })
+        })
+    }).catch(err => {
+        res.send("404")//chage to a page
+    })
+}
 // exports.dashboard=(req,res)=>{
 //     res.render('admin/dashboard')
 // }

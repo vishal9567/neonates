@@ -34,5 +34,4 @@ router.post('/updateProduct/:id',upload.array('image',2),sessionCheck.auth,produ
 router.post('/adminLogin',adminController.findone)
 router.post('/addToCategory',sessionCheck.auth,redirect.addToCategory)
 
-
 module.exports=router;

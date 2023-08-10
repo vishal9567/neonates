@@ -1,9 +1,11 @@
 const productDb = require('../model/productModel')
 const categoryController=require('../controller/categoryController')
+const cropImg=require('../../config/imageCrop')
 
 //------------------insert------------//
-exports.create = (req, res) => {
+exports.create = async(req, res) => {
     // console.log(req.body);
+    await cropImg.crop(req);
     let product = new productDb({
         productname: req.body.productname,
         brandname: req.body.brandname,
@@ -13,7 +15,7 @@ exports.create = (req, res) => {
         quantity: req.body.quantity,
         image: [req.files[0].filename,req.files[1].filename]
     })
-    product
+    await product
         .save()
         .then(result => {
             res.redirect('/admin/addProductPage')
@@ -102,4 +104,5 @@ exports.delete = async (req, res) => {
             })
         })
 }
+
 
