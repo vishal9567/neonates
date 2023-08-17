@@ -20,6 +20,13 @@ var productSchema=new mongoose.Schema({
     quantity:{
         type:Number
     },
+    discription:{
+        type:String
+    },
+    date:{
+        type:Date,
+        default:Date.now
+    },
     image:{
         type:Array
     }

@@ -31,12 +31,12 @@
 
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <div class="navbar-nav ms-auto">
-            <span class="material-symbols-outlined p-2">
-              search
-            </span>
-            <span class="material-symbols-outlined p-2">
-              shopping_cart
-            </span>
+            <a href="/search" class="text-light"><span class="material-symbols-outlined p-2">
+                search
+              </span></a>
+            <a {{#if user}}href="/cart"{{else}} id="myCart" href=""{{/if}}  onclick="showModal()" class="text-light"><span class="material-symbols-outlined p-2">
+                shopping_cart
+              </span></a>
             <div class="nav-item dropdown">
               <a href="#" class="nav-link dropdown-toggle btn btn-success rounded-pill text-light"
                 data-bs-toggle="dropdown">Options</a>
@@ -58,3 +58,11 @@
       </div>
   </nav>
 </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+<script>
+  $("#myCart").on('click', function() {
+  alert("Login or signUP");
+});
+</script>

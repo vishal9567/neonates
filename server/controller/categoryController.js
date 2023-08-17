@@ -14,7 +14,7 @@ module.exports={
     },
     getItems:()=>{
         return new Promise(async(resolve,reject)=>{
-            let doc=await productDb.find().lean()
+            let doc=await productDb.find().sort({date:-1}).lean()
             .then(products=>{
                 resolve(products)
             })

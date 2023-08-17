@@ -27,11 +27,11 @@
     {{#each product}}
     <div class="col">
       <div class="card h-100">
-        <a href="/productView/{{this._id}}"><img src="/images/{{this.image.[0]}}" class="card-img-top ms-5" alt="..." style="width: 175px;">
-        <a role="button" class="btn btn-lg btn-primary" data-bs-toggle="modal">{{this.brandname}}</a></a>
-        <div class="card-body">
-          <h5 class="card-title">{{this.productname}}</h5>
-          <p class="card-text">{{this.price}}</p>
+        <a id="{{this._id}}1" href="/productView/{{this._id}}"><img src="/images/{{this.image.[0]}}" class="card-img-top ms-5" alt="..." style="width: 175px;">
+        <a role="button" class="btn btn-lg btn-primary" data-bs-toggle="modal">{{this.productname}}</a></a>
+        <div class="card-body" style="display: none;" id="{{this._id}}">
+          <h5 class="card-title">{{this.brandname}}</h5>
+          <p class="card-text">&#x20b9;{{this.price}}</p>
         </div>
       </div>
     </div>
@@ -52,3 +52,18 @@
   </div>
 </div>
 <!-- Hero -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+{{#each product}}
+<script> 
+$(document).ready(function(){
+  $("#{{this._id}}1").mouseenter(function(){
+    $("#{{this._id}}").slideToggle("slow");
+  });
+});
+$(document).ready(function(){
+  $("#{{this._id}}1").mouseleave(function(){
+    $("#{{this._id}}").slideToggle("slow");
+  });
+});
+</script>
+{{/each}}

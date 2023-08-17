@@ -29,9 +29,10 @@
                                 use, you could pair it with a stylish pair of jeans or trousers complete the look.</p>
 
                             <div class="cart mt-4 align-items-center">
-                                <a href="/addToCart/{{product._id}}"><button class="btn btn-danger text-uppercase mr-2 px-4">Add to
-                                        cart</button> <i class="fa fa-heart text-muted">
-                                </a>
+                                <button class="btn btn-danger text-uppercase mr-2 px-4"
+                                    onclick="addtocart('{{product._id}}','{{user}}')">Add to
+                                    cart</button> <i class="fa fa-heart text-muted">
+
                                 </i> <i class="fa fa-share-alt text-muted"></i>
                             </div>
                         </div>
@@ -68,11 +69,39 @@
 
     document.addEventListener("DOMContentLoaded", function (event) {
 
-
-
-
-
-
-
     });
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+
+<script>
+    function addtocart(id, user) {
+        $.ajax({
+            url: '/addToCart/' + id,
+            method: 'get',
+            success: (function (response) {
+                if (user) {
+                    Swal.fire({
+                        title: 'Added to cart!',
+                        text: 'Product has been added to cart succesfully.',
+                        icon: 'success',
+                        timer: 5000
+                    })
+                }
+                else {
+                    Swal.fire({
+                        title: 'Please login',
+                        text: 'Signup or login',
+                        icon: 'info',
+                        timer: 5000
+                    }).then(function () {
+                        window.location.href = "http://localhost:3000/userLogin"
+                    })
+                }
+
+            })
+        })
+
+    }
 </script>

@@ -19,6 +19,16 @@
             <label class="form-label" for="form3Example2">Price</label>
           </div>
         </div>
+
+ <div class="col">
+          <div class="form-outline">
+            
+               <input type="text" id="form3Example4" class="form-control" name="quantity" {{#if updating}}
+          value="{{data.quantity}}" {{/if}} />
+            <label class="form-label" for="form3Example2">Quantity</label>
+          </div>
+        </div>
+
       </div>
 
       <!-- Email input -->
@@ -51,9 +61,9 @@
       </div>
 
       <div class="form-outline mb-2">
-        <input type="text" id="form3Example4" class="form-control" name="quantity" {{#if updating}}
-          value="{{data.quantity}}" {{/if}} />
-        <label class="form-label" for="form3Example4">Qty</label>
+        <textarea type="text" id="form3Example4" class="form-control" placeholder="Discription" name="discription" {{#if updating}}
+          value="{{data.discription}}" {{/if}} /></textarea>
+        
       </div>
 
       <div class="form-outline mb-2">

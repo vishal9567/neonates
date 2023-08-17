@@ -4,6 +4,7 @@ const redirect=require('../services/redirect')
 const sessionCheck=require('../services/middleware/sessionCheck')
 const categoryController=require('../controller/cartController');
 const cartController = require('../controller/cartController');
+const { response } = require('express');
 
 
 
@@ -17,30 +18,38 @@ router.get('/home',render.home)
 router.get('/eachCategory/:id',render.categoryProduct)
 router.get('/forgotPassword',render.forgotPassword)
 router.get('/logout',redirect.logOut)
+//--------cart--
+router.get('/productView/:id',render.showProductDetail)
+router.get('/addToCart/:id',sessionCheck.userAuth,redirect.addToCart)
+router.get('/cart',sessionCheck.userAuth,render.getCart)
+
+router.get('/userDash',(req,res)=>{
+    res.render('user/userDashboard',{dashboard:true})
+})
 
 
 router.post('/sendOtp',render.userSignup);
 router.post('/verifyOtp',sessionCheck.otpAuth,redirect.createUser)
 router.post('/loginCheck',redirect.findUser)
 router.post('/sendMobOtp',render.sendTwillio)
-router.post('/verifyMobOtp',sessionCheck.mobOtpAuth,redirect.UserRedirect) 
-
-
-
-//--------testing--
-router.get('/productView/:id',render.showProductDetail)
-router.get('/addToCart/:id',sessionCheck.userAuth,(req,res)=>{
-    //res.render('user/cartPage',{product})
-    let val=req.session.userId
-    cartController.addToCart(req.params.id,val._id).then(result=>{
-        if(result)
-            res.redirect('/')
+router.post('/verifyMobOtp',sessionCheck.mobOtpAuth,redirect.UserRedirect)
+router.post('/incItems/decItems',redirect.incrementItems)
+router.post('/deleteCartItem',(req,res)=>{
+    let proId=req.body.count
+    console.log("productid for delete cart item",proId);
+    cartController.deleteCartItem(req.body).then(response=>{
+        res.json(response)
+    }).catch(error=>{
+        res.send(error)
     })
-    console.log(req.params.id);
-    
-
-   
 })
+
+
+// router.get('/cartPage',(req,res)=>{
+//     let product=req.session.product
+//     console.log(req.session.product);
+//     res.render('user/cartPage',{product})
+// })
 
 module.exports=router;
 

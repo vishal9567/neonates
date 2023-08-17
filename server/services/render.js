@@ -4,6 +4,7 @@ const secret = require('../../config/secret');
 const userController = require('../controller/userController');
 const userdb = require('../model/userModel')
 const productHelper = require('../controller/productHelper')
+const cartController=require('../controller/cartController')
 
 
 //*----------------user---------------------------------------------user----------------------------------------------------------------*//
@@ -122,12 +123,30 @@ exports.home = (req, res) => {
 exports.showProductDetail = (req, res) => {
     let id = req.params.id
     let user = req.session.user
+    console.log(`this is user:${user}`);
     productHelper.showProductDetail(id).then(product => {
         categoryController.findCategory().then(category => {
             res.render('user/productPage', { signup: true, product, productDetail: true, user, category })
         })
     }).catch(err => {
         res.send("404")//chage to a page
+    })
+}
+exports.getCart = (req, res) => {
+    let val = req.session.userId
+    cartController.getCartProducts(val._id).then(product => {
+        let totalCount = 0;
+        let grandTotal = 0;
+        for (i of product) {
+            totalCount += i.quantity
+            grandTotal += ((i.quantity) * i.product.price)
+        }
+        console.log(product[0].user);
+        let products = product
+        res.render('user/cartPage', { products, totalCount, grandTotal, user_id: val._id })
+    })
+    .catch(err=>{
+        res.send("cart is empty")
     })
 }
 // exports.dashboard=(req,res)=>{

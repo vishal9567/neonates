@@ -2,6 +2,8 @@ const addcategory = require('../controller/categoryController')
 const adminController = require('../controller/adminController')
 const userController = require('../controller/userController')
 const categoryController = require('../controller/categoryController')
+const cartController = require('../controller/cartController');
+const productHelpers=require('../controller/productHelper')
 
 
 //*----------------user--------------------------------------------------user----------------------------------------------------------*//
@@ -15,12 +17,12 @@ exports.createUser = (req, res) => {
 }
 exports.findUser = (req, res) => {
     userController.validateUser(req.body).then(result => {
-        if(result){
+        if (result) {
             req.session.user = true
-            req.session.userId=result
+            req.session.userId = result
             res.redirect('/')
         }
-       
+
     })
         .catch((err) => {
             res.send('User name or password incorrect or you are inactive')
@@ -39,10 +41,40 @@ exports.UserRedirect = (req, res) => {
     }
 
 }
-exports.logOut=(req,res)=>{
+exports.logOut = (req, res) => {
     req.session.destroy();
     res.redirect('/')
 }
+exports.addToCart = (req, res) => {
+    let val = req.session.userId
+    let c= -1
+    cartController.addToCart(req.params.id, val._id).then(result => {
+        productHelpers.inventryThenAddToCart(req.params.id,c).then(result=>{
+            console.log("here comes call hurray!");
+            res.json(true)
+        })
+       
+    })
+        .catch(err => {
+            console.log(err,"message from addtocart catch");
+        })
+}
+exports.incrementItems = (req, res) => {
+    console.log(req.body);
+    productHelpers.inventry(req.body)
+    cartController.incrementItems(req.body).then((response) => {
+        res.json(response)
+    }).catch(err => {
+        res.send(err)//show in error page
+    })
+}
+
+
+
+
+
+
+
 
 //----------------admin--------------------------------------------------admin----------------------------------------------------------*//
 
@@ -51,7 +83,7 @@ exports.logout = (req, res) => {
     res.redirect('/admin')
 }
 exports.addToCategory = (req, res) => {
-    addcategory.create(req.body).then(result => { 
+    addcategory.create(req.body).then(result => {
         res.redirect('/admin/addCategory')
     })
 }

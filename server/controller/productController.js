@@ -13,6 +13,7 @@ exports.create = async(req, res) => {
         color: req.body.color,
         price: req.body.price,
         quantity: req.body.quantity,
+        discription:req.body.discription,
         image: [req.files[0].filename,req.files[1].filename]
     })
     await product
@@ -29,7 +30,7 @@ exports.create = async(req, res) => {
 }
 //-------------find()-----------//
 exports.get = async (req, res) => {
-    let product = await productDb.find().lean()
+    let product = await productDb.find().sort({date:-1}).lean()
         .then(products => {
                 categoryController.findCategory().then(category=>{
                     res.render('admin/productlist', { products,category })
@@ -61,7 +62,6 @@ exports.findone = async (req, res) => {
 exports.update = async (req, res) => {
     const id = req.params.id
     const data = req.body
-    // console.log(data);
     if (req.session.AdminLogIn) {
         let doc = await productDb.updateOne({ _id: id }, {
             $set: {
@@ -71,6 +71,7 @@ exports.update = async (req, res) => {
                 color: data.color,
                 price: data.price,
                 quantity: data.quantity,
+                discription:data.discription,
                 image: [req.files[0].filename]
 
             }
