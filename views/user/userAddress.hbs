@@ -1,0 +1,219 @@
+<div class="container my-5 py-5" style="background-color: rgb(218, 108, 200);">
+
+    <!--Section: Design Block-->
+    <section>
+        <form action="/addAddress" method="post" id="form">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card mb-4">
+
+
+                        <div class="card-body">
+                            <p class="text-uppercase h4 text-font">Delivery Country:</p>
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <select id="countryData" name="country" class="selectpicker countrypicker" data-flag="true"
+                                            data-default="IN"></select>
+                                                  
+                                        
+                                    </div>
+                                </div>
+                                {{#if ptag}}<p class="text-danger ps-3">Already have two addresses</p>{{/if}}
+                            </div>
+
+
+
+
+                        </div>
+                    </div>
+                    <!--<div class="card mb-4 accordion" id="accordionExample">
+          <div class="card body accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+              <div class="accordion-button collapsed text-uppercase text-font h4" type="button"
+                data-mdb-toggle="collapse" data-mdb-target="#collapseOne" aria-expanded="false"
+                aria-controls="collapseOne">
+                Promo/Student Code or Vouchers
+              </div>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+              data-mdb-parent="#accordionExample">
+              <div class="accordion-body">
+                <div class="form-outline d-flex">
+                  <input type="text" id="form1" class="form-control" />
+                  <label class="form-label" for="form1">Enter code</label>
+                </div>
+              </div>
+            </div>
+
+
+
+          </div>
+        </div>-->
+
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <p class="text-uppercase fw-bold mb-3 text-font">Email address</p>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <p>{{email}}</p>
+                                </div>
+                                <!-- <div class="col-md-7">
+                <button type="button" class="btn btn-outline-dark float-end button-color "
+                  data-mdb-ripple-color="dark">
+                  Change
+                </button>
+              </div>>-->
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4 position-static">
+                    <div class="card mb-4">
+                        <div class="card-header py-3">
+                            <h5 class="mb-0 text-font">Items</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+
+                                <div class="col-md-6 ms-3">
+                                    <span class="mb-0 text-price">
+                                        <h6 style="font-weight: bold;">Quantity:- <span
+                                                style="font-size:medium">{{TotalPrice.[1]}}</span></h6>
+                                    </span>
+                                    <h6 class="mb-0 ">Discount</h6>
+
+                                </div>
+                            </div>
+                            <div class="card-footer mt-4">
+                                <ul class="list-group list-group-flush">
+                                    <li
+                                        class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0 text-muted">
+                                        Subtotal
+                                        <span>&#x20b9;{{TotalPrice.[0]}}</span>
+                                    </li>
+                                    <li
+                                        class="list-group-item d-flex justify-content-between align-items-center px-0 fw-bold text-uppercase">
+                                        Total to pay
+                                        <span>&#x20b9;{{TotalPrice.[0]}}</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-8 mb-4">
+                    <div class="card mb-4">
+                        <div class="card-header py-3">
+                            <h5 class="mb-0 text-font text-uppercase">Delivery address</h5>
+                        </div>
+                        <div class="card-body px-5">
+
+
+                            <div class="row mb-4">
+                                <div class="col">
+                                    <!--<div class="form-outline">
+                    <input type="text" id="form11Example1" class="form-control" />
+                    <label class="form-label" for="form11Example1">First name</label>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-outline">
+                    <input type="text" id="form11Example2" class="form-control" />
+                    <label class="form-label" for="form11Example2">Last name</label>
+                  </div>
+                </div>-->
+                                </div>
+
+                                <!-- Text input -->
+                                <div class="form-outline mb-4">
+                                    <input type="text" id="form11Example3" class="form-control" name="state" />
+                                    <label class="form-label" for="form11Example3">State</label>
+                                </div>
+
+                                <!-- Text input -->
+                                <div class="form-outline mb-4">
+                                    <input type="text" id="form11Example4" class="form-control" name="district" />
+                                    <label class="form-label" for="form11Example4">District</label>
+                                </div>
+
+                                <!-- Email input -->
+                                <div class="form-outline mb-4">
+                                    <input type="text" id="form11Example5" class="form-control" name="city" />
+                                    <label class="form-label" for="form11Example5">City</label>
+                                </div>
+
+                                <!-- Number input -->
+                                <div class="form-outline mb-4">
+                                    <input type="number" id="form11Example6" class="form-control" name="pinCode" />
+                                    <label class="form-label" for="form11Example6">Pin code</label>
+                                </div>
+                                <!--pin code-->
+                                <div class="form-outline mb-4">
+                                    <input type="number" id="form11Example7" class="form-control" name="phone" />
+                                    <label class="form-label" for="form11Example7">Phone</label>
+                                    
+                                </div>
+
+                                <!-- Message input -->
+
+
+                                <!-- Checkbox -->
+
+
+                            </div>
+
+                        </div>
+                        <div class="text-center" style="padding: 0px 0px 20px 70px;">
+                            <button type="submit" class="btn button-order col-md-10">
+                                <h6>Go to next</h6>
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+        </form>
+    </section>
+    <!--Section: Design Block-->
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script>
+    let state = document.getElementById('form11Example3')
+    let district = document.getElementById('form11Example4')
+    let city = document.getElementById('form11Example5')
+    let pin = document.getElementById('form11Example6')
+    let phone = document.getElementById('form11Example7')
+    let form = document.getElementById('form')
+
+    form.addEventListener('submit', validate)
+    function validate(e) {
+        if (state.value == "") {
+            e.preventDefault()
+            alert("Enter the fields")
+        }
+        else if (district.value == "") {
+            e.preventDefault()
+            alert("Enter the fields")
+        }
+        else if (city.value == "") {
+            e.preventDefault()
+            alert("Enter the fields")
+        }
+        else if (pin.value == "") {
+            e.preventDefault()
+            alert("Enter the fields")
+        }
+        else if (phone.value == "") {
+            e.preventDefault()
+            alert("Enter the fields")
+        }
+
+    }
+</script>

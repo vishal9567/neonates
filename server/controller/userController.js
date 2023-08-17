@@ -71,7 +71,7 @@ module.exports = {
                 })
         })
     },
-    updateUserPassword: (email,password) => {
+    updateUserPassword: (email, password) => {
         console.log(password);
         return new Promise(async (resolve, reject) => {
             pass = await bcrypt.hash(password, 10)
@@ -81,39 +81,79 @@ module.exports = {
                 {
                     password: pass
                 }
-            }).then(result=>{
+            }).then(result => {
                 resolve(result)
             })
 
         })
     },
-        validateUser:(data)=>{
-        try{
+    validateUser: (data) => {
+        try {
             console.log(data.email);
-            return new Promise(async(resolve,reject)=>{
-                let doc=await userdb.findOne({Email:data.email}).lean()
-                .then(user=>{
-                    
-                    if(user){
-                        bcrypt.compare(data.password,user.password).then(result=>{
-                            console.log(result);
-                            if(user.status === true && result)
-                                resolve(user)
-                            else
-                                reject()
-                        })
-                    }
-                    else{
-                        reject()
-                    }
-                })
+            return new Promise(async (resolve, reject) => {
+                let doc = await userdb.findOne({ Email: data.email }).lean()
+                    .then(user => {
+
+                        if (user) {
+                            bcrypt.compare(data.password, user.password).then(result => {
+                                console.log(result);
+                                if (user.status === true && result)
+                                    resolve(user)
+                                else
+                                    reject()
+                            })
+                        }
+                        else {
+                            reject()
+                        }
+                    })
             })
         }
-           
-    catch(err){
-        console.log(err);
-    }
-        
+
+        catch (err) {
+            console.log(err);
+        }
+
+    },
+    addAddress: (id, data) => {
+        console.log(id, data);// find user using id otherwise each refresh do not get the total address entered 
+        return new Promise(async (resolve, reject) => {
+            try {
+                let user = await userdb.findOne({ _id: id._id }).then(async user => {
+                    console.log("this is user",user);
+                    try {
+                        if (user.address[0]) {
+                            let doc = await userdb.aggregate([{ $unwind: "$address" }, { $group: { _id: 0, 'count': { $sum: 1 } } }]).then(async result => {
+                                if (result[0].count > 1) {
+                                    console.log("count comes in if:", result[0].count);
+                                    resolve({ address: true })
+                                }
+                                else {
+                                    console.log("count comes:", result[0].count);
+                                    try {
+                                        let doc = await userdb.updateOne({ _id: id._id }, { $push: { address: data } })
+                                    }
+                                    catch (err) {
+                                    }
+                                }
+                            })
+                        }
+                        else {
+                            try {
+                                let doc = await userdb.updateOne({ _id: id._id }, { $push: { address: data } })
+                            }
+                            catch (err) {
+                            }
+                        }
+                    }
+                    catch (err) {
+                    }
+                })
+            }
+            catch (err) {
+
+            }
+        })
     }
 }
 

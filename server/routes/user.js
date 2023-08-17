@@ -23,9 +23,9 @@ router.get('/productView/:id',render.showProductDetail)
 router.get('/addToCart/:id',sessionCheck.userAuth,redirect.addToCart)
 router.get('/cart',sessionCheck.userAuth,render.getCart)
 
-router.get('/userDash',(req,res)=>{
-    res.render('user/userDashboard',{dashboard:true})
-})
+// router.get('/userDash',(req,res)=>{
+//     res.render('user/userAddress',{dashboard:true})
+// })
 
 
 router.post('/sendOtp',render.userSignup);
@@ -34,6 +34,8 @@ router.post('/loginCheck',redirect.findUser)
 router.post('/sendMobOtp',render.sendTwillio)
 router.post('/verifyMobOtp',sessionCheck.mobOtpAuth,redirect.UserRedirect)
 router.post('/incItems/decItems',redirect.incrementItems)
+
+//need rework
 router.post('/deleteCartItem',(req,res)=>{
     let proId=req.body.count
     console.log("productid for delete cart item",proId);
@@ -42,6 +44,21 @@ router.post('/deleteCartItem',(req,res)=>{
     }).catch(error=>{
         res.send(error)
     })
+})
+
+router.post('/addAddress',render.addAddress)
+
+router.get('/proceedToCkeckOut',(req,res)=>{
+    let userId=req.session.userId
+    if(userId.address){
+        console.log(userId.address);
+        //got the next stage of check out
+        res.send("go to next")
+    }
+    else{
+        res.render('user/userAddress',{email:userId.Email,dashboard:true,TotalPrice:req.session.grandTotal})
+    }
+    
 })
 
 

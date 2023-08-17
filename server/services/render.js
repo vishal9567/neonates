@@ -141,12 +141,25 @@ exports.getCart = (req, res) => {
             totalCount += i.quantity
             grandTotal += ((i.quantity) * i.product.price)
         }
+        req.session.grandTotal=[grandTotal,totalCount]
         console.log(product[0].user);
         let products = product
         res.render('user/cartPage', { products, totalCount, grandTotal, user_id: val._id })
     })
     .catch(err=>{
         res.send("cart is empty")
+    })
+}
+exports.addAddress=(req,res)=>{
+    let userId=req.session.userId
+    let data=req.body
+    userController.addAddress(userId,data).then(result=>{
+        if(result.address){
+            let userId=req.session.userId
+            res.render('user/userAddress',{email:userId.Email,dashboard:true,TotalPrice:req.session.grandTotal,ptag:true})
+        }
+        
+        
     })
 }
 // exports.dashboard=(req,res)=>{
