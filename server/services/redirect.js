@@ -4,6 +4,7 @@ const userController = require('../controller/userController')
 const categoryController = require('../controller/categoryController')
 const cartController = require('../controller/cartController');
 const productHelpers=require('../controller/productHelper')
+const orderController=require('../controller/orderController')
 
 
 //*----------------user--------------------------------------------------user----------------------------------------------------------*//
@@ -16,11 +17,26 @@ exports.createUser = (req, res) => {
         })
 }
 exports.findUser = (req, res) => {
-    userController.validateUser(req.body).then(result => {
+    userController.validateUser(req.body).then(result => { 
         if (result) {
             req.session.user = true
             req.session.userId = result
-            res.redirect('/')
+            // let totalQuantity=0;
+            // if(req.session.grandTotal){
+            //     totalQuantity=req.session.grandTotal[1]
+            // }
+            // else{
+            //     totalQuantity=0;
+            // }
+            // cartController.getCartItemForLogin(result._id).then(result=>{
+            //     let totalQuantity=0
+            //     for(let i=0;i<result.products.length;i++){
+            //         totalQuantity += result.products[i].quantity;
+            //     }
+            //     req.session.totalQuantityDuringLogin=totalQuantity;
+            //     res.redirect('/')
+            // })  
+            res.redirect('/') 
         }
 
     })
@@ -49,10 +65,11 @@ exports.addToCart = (req, res) => {
     let val = req.session.userId
     let c= -1
     cartController.addToCart(req.params.id, val._id).then(result => {
-        productHelpers.inventryThenAddToCart(req.params.id,c).then(result=>{
-            console.log("here comes call hurray!");
-            res.json(true)
-        })
+        // productHelpers.inventryThenAddToCart(req.params.id,c).then(result=>{
+        //     console.log("here comes call hurray!");
+            
+        // })
+        res.json(true)
        
     })
         .catch(err => {
@@ -61,11 +78,61 @@ exports.addToCart = (req, res) => {
 }
 exports.incrementItems = (req, res) => {
     console.log(req.body);
-    productHelpers.inventry(req.body)
+    ////productHelpers.inventry(req.body)
     cartController.incrementItems(req.body).then((response) => {
         res.json(response)
     }).catch(err => {
         res.send(err)//show in error page
+    })
+}
+exports.addUserFormSubmit=(req,res)=>{                          //*=======it will redirect to the same page using ajax=======// 
+    let userId = req.session.userId
+    let data = req.body
+
+    if (req.body.country == "")
+        res.json({ validation: false })
+    else if (req.body.state == "")
+        res.json({ validation: false })
+    else if (req.body.district == "")
+        res.json({ validation: false })
+    else if (req.body.city == "")
+        res.json({ validation: false })
+    else if (req.body.pinCode == "")
+        res.json({ validation: false })
+    else if (req.body.phone == "")
+        res.json({ validation: false })
+    else {
+        console.log("current data:", data);
+        userController.addAddress(userId, data).then(result => {
+            res.json(result)
+        })
+    }
+}
+exports.getOrderDetails=async (req,res)=>{
+    let user = req.session.userId
+    let deliveryDetail=req.body //contains payment type total price address id
+    //let cartData=req.session.cartItem
+    let totalQty=req.session.grandTotal//contains totalqty total price
+  
+    await userController.getDeliveryAddress(user,deliveryDetail).then(async getAddress=>{//here getting the selected address
+        // //req.session.deliveryAddress=result.address
+       await cartController.getCartItemForLogin(user._id).then(async cartItem=>{//here getting the cart details such as product id and count
+           await orderController.createOrder(getAddress,cartItem,deliveryDetail,totalQty,user.name).then(async result=>{
+            await cartController.removeCart(user._id).then(result=>{
+                res.json(true)
+            })
+           })
+            
+        })
+    })
+}
+exports.deleteCartItem=(req,res)=>{
+    let proId = req.body.count
+    console.log("productid for delete cart item", proId);
+    cartController.deleteCartItem(req.body).then(response => {
+        res.json(response)
+    }).catch(error => {
+        res.send(error)
     })
 }
 
@@ -74,9 +141,7 @@ exports.incrementItems = (req, res) => {
 
 
 
-
-
-//----------------admin--------------------------------------------------admin----------------------------------------------------------*//
+//!----------------admin--------------------------------------------------admin----------------------------------------------------------*//
 
 exports.logout = (req, res) => {
     req.session.destroy();
@@ -84,6 +149,7 @@ exports.logout = (req, res) => {
 }
 exports.addToCategory = (req, res) => {
     addcategory.create(req.body).then(result => {
+        req.session.catCheck=result.cats
         res.redirect('/admin/addCategory')
     })
 }
@@ -101,6 +167,7 @@ exports.userED = (req, res) => {
     let id = req.params.id
     let status = req.params.status
     userController.enableOrDesableUser(id, status).then(result => {
+        req.session.destroy();
         res.redirect('/admin/userList')
     })
 }

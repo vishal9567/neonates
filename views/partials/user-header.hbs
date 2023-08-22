@@ -35,15 +35,18 @@
                 search
               </span></a>
             <a {{#if user}}href="/cart"{{else}} id="myCart" href=""{{/if}}  onclick="showModal()" class="text-light"><span class="material-symbols-outlined p-2">
-                shopping_cart
+                shopping_cart{{#if user}}<sub style="font-size: x-small; background-color:red; border-radius:20px;padding:1px">{{TotalQuantity}}</sub>{{/if}}
               </span></a>
             <div class="nav-item dropdown">
               <a href="#" class="nav-link dropdown-toggle btn btn-success rounded-pill text-light"
                 data-bs-toggle="dropdown">Options</a>
               <div class="dropdown-menu">
-                <a href="/signUp" class="dropdown-item">
+                {{#if user}}<a href="/userDashBoard" class="dropdown-item">
                   <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                  SignUp</a>
+                  Account</a>{{else}}
+                  <a href="/signUp" class="dropdown-item">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  SignUp</a>{{/if}}
                 <a class="dropdown-item" {{#if user}}href="/logout" data-toggle="modal" data-target="#logoutModal"
                   {{else}}href="/userLogin" {{/if}}>
                   <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>

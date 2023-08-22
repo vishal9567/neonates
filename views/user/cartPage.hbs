@@ -12,6 +12,7 @@
                     <h6 class="mb-0 text-muted" id="qty">Qty: {{totalCount}}</h6>
                   </div>
                   <hr class="my-4">
+                  {{#if cartIsEmty}}<h1>Cart is empty</h1>{{/if}}
                   {{#each products}}
                   <div class="row mb-4 d-flex justify-content-between align-items-center">
                     <div class="col-md-2 col-lg-2 col-xl-2">
@@ -95,8 +96,8 @@
                     <h5>&#x20b9; {{grandTotal}}</h5>
                   </div>
 
-                  <a href="/proceedToCkeckOut" type="button" class="btn btn-block btn-lg text-uppercase" style="background-color: rgb(236,79,162); color: white"
-                    data-mdb-ripple-color="dark">Proceed to checkout</a>
+                  {{#if cartIsEmty}}<h6>Cart is empty</h6>{{else}}<a href="/proceedToCkeckOut" type="button" class="btn btn-block btn-lg text-uppercase" style="background-color: rgb(236,79,162); color: white"
+                    data-mdb-ripple-color="dark">Proceed to checkout</a>{{/if}}
 
                 </div>
               </div>
@@ -131,7 +132,7 @@
       method: 'post',
       success: (function (response) {
         if(response.removeProduct){
-          confirm("Product Removed from cart")
+          alert("Product Removed from cart")
           location.reload()
         }
         else{

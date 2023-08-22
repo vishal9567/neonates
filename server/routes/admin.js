@@ -5,6 +5,7 @@ const upload=require('../services/middleware/multer')
 const sessionCheck=require('../services/middleware/sessionCheck')
 const productController=require('../controller/productController')
 const adminController=require('../controller/adminController')
+const orderController=require('../controller/orderController')
 
 
 //----homeroutes-----
@@ -33,5 +34,17 @@ router.post('/addProduct',upload.array('image', 2),sessionCheck.auth,productCont
 router.post('/updateProduct/:id',upload.array('image',2),sessionCheck.auth,productController.update)
 router.post('/adminLogin',adminController.findone)
 router.post('/addToCategory',sessionCheck.auth,redirect.addToCategory)
+
+router.get('/orderListTable',(req,res)=>{
+    // orderController.getOrderDetailsForAdmin().then(orderData=>{
+    //     console.log(orderData);
+    //     res.render('admin/orderList',{orderData})
+    // })
+    orderController.getOrderForAdmin().then(order=>{
+        console.log('this is order',order);
+        res.render('admin/orderList',{order})
+    })
+    
+})
 
 module.exports=router;

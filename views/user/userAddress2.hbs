@@ -1,0 +1,219 @@
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgb(236,79,162)">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#" style="color: rgb(68, 248, 3);">neonates</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-link active text-light" aria-current="page" href="/home">Home</a>
+                <a class="nav-link text-light" href="#"></a>
+                <a class="nav-link text-light" href="#">Dashboard</a>
+                <a class="nav-link text-light" href="/cart">Cart</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container my-5 py-5">
+
+    <!--Section: Design Block-->
+    <section>
+        <form id="addUserForm">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card mb-4">
+
+
+                        <div class="card-body bg-primary">
+                            <p class="text-uppercase h4 text-font">Delivery Country:</p>
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <select id="countryData" name="country" class="selectpicker countrypicker"
+                                            data-flag="true" data-default="IN"></select>
+                                                  
+
+                                    </div>
+                                </div>
+                                {{#if ptag}}<p class="text-danger ps-3">Already have two addresses</p>{{/if}}
+                            </div>
+
+
+
+
+                        </div>
+                    </div>
+                    <!--<div class="card mb-4 accordion" id="accordionExample">
+          <div class="card body accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+              <div class="accordion-button collapsed text-uppercase text-font h4" type="button"
+                data-mdb-toggle="collapse" data-mdb-target="#collapseOne" aria-expanded="false"
+                aria-controls="collapseOne">
+                Promo/Student Code or Vouchers
+              </div>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+              data-mdb-parent="#accordionExample">
+              <div class="accordion-body">
+                <div class="form-outline d-flex">
+                  <input type="text" id="form1" class="form-control" />
+                  <label class="form-label" for="form1">Enter code</label>
+                </div>
+              </div>
+            </div>
+
+
+
+          </div>
+        </div>-->
+
+                    <div class="card mb-4">
+                        <div class="card-body bg-primary">
+                            <p class="text-uppercase fw-bold mb-3 text-font">Email address</p>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <p>{{email}}</p>
+                                </div>
+                                <!-- <div class="col-md-7">
+                <button type="button" class="btn btn-outline-dark float-end button-color "
+                  data-mdb-ripple-color="dark">
+                  Change
+                </button>
+              </div>>-->
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-md-8 mb-4">
+                    <div class="card mb-4">
+                        <div class="card-header py-3 bg-primary">
+                            <h5 class="mb-0 text-font text-uppercase">Delivery address</h5>
+                        </div>
+                        <div class="card-body px-5" style="background-color: rgb(212, 205, 211);">
+
+
+                            <div class="row mb-4">
+                                <div class="col">
+                                    <!--<div class="form-outline">
+                    <input type="text" id="form11Example1" class="form-control" />
+                    <label class="form-label" for="form11Example1">First name</label>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-outline">
+                    <input type="text" id="form11Example2" class="form-control" />
+                    <label class="form-label" for="form11Example2">Last name</label>
+                  </div>
+                </div>-->
+                                </div>
+
+                                <!-- Text input -->
+                                <div class="form-outline mb-4">
+                                    <input type="text" id="form11Example3" class="form-control" name="state" />
+                                    <label class="form-label" for="form11Example3">State</label>
+                                </div>
+
+                                <!-- Text input -->
+                                <div class="form-outline mb-4">
+                                    <input type="text" id="form11Example4" class="form-control" name="district" />
+                                    <label class="form-label" for="form11Example4">District</label>
+                                </div>
+
+                                <!-- Email input -->
+                                <div class="form-outline mb-4">
+                                    <input type="text" id="form11Example5" class="form-control" name="city" />
+                                    <label class="form-label" for="form11Example5">City</label>
+                                </div>
+
+                                <!-- Number input -->
+                                <div class="form-outline mb-4">
+                                    <input type="number" id="form11Example6" class="form-control" name="pinCode" />
+                                    <label class="form-label" for="form11Example6">Pin code</label>
+                                </div>
+                                <!--pin code-->
+                                <div class="form-outline mb-4">
+                                    <input type="number" id="form11Example7" class="form-control" name="phone" />
+                                    <label class="form-label" for="form11Example7">Phone</label>
+
+                                </div>
+
+                                <!-- Message input -->
+
+
+                                <!-- Checkbox -->
+
+
+                            </div>
+
+                        </div>
+                        <div class="text-center"
+                            style="padding: 0px 0px 20px 70px; background-color: rgb(212, 205, 211)">
+                            <button type="submit" class="btn button-order col-md-10">
+                                <h6>Go to next</h6>
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+        </form>
+    </section>
+    <!--Section: Design Block-->
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+
+
+<script>
+    const $form = $('#addUserForm')
+
+    $form.on('submit', submitHandler)
+
+    function submitHandler(e) {
+        e.preventDefault()
+
+        $.ajax({
+            url: '/addUserFormSubmit',
+            type: 'POST',
+            data: $form.serialize()
+        }).done(response => {
+            if (!response.validation) {
+                Swal.fire({
+                    title: 'Empty fields!',
+                    text: 'Fill in all fields',
+                    icon: 'info',
+                    timer: 5000
+                })
+            }
+
+            else {
+                if (!response.address) {
+                    Swal.fire({
+                        title: 'Address Added!',
+                        text: 'Address has been added succesfully.',
+                        icon: 'success',
+                        timer: 5000
+                    })
+                }
+                else {
+                    Swal.fire({
+                        title: 'Address limit!',
+                        text: 'Already Exist Two Addresses',
+                        icon: 'info',
+                        timer: 5000
+                    })
+                }
+
+            }
+
+        })
+    }
+</script>

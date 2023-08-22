@@ -133,12 +133,14 @@ module.exports = {
     });
   },
   incrementItems: (body) => {
+    console.log("here is the incdec count", body);
     let count = parseInt(body.count)
     let quantity = parseInt(body.quantity)
     try {
       return new Promise(async (resolve, reject) => {
         let doc = await Cart.findOne({ _id: new mongoose.Types.ObjectId(body.cart) })
         if (doc) {
+          console.log(doc);
           if (count == -1 && quantity == 1) {
             await Cart.updateOne(
               { _id: new mongoose.Types.ObjectId(body.cart) },
@@ -149,7 +151,7 @@ module.exports = {
           }
           else {
             await Cart.updateOne(
-              { 'products.item': new mongoose.Types.ObjectId(body.product) },
+              { 'products.item': new mongoose.Types.ObjectId(body.product), _id: new mongoose.Types.ObjectId(body.cart) },
               {
                 $inc: { 'products.$.quantity': count }
               }
@@ -168,7 +170,7 @@ module.exports = {
   deleteCartItem: (body) => {
     let id = body.product
     let count = body.count
-    let c= -1
+    let c = -1
     try {
       return new Promise(async (resolve, reject) => {
         let doc = await Cart.findOne({ _id: new mongoose.Types.ObjectId(body.cart) })
@@ -176,9 +178,10 @@ module.exports = {
           await Cart.updateOne({ _id: new mongoose.Types.ObjectId(body.cart) },
             { $pull: { products: { item: new mongoose.Types.ObjectId(body.product) } } }
           ).then(async response => {
-            await productHelper.inventryThenAddToCart(id,c,count).then(() => {
-              resolve({ deleteProduct: true })
-            })
+            // await productHelper.inventryThenAddToCart(id,c,count).then(() => {
+
+            // })
+            resolve({ deleteProduct: true })
 
           })
         }
@@ -187,6 +190,32 @@ module.exports = {
     catch (err) {
       reject("Cart is empty")
     }
+  },
+  getCartItemForLogin: (id) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let doc = await Cart.findOne({ user: id }).lean().then(result => {
+          resolve(result)
+        })
+      }
+      catch (err) {
+
+      }
+    })
+  },
+  removeCart: (id) => {
+    console.log(id);
+    return new Promise(async (resolve, reject) => {
+      try {
+        let doc = await Cart.deleteOne({ user: new mongoose.Types.ObjectId(id) }).then(result => {
+          console.log(result);
+          resolve(result)
+        })
+      }
+      catch (err) {
+
+      }
+    })
   }
 
 }

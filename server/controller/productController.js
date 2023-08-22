@@ -92,7 +92,7 @@ exports.update = async (req, res) => {
     else
         res.redirect('/admin')
 }
-//------------delete one---------//
+//*---------=====---delete one----=====---------//
 exports.delete = async (req, res) => {
     const id = req.params.id
     let doc = await productDb.deleteOne({ _id: id })

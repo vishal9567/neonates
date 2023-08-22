@@ -42,7 +42,7 @@ module.exports = {
 
         }
     },
-    inventryThenAddToCart: (id,c,counts) => {
+    inventryThenAddToCart: (id,c,counts) => {          //?check whether it is necessary or not
         console.log("test for count",counts);
         
         let count = (counts !== null && counts !== undefined) ? parseInt(counts) : c;

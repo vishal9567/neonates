@@ -4,12 +4,19 @@ const productDb=require('../model/productModel')
 module.exports={
     create:(data)=>{
         return new Promise(async(resolve,reject)=>{
-            let doc=await categoryDb.collection.insertOne({
-                category:data.categoryname,
-                status:true
-            }).then(result=>{
-                resolve(result)
-            })
+            let checkCat=await categoryDb.findOne({category:data.categoryname}).lean()
+            if(checkCat){
+                resolve({cats:true})
+            }
+            else{
+                let doc=await categoryDb.collection.insertOne({
+                    category:data.categoryname,
+                    status:true
+                }).then(result=>{
+                    resolve(result)
+                })
+    
+            }
         })
     },
     getItems:()=>{
