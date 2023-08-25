@@ -204,11 +204,9 @@ module.exports = {
     })
   },
   removeCart: (id) => {
-    console.log(id);
     return new Promise(async (resolve, reject) => {
       try {
         let doc = await Cart.deleteOne({ user: new mongoose.Types.ObjectId(id) }).then(result => {
-          console.log(result);
           resolve(result)
         })
       }

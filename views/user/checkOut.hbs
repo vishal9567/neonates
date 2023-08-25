@@ -1,4 +1,4 @@
-<section class="bg-light py-5">
+<section class="bg-light py-5" style="margin-top: 100px;">
   <div class="container">
     <div class="row">
       <div class="col-xl-8 col-lg-8 mb-4">
@@ -170,7 +170,7 @@
                 <textarea class="form-control" id="textAreaExample1" rows="2"></textarea>
               </div>
             </div>-->
-           
+
             <div class="float-end">
               <a href="/userDashBoard" class="btn btn-info me-5">Dashboard</a>
               <!-- <button class="btn btn-light border">Cancel</button> -->
@@ -218,6 +218,7 @@
                 class="img-sm rounded border" />
             </div>
             <div class="">
+              <p hidden id="proname">{{this.product.productname}}</p>
               <a href="#" class="nav-link">
                 {{this.product.productname}}<br />
                 {{this.product.brandname}}
@@ -285,10 +286,20 @@
             title: 'Order Placed Successfully!',
             text: 'If you need to see the order go to dashboard',
             icon: 'success',
-            timer: 5000
+            showConfirmButton: true,
+            confirmButtonText: "See order"
+          }).then(function () {
+            window.location.href = "http://localhost:3000/userDashBoard"
+
           })
         }
       })
     })
   })
+</script>
+<script type="text/javascript">
+  window.history.forward();
+  function noBack() {
+    window.history.forward();
+  }
 </script>

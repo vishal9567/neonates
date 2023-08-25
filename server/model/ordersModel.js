@@ -22,6 +22,9 @@ const orederSchema = new mongoose.Schema({
     status:{
         type:Boolean
     },
+    cancelStatus:{
+        type:Boolean
+    },
     quantity:{
         type:Number
     },

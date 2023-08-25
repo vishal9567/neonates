@@ -2,7 +2,7 @@ const productDb = require('../model/productModel')
 const mongoose = require('mongoose')
 
 module.exports = {
-    showProductDetail: (id) => {
+    showProductDetail: (id) => {  //?to che it is needed or not
         try {
             return new Promise(async (resolve, reject) => {
                 let doc = await productDb.findOne({ _id: id }).lean().then(result => {
@@ -65,5 +65,17 @@ module.exports = {
         catch(err){
 
         }
+    },
+    searchProduct:(proName)=>{
+        return new Promise(async(resolve,reject)=>{
+            try{
+                let doc=await productDb.find({productname:proName}).lean().then(product=>{
+                    resolve(product)
+                })
+            }
+            catch(err){
+                reject(err)
+            }
+        })
     }
 }

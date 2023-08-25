@@ -15,7 +15,7 @@ router.get('/dashboard',sessionCheck.auth,redirect.dashboar);
 router.get('/addProductPage',sessionCheck.auth,services.addproducts);
 router.get('/listProduct',sessionCheck.auth,productController.get);
 router.get('/editProduct/:id',sessionCheck.auth,productController.findone);
-router.get('/deleteProduct/:id',sessionCheck.auth,productController.delete);
+router.get('/deleteProduct/:id/:img',sessionCheck.auth,productController.delete);
 //---category routes-
 router.get('/categoryList',sessionCheck.auth,services.categoryList);
 router.get('/addCategory',sessionCheck.auth,services.addCategory);
@@ -35,16 +35,7 @@ router.post('/updateProduct/:id',upload.array('image',2),sessionCheck.auth,produ
 router.post('/adminLogin',adminController.findone)
 router.post('/addToCategory',sessionCheck.auth,redirect.addToCategory)
 
-router.get('/orderListTable',(req,res)=>{
-    // orderController.getOrderDetailsForAdmin().then(orderData=>{
-    //     console.log(orderData);
-    //     res.render('admin/orderList',{orderData})
-    // })
-    orderController.getOrderForAdmin().then(order=>{
-        console.log('this is order',order);
-        res.render('admin/orderList',{order})
-    })
-    
-})
+router.get('/orderListTable',sessionCheck.auth,services.orderListTable)
+router.post('/changeStatus',sessionCheck.auth,redirect.changeStatus)
 
 module.exports=router;

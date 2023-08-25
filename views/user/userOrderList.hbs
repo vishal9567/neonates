@@ -180,10 +180,11 @@
                                 <thead>
                                     <tr>
                                         <th>Order</th>
-                                        <th>Delivery Date</th>
-                                        <th>Delivery Qty/Price</th>
-                                        <th>Delivery Status</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                        <th>Order Date</th>
                                         <th>Payment Method</th>
+                                        <th>Order Status</th>
                                     </tr>
                                 </thead>
                                 {{!-- <tfoot>
@@ -197,9 +198,10 @@
                                 {{#each data}}
                                 <tbody>
                                     <tr>
-                                        <td><a href="/showProducts/{{this.order._id}}" class="text-decoration-none"><h6 class="text-primary">{{this.order.productname}}</h6></a></td>
-                                        <td>{{this.date}}</td>
-                                        <td>{{this.order.price}}x{{this.quantity}}</td>
+                                        <td><a href="/showProducts/{{this._id}}" class="text-decoration-none"><h6 class="text-primary">{{this._id}}</h6></a></td>
+                                        <td>{{this.quantity}}</td>
+                                        <td>{{this.totalAmount}}</td>
+                                        <td>{{this.date}}</td><td>{{this.paymentMethod}}</td>
                                         <td>  <div >
                                                 <h6 {{#if
                                                     this.status}}
@@ -208,7 +210,6 @@
                                                     class="text-warning" {{/if}}>{{#if
                                                     this.status}}Placed{{else}}Pending{{/if}}</h6>
                                             </div></td>
-                                        <td>{{this.payType}}</td>
                                     </tr>
 
                                 </tbody>

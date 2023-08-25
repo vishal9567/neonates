@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
     secret:'vsm',
     cookie:{
-        maxAge:600000
+        maxAge:800000
     }
 }))
 app.use(nocache());
@@ -49,3 +49,4 @@ async function main() {
 
 
 
+//!categoryPage, homepageTest, userOrderlist, landing, productDetails should be removed.

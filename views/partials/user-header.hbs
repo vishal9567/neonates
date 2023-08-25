@@ -1,7 +1,7 @@
 <!-- Navbar -->
 
 <div>
-  <nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgb(236,79,162)">
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" style="background-color:rgb(236,79,162)">
     <div class="container-fluid">
       <a href="#" class="navbar-brand">
         <a class="navbar-brand mt-2 mt-lg-0" href="#">
@@ -15,6 +15,7 @@
       <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
       </button>
+      <a href="/home" class="text-white btn btn-success rounded-pill mx-2">Home</a>
       <a href="/landing" class="text-white btn btn-success rounded-pill mx-2">All</a>
       <div class="collapse navbar-collapse" id="navbarCollapse">
         <div class="navbar-nav ms-auto">
@@ -34,8 +35,10 @@
             <a href="/search" class="text-light"><span class="material-symbols-outlined p-2">
                 search
               </span></a>
-            <a {{#if user}}href="/cart"{{else}} id="myCart" href=""{{/if}}  onclick="showModal()" class="text-light"><span class="material-symbols-outlined p-2">
-                shopping_cart{{#if user}}<sub style="font-size: x-small; background-color:red; border-radius:20px;padding:1px">{{TotalQuantity}}</sub>{{/if}}
+            <a {{#if user}}href="/cart" {{else}} id="myCart" href="" {{/if}} onclick="showModal()"
+              class="text-light"><span class="material-symbols-outlined p-2">
+                shopping_cart{{#if user}}<sub
+                  style="font-size: x-small; background-color:red; border-radius:20px;padding:1px">{{TotalQuantity}}</sub>{{/if}}
               </span></a>
             <div class="nav-item dropdown">
               <a href="#" class="nav-link dropdown-toggle btn btn-success rounded-pill text-light"
@@ -44,7 +47,7 @@
                 {{#if user}}<a href="/userDashBoard" class="dropdown-item">
                   <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                   Account</a>{{else}}
-                  <a href="/signUp" class="dropdown-item">
+                <a href="/signUp" class="dropdown-item">
                   <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                   SignUp</a>{{/if}}
                 <a class="dropdown-item" {{#if user}}href="/logout" data-toggle="modal" data-target="#logoutModal"
@@ -65,7 +68,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
 <script>
-  $("#myCart").on('click', function() {
-  alert("Login or signUP");
-});
+  $("#myCart").on('click', function () {
+    alert("Login or signUP");
+  });
 </script>

@@ -1,29 +1,4 @@
-<!-- Hero -->
-<div class="p-5 text-center bg-image rounded-3" style="
-    background-image: url('/img/img3.jpg');
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: cover;
-    height: 400px;
-    margin-top:100px; 
-  ">
-  <div class="mask" style="background-color: rgba(0, 0, 0, 0.6);">
-    <div class="d-flex justify-content-center align-items-center h-100">
-      <div class="text-white">
-        {{!-- <h1 class="mb-3">neonates</h1> --}}
-        {{!-- <h4 class="mb-3">Subheading</h4> --}}
-        {{!-- <a class="btn btn-outline-light btn-lg" href="#!" role="button">Call to action</a> --}}
-      </div>
-    </div>
-  </div>
-</div>
-{{!-- line --}}
-<div class="container-fluid">
-  <hr style="border: 2px solid;">
-</div>
-{{!-- cards--}}
-
-<section style="background-color: #eee;">
+<section style="background-color: #eee; margin-top:100px">
   <div class="container py-5">
     <div class="row">
       {{#each product}}
@@ -69,19 +44,3 @@
     </div>
   </div>
 </section>
-<!-- Hero -->
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-{{#each product}}
-<script> 
-$(document).ready(function(){
-  $("#{{this._id}}1").mouseenter(function(){
-    $("#{{this._id}}").slideToggle("slow");
-  });
-});
-$(document).ready(function(){
-  $("#{{this._id}}1").mouseleave(function(){
-    $("#{{this._id}}").slideToggle("slow");
-  });
-});
-</script>
-{{/each}} -->

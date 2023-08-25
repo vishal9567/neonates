@@ -13,14 +13,17 @@ exports.createUser = (req, res) => {
         res.redirect('/userLogin')
     })
         .catch(err => {
-            res.send(400, "Not found")
+            // res.send(400, "Not found")
+            res.render('user/errorPage')
         })
 }
 exports.findUser = (req, res) => {
+    let isUser;
     userController.validateUser(req.body).then(result => { 
         if (result) {
             req.session.user = true
             req.session.userId = result
+            isUser=req.session.user
             // let totalQuantity=0;
             // if(req.session.grandTotal){
             //     totalQuantity=req.session.grandTotal[1]
@@ -41,7 +44,8 @@ exports.findUser = (req, res) => {
 
     })
         .catch((err) => {
-            res.send('User name or password incorrect or you are inactive')
+            //res.send('User name or password incorrect or you are inactive')
+            res.render('user/errorPage',{isUser})
         })
 }
 exports.UserRedirect = (req, res) => {
@@ -52,7 +56,8 @@ exports.UserRedirect = (req, res) => {
                 res.redirect('/')
             })
             .catch(reject => {
-                res.send("!Oops...")
+                //res.send("!Oops...")
+                res.render('user/errorPage',{notEditpass:true})
             })
     }
 
@@ -63,7 +68,7 @@ exports.logOut = (req, res) => {
 }
 exports.addToCart = (req, res) => {
     let val = req.session.userId
-    let c= -1
+    //let c= -1
     cartController.addToCart(req.params.id, val._id).then(result => {
         // productHelpers.inventryThenAddToCart(req.params.id,c).then(result=>{
         //     console.log("here comes call hurray!");
@@ -82,7 +87,8 @@ exports.incrementItems = (req, res) => {
     cartController.incrementItems(req.body).then((response) => {
         res.json(response)
     }).catch(err => {
-        res.send(err)//show in error page
+        // res.send(err)//show in error page
+        res.render('user/errorPage')
     })
 }
 exports.addUserFormSubmit=(req,res)=>{                          //*=======it will redirect to the same page using ajax=======// 
@@ -132,7 +138,8 @@ exports.deleteCartItem=(req,res)=>{
     cartController.deleteCartItem(req.body).then(response => {
         res.json(response)
     }).catch(error => {
-        res.send(error)
+        // res.send(error)
+        res.render('user/errorPage')
     })
 }
 
@@ -169,6 +176,23 @@ exports.userED = (req, res) => {
     userController.enableOrDesableUser(id, status).then(result => {
         req.session.destroy();
         res.redirect('/admin/userList')
+    })
+}
+exports.changeStatus=(req,res)=>{
+    console.log(req.body);
+    let id=req.body.orderId;
+    let status=req.body.orderStatus;
+    orderController.changeOrderStatus(id,status).then(result=>{
+        res.json(true)
+    })
+}
+exports.cancelOrder=(req,res)=>{
+    let id=req.body.orderId;
+    let status=req.body.orderStatus;
+    orderController.cacelStatus(id,status).then(result=>{
+        res.json(true)
+    }).catch(err=>{
+        res.render('user/errorPage')
     })
 }
 
