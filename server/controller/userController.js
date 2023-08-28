@@ -116,8 +116,8 @@ module.exports = {
                     console.log("this is user", user);
                     try {
                         if (user.address[0]) {
-                            let doc = await userdb.aggregate([{ $unwind: "$address" }, { $group: { _id: 0, 'count': { $sum: 1 } } }]).then(async result => {
-                                if (result[0].count > 1) {                                          //check the count of addresses 2 address limited
+                            let doc = await userdb.aggregate([{ $match: { '_id': mongoose.Types.ObjectId.createFromHexString(id._id) } },{ $unwind: "$address" }, { $group: { _id: 0, 'count': { $sum: 1 } } }]).then(async result => {
+                                if (result[0].count >=2) {                                          //check the count of addresses, 2 address limited
                                     console.log("count comes in if:", result[0].count);
                                     resolve({ address: true, validation: true })                                      //============if address present go to the next stage of check out================
                                 }
@@ -177,5 +177,42 @@ module.exports = {
                 reject(err)
             }
         })
+    },
+    updateAddress: (id, data) => {
+        try {
+            return new Promise(async (resolve, reject) => {
+                let doc = await userdb.updateOne({ 'address._id': new mongoose.Types.ObjectId(id) }, {
+                    $set: {
+                        'address.$.country': data.country,
+                        'address.$.state': data.state,
+                        'address.$.district': data.district,
+                        'address.$.city': data.city,
+                        'address.$.pinCode': data.pinCode,
+                        'address.$.phone': data.phone
+                    }
+                }).then(() => {
+                    resolve()
+                }).catch(err => {
+                    reject(err)
+                })
+            })
+        }
+        catch (err) {
+        }
+    },
+    deleteAddress: (data) => {
+        try {
+            return new Promise(async (resolve, reject) => {
+                let doc = await userdb.updateOne({ _id: data.userId }, { $pull: { address: { _id: data.addressId } } })
+                    .then(result => {
+                        resolve()
+                    }).catch(err => {
+                        reject(err)
+                    })
+            })
+        }
+        catch (err) {
+
+        }
     }
 }

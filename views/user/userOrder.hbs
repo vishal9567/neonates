@@ -55,7 +55,7 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <li><button class="dropdown-item" onclick="cancelOrder('{{this._id}}','{{this.cancelStatus}}')">{{#if cancelStatus}}Cancel Order{{else}}Place order{{/if}}</button></li>
-                                <li><a class="dropdown-item" href="#">Link 2</a></li>
+                                <li><a class="dropdown-item" href="/showProducts/{{this._id}}">Order Details</a></li>
                                 <li><a class="dropdown-item" href="#">Link 3</a></li>
                             </ul>
                         </div>

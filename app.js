@@ -48,5 +48,3 @@ async function main() {
 
 
 
-
-//!categoryPage, homepageTest, userOrderlist, landing, productDetails should be removed.

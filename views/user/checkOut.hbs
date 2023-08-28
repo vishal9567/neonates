@@ -266,6 +266,7 @@
 <!-- Footer -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
   $('#placeOrder').click(function (e) {
     e.preventDefault();
@@ -281,7 +282,7 @@
       },
       method: 'post',
       success: (function (response) {
-        if (response) {
+        if (response.codSuccess) {
           Swal.fire({
             title: 'Order Placed Successfully!',
             text: 'If you need to see the order go to dashboard',
@@ -293,9 +294,64 @@
 
           })
         }
+        else {
+          alert("success")
+          razorPayment(response);
+        }
       })
     })
   })
+  function razorPayment(order) {
+    var options = {
+      "key": "rzp_test_pgqzwpmJIeUjDN", // Enter the Key ID generated from the Dashboard
+      "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+      "currency": "INR",
+      "name": "Acme Corp",
+      "description": "Test Transaction",
+      "image": "/img/neonatesLogo.png",
+      "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+      "handler": function (response) {
+
+        verifyPayment(response, order)
+      },
+      "prefill": {
+        "name": "neonates",
+        "email": "easyedavsm@gmail.com",
+        "contact": "9000090000"
+      },
+      "notes": {
+        "address": "neonates"
+      },
+      "theme": {
+        "color": "#3399cc"
+      }
+    };
+    var rzp1 = new Razorpay(options);
+    rzp1.open();
+  }
+  function verifyPayment(payment, order) {
+    alert("cal comes")
+    $.ajax({
+      url: '/verifyPayment',
+      data: {
+        payment,
+        order
+      },
+      method: 'post',
+      success:(function (){
+            Swal.fire({
+            title: 'Order Placed Successfully!',
+            text: 'If you need to see the order go to dashboard',
+            icon: 'success',
+            showConfirmButton: true,
+            confirmButtonText: "See order"
+          }).then(function () {
+            window.location.href = "http://localhost:3000/userDashBoard"
+
+          })
+      })
+    })
+  }
 </script>
 <script type="text/javascript">
   window.history.forward();

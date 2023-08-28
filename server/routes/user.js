@@ -9,13 +9,16 @@ const { response } = require('express');
 const orderController=require('../controller/orderController')
 const fs=require('fs');
 const path = require('path')
+const userController = require('../controller/userController')
+const mongoMiddleware=require('../services/middleware/mongoMiddleware')
 
 
 
 
 
 
-//------//
+
+//!----------------------------------------------------------------get----------------------------------------------------------//
 router.get('/',cartCount.cartCount,render.home)
 router.get('/signUp', render.signUp);
 router.get('/userLogin', render.userLogin)
@@ -24,33 +27,65 @@ router.get('/home', render.home)
 router.get('/eachCategory/:id', render.categoryProduct)
 router.get('/forgotPassword', render.forgotPassword)
 router.get('/logout', redirect.logOut)
-//?--------======cart=======--------//
+
+//--------======cart=======--------//
 router.get('/productView/:id', render.showProductDetail)
 router.get('/addToCart/:id', sessionCheck.userAuth, redirect.addToCart)
 router.get('/cart', sessionCheck.userAuth, render.getCart)
 router.get('/proceedToCkeckOut',sessionCheck.userAuth,render.proceedToCheckOut)
-//?--------=======address section=====---------//
+
+//--------=======address section=====---------//
 router.get('/addAddress2',sessionCheck.userAuth,render.addAdddress2)
-//?--------=======user dashboard=======-----//
+
+//--------=======user dashboard=======-----//
 router.get('/showProducts/:id',sessionCheck.userAuth,cartCount.cartCount,render.showProductsForuser)
 router.get('/userDashBoard',sessionCheck.userAuth,cartCount.cartCount,render.userDashboard)
 router.get('/userOrderList',sessionCheck.userAuth,cartCount.cartCount,render.userOrderList)
+router.get('/addressBook',sessionCheck.userAuth,mongoMiddleware.userData,cartCount.cartCount,render.addressBook)
 
 
+
+//!------------------------------------------------------------------post---------------------------------------------------------//
 router.post('/sendOtp', render.userSignup);
 router.post('/verifyOtp', sessionCheck.otpAuth, redirect.createUser)
 router.post('/loginCheck', redirect.findUser)
 router.post('/sendMobOtp', render.sendTwillio)
 router.post('/verifyMobOtp', sessionCheck.mobOtpAuth, redirect.UserRedirect)
 router.post('/incItems/decItems',sessionCheck.userAuth, redirect.incrementItems)
-//?==========user address section=========//
+
+//==========user address section=========//
 router.post('/addAddress',sessionCheck.userAuth, render.addAddress)
 router.post('/addUserFormSubmit',sessionCheck.userAuth, redirect.addUserFormSubmit)
-//?=======delete the item using delete button in cart page======//
+
+//=======delete the item using delete button in cart page======//
 router.post('/deleteCartItem',sessionCheck.userAuth,redirect.deleteCartItem)
-//?=======order management==============//
+
+//=======order management==============//
 router.post('/placeOrder',sessionCheck.userAuth,redirect.getOrderDetails)
 router.post('/cancelOrder',sessionCheck.userAuth,redirect.cancelOrder)
+
+//=======address management===========//
+router.post('/editAddress',sessionCheck.userAuth,render.editAddress)
+router.post('/editAddressSubmit',sessionCheck.userAuth,redirect.submitEditAddress)
+router.post('/deleteAddress',sessionCheck.userAuth,redirect.deleteAddress)
+
+//!--------------------------------------------------------------------------------------------------------------------------------//
+
+
+
+router.post('/verifyPayment',(req,res)=>{
+    console.log(req.body.payment.razorpay_signature);
+    console.log("orderId:",req.body.order.receipt);
+    orderController.verifyPayment(req.body).then(result=>{
+        orderController.changeStatusOfOrder(req.body.order.receipt).then(()=>{
+            res.json(true)
+        }).catch(err=>{
+            res.render('user/errorPage')
+        })
+    }).catch(err=>{
+        res.render('user/errorPage')
+    })
+})
 
 
 // router.post('/placeOrder',(req,res)=>{

@@ -15,13 +15,13 @@
       <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <a href="/home" class="text-white btn btn-success rounded-pill mx-2">Home</a>
-      <a href="/landing" class="text-white btn btn-success rounded-pill mx-2">All</a>
+      <a href="/home" class="text-white btn rounded-pill mx-2" >Home</a>
+      <a href="/landing" class="text-white btn  rounded-pill mx-2">All</a>
       <div class="collapse navbar-collapse" id="navbarCollapse">
         <div class="navbar-nav ms-auto">
           <div class="nav-item dropdown">
-            <a href="#" class="nav-link dropdown-toggle btn btn-success rounded-pill text-light"
-              data-bs-toggle="dropdown">Categories</a>
+            <a href="#" class="nav-link dropdown-toggle btn rounded-pill text-light"
+              data-bs-toggle="dropdown" >Categories</a>
             <div class="dropdown-menu">
               {{#each category}}
               <a class="dropdown-item" href="/eachCategory/{{this._id}}">{{this.category}}</a>
@@ -41,7 +41,7 @@
                   style="font-size: x-small; background-color:red; border-radius:20px;padding:1px">{{TotalQuantity}}</sub>{{/if}}
               </span></a>
             <div class="nav-item dropdown">
-              <a href="#" class="nav-link dropdown-toggle btn btn-success rounded-pill text-light"
+              <a href="#" class="nav-link dropdown-toggle btn rounded-pill text-light"
                 data-bs-toggle="dropdown">Options</a>
               <div class="dropdown-menu">
                 {{#if user}}<a href="/userDashBoard" class="dropdown-item">

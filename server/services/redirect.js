@@ -123,9 +123,17 @@ exports.getOrderDetails=async (req,res)=>{
     await userController.getDeliveryAddress(user,deliveryDetail).then(async getAddress=>{//here getting the selected address
         // //req.session.deliveryAddress=result.address
        await cartController.getCartItemForLogin(user._id).then(async cartItem=>{//here getting the cart details such as product id and count
-           await orderController.createOrder(getAddress,cartItem,deliveryDetail,totalQty,user.name).then(async result=>{
+           await orderController.createOrder(getAddress,cartItem,deliveryDetail,totalQty,user.name).then(async order=>{
             await cartController.removeCart(user._id).then(result=>{
-                res.json(true)
+                if(req.body.payType === 'COD')
+                    res.json({codSuccess:true})
+                else{
+                    let orderId=order.toString()
+                    orderController.generateRazorPay(orderId,totalQty[0]).then(order=>{
+                        res.json(order)
+                    })
+                    //console.log(orderId,totalQty[0]);
+                }
             })
            })
             
@@ -142,7 +150,38 @@ exports.deleteCartItem=(req,res)=>{
         res.render('user/errorPage')
     })
 }
-
+exports.submitEditAddress=(req,res)=>{
+    let addressId = req.session.addressId
+    let data = req.body
+    if (req.body.country == "")
+        res.json({ validation: false })
+    else if (req.body.state == "")
+        res.json({ validation: false })
+    else if (req.body.district == "")
+        res.json({ validation: false })
+    else if (req.body.city == "")
+        res.json({ validation: false })
+    else if (req.body.pinCode == "")
+        res.json({ validation: false })
+    else if (req.body.phone == "")
+        res.json({ validation: false })
+    else {
+        userController.updateAddress(addressId,data).then(result=>{
+            res.json({validation:true})
+        }).catch(err=>{
+            res.render('user/errorPage')
+        })
+    }
+}
+exports.deleteAddress=(req,res)=>{
+    let data=req.body
+    userController.deleteAddress(data).then(()=>{
+        res.json(true)
+    })
+    .catch(err=>{
+        res.render('user/errorPage')
+    })
+}
 
 
 

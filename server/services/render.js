@@ -212,6 +212,10 @@ exports.proceedToCheckOut = (req, res) => {                                     
         else if (userId.address.length === 1) {
             addressOne = true;
         }
+        else{
+            addressZero=false;
+            addressOne=false;
+        }
 
         userController.getCurrentUser(userId).then(result => {
             let address;
@@ -274,7 +278,38 @@ exports.userOrderList = (req, res) => {                 //*-----=========display
         res.render('user/errorPage', { error: err })
     })
 }
-
+exports.addressBook=(req,res)=>{
+    let user=req.session.user
+    let userData=req.session.userDatas[0].address
+    let userDetail=req.session.userDatas[0]
+    let TotalQuantity = 0;
+    if (req.session.grandTotal) {
+        TotalQuantity = req.session.grandTotal[1]
+    }
+    else {
+        TotalQuantity = 0;
+    }
+    let addressOne=false;
+    let addresszero=false;
+    if(userData.length === 1){
+        addressOne=true;
+    }
+    else if(userData.length ===0){
+        addresszero=true
+    }
+    res.render('user/addressBook',{user,signup:true,userData,addressOne,addresszero,TotalQuantity,userDetail})
+}
+exports.editAddress=(req,res)=>{
+    req.session.addressId=req.body.addressId
+    let user = req.session.userDatas[0]
+    let deliveryDetail=req.body 
+    userController.getDeliveryAddress(user,deliveryDetail).then(address=>{
+        res.json({address:address.address});
+    })
+    .catch(err=>{
+        res.render('user/errorPage')
+    })
+}
 
 
 
@@ -319,6 +354,8 @@ exports.userList = (req, res) => {
         categoryController.findCategory().then(category => {
             res.render('admin/userListTable', { user, category })
         })
+    }).catch(err=>{
+        res.render('user/errorPage')
     })
 }
 exports.categoryList = (req, res) => {
@@ -326,6 +363,8 @@ exports.categoryList = (req, res) => {
         categoryController.findCategory().then(category => {
             res.render('admin/categoryList', { cat, category })
         })
+    }).catch(err=>{
+        res.render('user/errorPage')
     })
 }
 exports.orderListTable = (req, res) => {

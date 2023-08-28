@@ -27,6 +27,9 @@ router.get('/desableUser/:id/:status',sessionCheck.auth,redirect.userED);
 router.get('/enableUser/:id/:status',sessionCheck.auth,redirect.userED);
 //----logout---------
 router.get('/adminLogout',redirect.logout);
+//----order list----
+router.get('/orderListTable',sessionCheck.auth,services.orderListTable)
+
 
 
 //--post
@@ -34,8 +37,6 @@ router.post('/addProduct',upload.array('image', 2),sessionCheck.auth,productCont
 router.post('/updateProduct/:id',upload.array('image',2),sessionCheck.auth,productController.update)
 router.post('/adminLogin',adminController.findone)
 router.post('/addToCategory',sessionCheck.auth,redirect.addToCategory)
-
-router.get('/orderListTable',sessionCheck.auth,services.orderListTable)
 router.post('/changeStatus',sessionCheck.auth,redirect.changeStatus)
 
 module.exports=router;
