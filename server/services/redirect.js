@@ -5,6 +5,8 @@ const categoryController = require('../controller/categoryController')
 const cartController = require('../controller/cartController');
 const productHelpers=require('../controller/productHelper')
 const orderController=require('../controller/orderController')
+const coupenController = require('../controller/coupenController')
+
 
 
 //*----------------user--------------------------------------------------user----------------------------------------------------------*//
@@ -56,24 +58,18 @@ exports.UserRedirect = (req, res) => {
                 res.redirect('/')
             })
             .catch(reject => {
-                //res.send("!Oops...")
                 res.render('user/errorPage',{notEditpass:true})
             })
     }
 
 }
 exports.logOut = (req, res) => {
-    req.session.destroy();
+    req.session.user=false;
     res.redirect('/')
 }
 exports.addToCart = (req, res) => {
     let val = req.session.userId
-    //let c= -1
     cartController.addToCart(req.params.id, val._id).then(result => {
-        // productHelpers.inventryThenAddToCart(req.params.id,c).then(result=>{
-        //     console.log("here comes call hurray!");
-            
-        // })
         res.json(true)
        
     })
@@ -114,15 +110,17 @@ exports.addUserFormSubmit=(req,res)=>{                          //*=======it wil
         })
     }
 }
-exports.getOrderDetails=async (req,res)=>{
+exports.getOrderDetails=async (req,res)=>{                              //*-----collecting order details for checkout procedure---//
     let user = req.session.userId
     let deliveryDetail=req.body //contains payment type total price address id
-    //let cartData=req.session.cartItem
     let totalQty=req.session.grandTotal//contains totalqty total price
   
     await userController.getDeliveryAddress(user,deliveryDetail).then(async getAddress=>{//here getting the selected address
         // //req.session.deliveryAddress=result.address
        await cartController.getCartItemForLogin(user._id).then(async cartItem=>{//here getting the cart details such as product id and count
+        for(let i=0;i<cartItem.products.length;i++){
+            await productHelpers.inventryManagement(cartItem.products[i].item,cartItem.products[i].quantity)
+        }
            await orderController.createOrder(getAddress,cartItem,deliveryDetail,totalQty,user.name).then(async order=>{
             await cartController.removeCart(user._id).then(result=>{
                 if(req.body.payType === 'COD')
@@ -132,12 +130,13 @@ exports.getOrderDetails=async (req,res)=>{
                     orderController.generateRazorPay(orderId,totalQty[0]).then(order=>{
                         res.json(order)
                     })
-                    //console.log(orderId,totalQty[0]);
                 }
             })
            })
             
         })
+    }).catch(err=>{
+
     })
 }
 exports.deleteCartItem=(req,res)=>{
@@ -187,10 +186,11 @@ exports.deleteAddress=(req,res)=>{
 
 
 
+
 //!----------------admin--------------------------------------------------admin----------------------------------------------------------*//
 
 exports.logout = (req, res) => {
-    req.session.destroy();
+    req.session.AdminLogIn=false;
     res.redirect('/admin')
 }
 exports.addToCategory = (req, res) => {
@@ -213,7 +213,7 @@ exports.userED = (req, res) => {
     let id = req.params.id
     let status = req.params.status
     userController.enableOrDesableUser(id, status).then(result => {
-        req.session.destroy();
+        req.session.user=false;
         res.redirect('/admin/userList')
     })
 }
@@ -221,7 +221,8 @@ exports.changeStatus=(req,res)=>{
     console.log(req.body);
     let id=req.body.orderId;
     let status=req.body.orderStatus;
-    orderController.changeOrderStatus(id,status).then(result=>{
+    let cancel=req.body.cancel
+    orderController.changeOrderStatus(id,status,cancel).then(result=>{
         res.json(true)
     })
 }
@@ -234,8 +235,30 @@ exports.cancelOrder=(req,res)=>{
         res.render('user/errorPage')
     })
 }
-
-
+exports.createCoupon=(req,res)=>{                                                 //*=====coupen section start===//
+    coupenController.createCoupen(req.body).then(result=>{
+        req.session.coupen=result.coupen
+        res.redirect('/admin/createCouponPage')
+    }).catch(err=>{
+        res.render('user/errorPage')
+    })
+}
+exports.editCoupon=(req,res)=>{
+    let id=req.params.id
+    coupenController.updateCoupen(req.body,id).then(result=>{
+        res.redirect('/admin/coupenList')
+    }).catch(err=>{
+        res.render('user/errorPage')
+    })
+}
+exports.deleteCoupon=(req,res)=>{
+    let id=req.params.id
+    coupenController.deleteCoupen(id).then(result=>{
+        res.redirect('/admin/coupenList')
+    }).catch(err=>{
+        res.render('user/errorPage')
+    })
+}                                                                                 //*=======coupen section end//
 
 
 

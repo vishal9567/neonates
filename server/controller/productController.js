@@ -30,8 +30,10 @@ exports.create = async (req, res) => {
         })
 }
 //-------------find()-----------//
-exports.get = async (req, res) => {
-    let product = await productDb.find().sort({ date: -1 }).lean()
+exports.get = async (req, res) => {                             //*----===========for admin page product list=======---------//
+    const perPage=3;
+    let page=parseInt(req.params.page) || 1;
+    let product = await productDb.find().sort({ date: -1 }).lean()////.skip(perPage * page -perPage).limit(perPage).lean()
         .then(products => {
             categoryController.findCategory().then(category => {
                 res.render('admin/productlist', { products, category })

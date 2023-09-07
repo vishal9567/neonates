@@ -6,32 +6,6 @@ const productHelper = require('../controller/productHelper')
 
 
 module.exports = {
-  // addToCart: (userId, productId) => {
-  //     try {
-  //         return new Promise(async (resolve, reject) => {
-  //             let doc = await cartDb.findOne({ userid:userId }).lean()
-  //                if(doc){
-  //                 await cartDb.updateOne({ userid:userId }, { $push: { productid:new mongoose.Types.ObjectId(productId) } })
-  //                 .then(result=>{
-  //                     resolve(result)
-  //                 })
-  //                }
-  //                else{
-  //                 let cartObj = {
-  //                     userid:userId,
-  //                     productid:[ new mongoose.Types.ObjectId(productId)]
-  //                 }
-  //                 cartDb.collection.insertOne(cartObj).then(result => {
-  //                     resolve(result)
-  //                 })
-  //                }
-
-  //         })
-  //     }
-  //     catch (err) {
-
-  //     }
-  // },
   addToCart: (proId, userId) => {
     let proObj = {
       item: proId,
@@ -178,9 +152,6 @@ module.exports = {
           await Cart.updateOne({ _id: new mongoose.Types.ObjectId(body.cart) },
             { $pull: { products: { item: new mongoose.Types.ObjectId(body.product) } } }
           ).then(async response => {
-            // await productHelper.inventryThenAddToCart(id,c,count).then(() => {
-
-            // })
             resolve({ deleteProduct: true })
 
           })

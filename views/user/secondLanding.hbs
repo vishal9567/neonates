@@ -43,4 +43,20 @@
       {{/each}}
     </div>
   </div>
+  <!--pagination-->
+  <nav aria-label="...">
+  <ul class="pagination justify-content-center">
+    <li class="page-item">
+      <a class="page-link">Previous</a>
+    </li>
+    {{#for pages}}
+    <li class="page-item" aria-current="page">
+      <a class="page-link" href="/landing/{{this}}">{{this}} <span class="visually-hidden">(current)</span></a>
+    </li>
+    {{/for}}
+    <li class="page-item">
+      <a class="page-link" href="/landing/2">Next</a>
+    </li>
+  </ul>
+</nav>
 </section>

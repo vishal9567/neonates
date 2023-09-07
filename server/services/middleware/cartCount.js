@@ -14,6 +14,8 @@ module.exports={
                 }
                 req.session.grandTotal=[grandTotal,totalCount]
                 next();
+            }).catch(err=>{
+                next();
             })
         }
         else{

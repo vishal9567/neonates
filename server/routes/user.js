@@ -22,8 +22,8 @@ const mongoMiddleware=require('../services/middleware/mongoMiddleware')
 router.get('/',cartCount.cartCount,render.home)
 router.get('/signUp', render.signUp);
 router.get('/userLogin', render.userLogin)
-router.get('/landing', render.landing)
-router.get('/home', render.home)
+router.get('/landing/:page', render.landing)
+router.get('/home/:page', render.home)
 router.get('/eachCategory/:id', render.categoryProduct)
 router.get('/forgotPassword', render.forgotPassword)
 router.get('/logout', redirect.logOut)
@@ -53,6 +53,7 @@ router.post('/sendMobOtp', render.sendTwillio)
 router.post('/verifyMobOtp', sessionCheck.mobOtpAuth, redirect.UserRedirect)
 router.post('/incItems/decItems',sessionCheck.userAuth, redirect.incrementItems)
 
+
 //==========user address section=========//
 router.post('/addAddress',sessionCheck.userAuth, render.addAddress)
 router.post('/addUserFormSubmit',sessionCheck.userAuth, redirect.addUserFormSubmit)
@@ -74,8 +75,6 @@ router.post('/deleteAddress',sessionCheck.userAuth,redirect.deleteAddress)
 
 
 router.post('/verifyPayment',(req,res)=>{
-    console.log(req.body.payment.razorpay_signature);
-    console.log("orderId:",req.body.order.receipt);
     orderController.verifyPayment(req.body).then(result=>{
         orderController.changeStatusOfOrder(req.body.order.receipt).then(()=>{
             res.json(true)
@@ -87,6 +86,7 @@ router.post('/verifyPayment',(req,res)=>{
     })
 })
 
+router.post('/searchProducts',render.productSearch)
 
 // router.post('/placeOrder',(req,res)=>{
 //     console.log(req.body);

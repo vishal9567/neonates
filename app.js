@@ -5,22 +5,31 @@ const logger = require('morgan')
 const path = require('path')
 const nocache=require('nocache')
 const bodyparser = require('body-parser')
-const hbs = require('express-handlebars')
+const exhbs = require('express-handlebars')
 const session=require('express-session')
 require('dotenv').config()
 const admin = require('./server/routes/admin')
 const userRout = require('./server/routes/user')
 
-
-
-app.use(logger('dev'))
-app.use(bodyparser.urlencoded({ extended: true }))
-app.engine('hbs', hbs.engine({
+const hbs=exhbs.create({
     extname: 'hbs',
     defaultLayout: 'main',
     layoutsDir: __dirname + '/views/layouts/',
-    partialsDir: __dirname + '/views/partials/'
-}));
+    partialsDir: __dirname + '/views/partials/',
+   // helpers: require('./views/helpers/pagination')
+    helpers:{
+        for:function(pages,options){
+            let accum='';
+            for(let i=1;i<=pages;++i)
+                accum+=options.fn(i)
+            return accum;
+        }
+    }
+});
+
+app.use(logger('dev'))
+app.use(bodyparser.urlencoded({ extended: true }))
+app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
 app.use(express.static(path.join(__dirname, 'public')));
 

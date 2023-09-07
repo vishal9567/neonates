@@ -6,6 +6,7 @@ const sessionCheck=require('../services/middleware/sessionCheck')
 const productController=require('../controller/productController')
 const adminController=require('../controller/adminController')
 const orderController=require('../controller/orderController')
+const coupenController = require('../controller/coupenController')
 
 
 //----homeroutes-----
@@ -23,12 +24,18 @@ router.get('/disableCat/:id/:status',sessionCheck.auth,redirect.catED);
 router.get('/enableCat/:id/:status',sessionCheck.auth,redirect.catED);
 //---user routes-----
 router.get('/userList',sessionCheck.auth,services.userList);
-router.get('/desableUser/:id/:status',sessionCheck.auth,redirect.userED);
+router.get('/disableUser/:id/:status',sessionCheck.auth,redirect.userED);
 router.get('/enableUser/:id/:status',sessionCheck.auth,redirect.userED);
 //----logout---------
 router.get('/adminLogout',redirect.logout);
 //----order list----
 router.get('/orderListTable',sessionCheck.auth,services.orderListTable)
+router.get('/showOrderDetail/:id',sessionCheck.auth,services.showOrderDetail)
+//----coupen list---
+router.get('/coupenList',sessionCheck.auth,services.coupenList)
+router.get('/createCouponPage',sessionCheck.auth,services.createCouponPage)
+router.get('/editCoupon/:id',sessionCheck.auth,services.editCouponPage)
+router.get('/deleteCoupon/:id',sessionCheck.auth,redirect.deleteCoupon)
 
 
 
@@ -38,5 +45,8 @@ router.post('/updateProduct/:id',upload.array('image',2),sessionCheck.auth,produ
 router.post('/adminLogin',adminController.findone)
 router.post('/addToCategory',sessionCheck.auth,redirect.addToCategory)
 router.post('/changeStatus',sessionCheck.auth,redirect.changeStatus)
+//--coupon management----
+router.post('/submitCoupon',sessionCheck.auth,redirect.createCoupon)
+router.post('/submitUpdate/:id',sessionCheck.auth,redirect.editCoupon)
 
 module.exports=router;

@@ -32,8 +32,8 @@ module.exports = {
                             resolve()
                         })
                 }
-                else{
-                    resolve({invertryEmpty:false})
+                else {
+                    resolve({ invertryEmpty: false })
                 }
 
             })
@@ -42,40 +42,41 @@ module.exports = {
 
         }
     },
-    inventryThenAddToCart: (id,c,counts) => {          //?check whether it is necessary or not
-        console.log("test for count",counts);
-        
-        let count = (counts !== null && counts !== undefined) ? parseInt(counts) : c;
-        console.log(count);
+    inventryManagement: (id, counts) => {          //*------inventry management need more updations-----//
+        let Id=id.toString()
+        let count = ((parseInt(counts)) * -1)
         try {
             return new Promise(async (resolve, reject) => {
-                let pro = await productDb.findOne({ _id: new mongoose.Types.ObjectId(id) })
-                if (pro.quantity > 0) {
-                    let doc = await productDb.updateOne({ _id: new mongoose.Types.ObjectId(id) }, { $inc: { quantity: count } })
+                let pro = await productDb.findOne({ _id: new mongoose.Types.ObjectId(Id)})
+                if (pro) {
+                    let doc = await productDb.updateOne({ _id: new mongoose.Types.ObjectId(Id) }, { $inc: { quantity: count } })
                         .then(result => {
-                            resolve(true)
+                            resolve()
                         })
                 }
-                else{
-                    resolve({invertryEmpty:true})
-                }
-
             })
         }
-        catch(err){
+        catch (err) {
 
         }
     },
-    searchProduct:(proName)=>{
-        return new Promise(async(resolve,reject)=>{
-            try{
-                let doc=await productDb.find({productname:proName}).lean().then(product=>{
+    searchProduct: (proName) => {
+        console.log("here Pro:", proName);
+        return new Promise(async (resolve, reject) => {
+            try {
+                let doc = await productDb.find({
+                    $or:
+                        [
+                            { productname: { $regex: proName, $options: "i" } },
+                            { category: { $regex: proName, $options: "i" } }
+                        ]
+                }).lean().then(product => {
                     resolve(product)
                 })
             }
-            catch(err){
+            catch (err) {
                 reject(err)
             }
         })
-    }
+    },
 }

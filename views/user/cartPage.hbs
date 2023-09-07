@@ -13,6 +13,7 @@
                   </div>
                   <hr class="my-4">
                   {{#if cartIsEmty}}<h1>Cart is empty</h1>{{/if}}
+                   {{#if productNotAvailable}}<h1><span>Oops!....</span>items not available</h1>{{/if}}
                   {{#each products}}
                   <div class="row mb-4 d-flex justify-content-between align-items-center">
                     <div class="col-md-2 col-lg-2 col-xl-2">
@@ -54,7 +55,7 @@
 
                   {{/each}}
                   <div class="pt-5">
-                    <h6 class="mb-0"><a href="/landing" class="text-body"><i
+                    <h6 class="mb-0"><a href="/landing/1" class="text-body"><i
                           class="fas fa-long-arrow-alt-left me-2 text-success"></i>Back to shop</a></h6>
                   </div>
                 </div>
@@ -96,8 +97,9 @@
                     <h5>&#x20b9; {{grandTotal}}</h5>
                   </div>
 
-                  {{#if cartIsEmty}}<h6>Cart is empty</h6>{{else}}<a href="/proceedToCkeckOut" type="button" class="btn btn-block btn-lg text-uppercase" style="background-color: rgb(236,79,162); color: white"
-                    data-mdb-ripple-color="dark">Proceed to checkout</a>{{/if}}
+                  {{#if productNotAvailable}}<h6>Products not available</h6>{{else}}{{#if cartIsEmty}}<h6>Cart is empty</h6>{{else}}<a href="/proceedToCkeckOut" type="button" class="btn btn-block btn-lg text-uppercase" style="background-color: rgb(236,79,162); color: white"
+                    data-mdb-ripple-color="dark">Proceed to checkout</a>{{/if}}{{/if}}
+                  
 
                 </div>
               </div>

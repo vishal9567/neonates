@@ -3,14 +3,15 @@ const productDb=require('../model/productModel')
 
 module.exports={
     create:(data)=>{
+        let categoryName=(data.categoryname).toUpperCase();
         return new Promise(async(resolve,reject)=>{
-            let checkCat=await categoryDb.findOne({category:data.categoryname}).lean()
+            let checkCat=await categoryDb.findOne({category:categoryName}).lean()
             if(checkCat){
                 resolve({cats:true})
             }
             else{
                 let doc=await categoryDb.collection.insertOne({
-                    category:data.categoryname,
+                    category:categoryName,
                     status:true
                 }).then(result=>{
                     resolve(result)
@@ -19,9 +20,9 @@ module.exports={
             }
         })
     },
-    getItems:()=>{
+    getItems:(perPage,page)=>{
         return new Promise(async(resolve,reject)=>{
-            let doc=await productDb.find().sort({date:-1}).lean()
+            let doc=await productDb.find().sort({date:-1}).skip(perPage * page -perPage).limit(perPage).lean()
             .then(products=>{
                 resolve(products)
             })

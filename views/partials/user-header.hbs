@@ -15,13 +15,13 @@
       <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <a href="/home" class="text-white btn rounded-pill mx-2" >Home</a>
-      <a href="/landing" class="text-white btn  rounded-pill mx-2">All</a>
+      <a href="/home/1" class="text-white btn rounded-pill mx-2">Home</a>
+      <a href="/landing/1" class="text-white btn  rounded-pill mx-2">All</a>
       <div class="collapse navbar-collapse" id="navbarCollapse">
         <div class="navbar-nav ms-auto">
           <div class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle btn rounded-pill text-light"
-              data-bs-toggle="dropdown" >Categories</a>
+              data-bs-toggle="dropdown">Categories</a>
             <div class="dropdown-menu">
               {{#each category}}
               <a class="dropdown-item" href="/eachCategory/{{this._id}}">{{this.category}}</a>
@@ -30,11 +30,22 @@
           </div>
         </div>
 
+
+
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <div class="navbar-nav ms-auto">
-            <a href="/search" class="text-light"><span class="material-symbols-outlined p-2">
+
+            <div class="input-group mb-3" id="searchPro" style="display: none;">
+              <input id="inputSearch" type="text" class="form-control" placeholder="Search here"
+                aria-label="Recipient's username" aria-describedby="basic-addon2" name="Item" />
+              <button style="border:none;" class="input-group-text text-decoration-none"
+                id="basic-addon2">Search</button>
+            </div>
+
+            <button class="text-light " style="border:none; background:none;" onclick="searchProduct()"><span
+                class="material-symbols-outlined p-2">
                 search
-              </span></a>
+              </span></button>
             <a {{#if user}}href="/cart" {{else}} id="myCart" href="" {{/if}} onclick="showModal()"
               class="text-light"><span class="material-symbols-outlined p-2">
                 shopping_cart{{#if user}}<sub
@@ -67,8 +78,35 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+
 <script>
   $("#myCart").on('click', function () {
-    alert("Login or signUP");
+      alert("Please log in or sign up")
   });
+</script>
+<script>
+  function searchProduct() {
+    let x = document.getElementById('searchPro')
+    if (x.style.display === "none")
+      x.style.display = "flex"
+    else
+      x.style.display = "none"
+  }
+</script>
+<script>
+  $('#basic-addon2').click(function () {
+    let item = $('#inputSearch').val()
+    $.ajax({
+      url: '/searchProducts',
+      data: {
+        Item: item
+      },
+      method: 'post',
+      success: (function () {
+        window.location.href = "http://localhost:3000/landing/1"
+      })
+    })
+  })
 </script>

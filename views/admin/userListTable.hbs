@@ -43,6 +43,8 @@
                     <a class="collapse-item" href="/admin/listProduct">Product List</a>
                     <a class="collapse-item" href="/admin/userList">User List</a>
                     <a class="collapse-item" href="/admin/categoryList">Category List</a>
+                    <a class="collapse-item" href="/admin/orderListTable">Orders</a>
+                    <a class="collapse-item" href="/admin/coupenList">Coupons</a>
                 </div>
             </div>
         </li>
@@ -367,7 +369,7 @@
                                         <td><!-- Default switch -->
                                             <div class="custom-control custom-switch">
                                                 <a {{#if
-                                                    this.status}}href="/admin/desableUser/{{this._id}}/{{this.status}}"
+                                                    this.status}}href="/admin/disableUser/{{this._id}}/{{this.status}}"
                                                     class="btn btn-success"
                                                     {{else}}href="/admin/enableUser/{{this._id}}/{{this.status}}"
                                                     class="btn btn-danger" {{/if}}>{{#if

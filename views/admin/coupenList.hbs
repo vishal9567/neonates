@@ -94,18 +94,18 @@
         </li>
 
         <!-- Nav Item - Charts -->
-        <!-- <li class="nav-item">
+        <li class="nav-item">
             <a class="nav-link" href="/admin/addCategory">
                 {{!-- <i class="fas fa-fw fa-chart-area"></i> --}}
                 <span>Add Category</span></a>
-        </li> -->
+        </li>
 
         <!-- Nav Item - Tables -->
-        <li class="nav-item">
-            <a class="nav-link" href="/admin/addCategory">
-                {{!-- <i class="fas fa-fw fa-table"></i> --}}
-                <span>Add category</span></a>
-        </li>
+        {{!-- <li class="nav-item active">
+            <a class="nav-link" href="tables.html">
+                <i class="fas fa-fw fa-table"></i>
+                <span>Tables</span></a>
+        </li> --}}
 
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
@@ -330,7 +330,7 @@
             <div class="container-fluid">
 
                 <!-- Page Heading -->
-                <h1 class="h3 mb-2 text-gray-800">Category List</h1>
+                <h1 class="h3 mb-2 text-gray-800">Coupon List</h1>
                 {{!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
                     For more information about DataTables, please visit the <a target="_blank"
                         href="https://datatables.net">official DataTables documentation</a>.</p> --}}
@@ -338,17 +338,18 @@
                 <!-- DataTales Example -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Neonates Category</h6>
-                        {{!-- <div class="d-flex justify-content-end"><a href="" class="btn btn-primary">Add User</a>
-                        </div> --}}
+                        <h6 class="m-0 font-weight-bold text-primary">Coupons</h6>
+                        <div class="d-flex justify-content-end"><a href="/admin/createCouponPage"
+                                class="btn btn-primary">Add coupon</a></div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
-                                        <th>Category</th>
-                                        <th>Status</th>
+                                        <th>Coupen</th>
+                                        <th>Discount</th>
+                                        <th>Expiry</th>
                                         <th>Options</th>
                                     </tr>
                                 </thead>
@@ -360,27 +361,17 @@
                                         <th>Options</th>
                                     </tr>
                                 </tfoot> --}}
-                                {{#each cat}}
+                                {{#each coupen}}
                                 <tbody>
                                     <tr>
-                                        <td>
-                                            <h6>{{this.category}}</h6>
-                                        </td>
-                                        <td><!-- Default switch -->
-                                            <div class="custom-control custom-switch">
-                                                <a {{#if
-                                                    this.status}}href="/admin/disableCat/{{this._id}}/{{this.status}}"
-                                                    class="btn btn-success"
-                                                    {{else}}href="/admin/enableCat/{{this._id}}/{{this.status}}"
-                                                    class="btn btn-danger" {{/if}}>{{#if
-                                                    this.status}}Active{{else}}Disabled{{/if}}</a>
-                                            </div>
-                                        </td>
-                                        <td><a href="/admin/editUser/{{this._id}}"><span
+                                        <td>{{this.coupenName}}</td>
+                                        <td>{{this.discount}}</td>
+                                        <td>{{this.expiry}}</td>
+                                        <td><a href="/admin/editCoupon/{{this._id}}"><span
                                                     class="material-symbols-outlined">
                                                     edit
-                                                </span></a><a href="/admin/deleteUser/{{this._id}}"
-                                                onclick="return confirm('Are you want to delete {{this.category}} ?')"><span
+                                                </span></a><a href="/admin/deleteCoupon/{{this._id}}"
+                                                onclick="return confirm('Are you want to delete {{this.coupenName}} ?')"><span
                                                     class="material-symbols-outlined">
                                                     delete
                                                 </span></a></td>

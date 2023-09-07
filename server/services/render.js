@@ -6,17 +6,41 @@ const userdb = require('../model/userModel')
 const productHelper = require('../controller/productHelper')
 const cartController = require('../controller/cartController')
 const orderController = require('../controller/orderController')
+const productDb = require('../model/productModel')
+const coupenController = require('../controller/coupenController')
 
 
 
 //?-------===============user============---------------=====================user===================-------------------------------------*//
-exports.landing = (req, res) => {
+exports.landing = async (req, res) => {
+    let count = await productDb.count()
     let user = req.session.user
+    let proSearch = `${req.session.searchPro}`
+    const perPage = 4;
+    let pages = Math.ceil((count / perPage))
+    let page = parseInt(req.params.page) || 1;
     categoryController.findCategory()
         .then(category => {
-            categoryController.getItems().then(product => {
+            categoryController.getItems(perPage, page).then(products => {
                 // res.render('user/landing', { product, category, user })
-                res.render('user/secondLanding', { product, category, user, signup: true })
+                //res.render('user/secondLanding', { product, category, user, signup: true, page, perPage, pages })
+
+                console.log("check search", proSearch);
+                if (typeof req.session.searchPro == undefined || req.session.searchPro == null) {
+                    product = products
+                    console.log("this is produect", product);
+                    res.render('user/secondLanding', { signup: true, product, category, user, page, perPage, pages })
+                }
+                else {
+                    productHelper.searchProduct(proSearch).then(pro => {
+                        if (pro) {
+                            product = pro
+                            res.render('user/secondLanding', { signup: true, product, category, user, page, perPage, pages })
+                            req.session.searchPro = null;
+                        }
+    
+                    })
+                }
             })
         })
         .catch((err) => {
@@ -120,9 +144,14 @@ exports.userSignup = (req, res) => {
 exports.signUp = (req, res) => {
     res.render('user/userSignUp')
 }
-exports.home = (req, res) => {
+exports.home = async (req, res) => {
+    let count = await productDb.count()
+    // let doc=req.session.TotalProduct
     let user = req.session.user
-    categoryController.getItems().then(product => {
+    const perPage = 4;
+    let pages = Math.ceil((count / perPage))
+    let page = parseInt(req.params.page) || 1;
+    categoryController.getItems(perPage, page).then(product => {
         categoryController.findCategory().then(category => {
             let TotalQuantity = 0;
             if (req.session.grandTotal) {
@@ -131,14 +160,21 @@ exports.home = (req, res) => {
             else {
                 TotalQuantity = 0;
             }
-            res.render('user/home', { signup: true, product, category, user, TotalQuantity })
+            res.render('user/home', { signup: true, product, category, user, TotalQuantity, page, perPage, pages })
+         
         })
     })
+}
+exports.productSearch = (req, res) => {  //!---product search----//
+    console.log('product', req.body.Item);
+    req.session.searchPro = req.body.Item
+    res.json(true)
+
 }
 exports.showProductDetail = (req, res) => {
     let id = req.params.id
     let user = req.session.user
-    console.log(`this is user:${user}`);
+    ////  console.log(`this is user:${user}`);
     productHelper.showProductDetail(id).then(product => {
         categoryController.findCategory().then(category => {
             let TotalQuantity = 0;
@@ -156,6 +192,7 @@ exports.showProductDetail = (req, res) => {
 }
 exports.getCart = (req, res) => {
     let val = req.session.userId
+    let productNotAvailable = true;
     cartController.getCartProducts(val._id).then(product => {
         let totalCount = 0;
         let grandTotal = 0;
@@ -170,14 +207,16 @@ exports.getCart = (req, res) => {
         console.log(products);
         if (products.length === 0) {                                   //*--===check whether cart is empty or not==--//
             let cartIsEmty = true;
+            productNotAvailable = false;
             res.render('user/cartPage', { products, totalCount, grandTotal, cartIsEmty, user_id: val._id })
         }
         else {
+            productNotAvailable = false;
             res.render('user/cartPage', { products, totalCount, grandTotal, user_id: val._id })
         }
     })
         .catch(err => {
-
+            res.render('user/cartPage', { productNotAvailable })
         })
 }
 exports.addAddress = (req, res) => {                                     //*=====this add address will limit the address 2 for every user====//
@@ -212,9 +251,9 @@ exports.proceedToCheckOut = (req, res) => {                                     
         else if (userId.address.length === 1) {
             addressOne = true;
         }
-        else{
-            addressZero=false;
-            addressOne=false;
+        else {
+            addressZero = false;
+            addressOne = false;
         }
 
         userController.getCurrentUser(userId).then(result => {
@@ -251,9 +290,16 @@ exports.showProductsForuser = (req, res) => {               //*-------========sh
     let firstLetter = user.charAt(0)
     orderController.getOrderDetails(id).then(data => {
         let user = req.session.user
-        ////console.log("it is products",data);
+        console.log("it is products", data);
         categoryController.findCategory().then(category => {
-            res.render('user/orderDetails', { signup: true, data, user, category, TotalQuantity: req.session.grandTotal[1] })
+            let TotalQuantity = 0;
+            if (req.session.grandTotal) {
+                TotalQuantity = req.session.grandTotal[1]
+            }
+            else {
+                TotalQuantity = 0;
+            }
+            res.render('user/orderDetails', { signup: true, data, user, category, TotalQuantity })
         })
     }).catch(err => {
         res.render('user/errorPage', { error: err, isUser: true })
@@ -262,26 +308,6 @@ exports.showProductsForuser = (req, res) => {               //*-------========sh
 exports.userDashboard = (req, res) => {                   //*-------=========user account========------------//
     let user = req.session.userId
     //let cart=req.session.grandTotal
-    orderController.getOrders(user._id).then(order => {
-        categoryController.findCategory().then(category => {
-            res.render('user/userDashBoard', { category, user, signup: true, dashboard: true, dash: true, orderCount: order.length, TotalQuantity: req.session.grandTotal[1] })
-        })
-    })
-}
-exports.userOrderList = (req, res) => {                 //*-----=========display the orderlist for user=========----//
-    let user = req.session.userId
-    orderController.getOrders(user._id).then(data => {
-        categoryController.findCategory().then(category => {
-            res.render('user/userOrder', { signup: true, data, user, TotalQuantity: req.session.grandTotal[1], category })
-        })
-    }).catch(err => {
-        res.render('user/errorPage', { error: err })
-    })
-}
-exports.addressBook=(req,res)=>{
-    let user=req.session.user
-    let userData=req.session.userDatas[0].address
-    let userDetail=req.session.userDatas[0]
     let TotalQuantity = 0;
     if (req.session.grandTotal) {
         TotalQuantity = req.session.grandTotal[1]
@@ -289,27 +315,65 @@ exports.addressBook=(req,res)=>{
     else {
         TotalQuantity = 0;
     }
-    let addressOne=false;
-    let addresszero=false;
-    if(userData.length === 1){
-        addressOne=true;
-    }
-    else if(userData.length ===0){
-        addresszero=true
-    }
-    res.render('user/addressBook',{user,signup:true,userData,addressOne,addresszero,TotalQuantity,userDetail})
+    orderController.getOrders(user._id).then(order => {
+        categoryController.findCategory().then(category => {
+            res.render('user/userDashBoard', { category, user, signup: true, dashboard: true, dash: true, orderCount: order.length, TotalQuantity })
+        })
+    })
 }
-exports.editAddress=(req,res)=>{
-    req.session.addressId=req.body.addressId
+exports.userOrderList = (req, res) => {                 //*-----=========display the orderlist for user=========----//
+    let user = req.session.userId
+    orderController.getOrders(user._id).then(data => {
+        categoryController.findCategory().then(category => {
+            let TotalQuantity = 0;
+            if (req.session.grandTotal) {
+                TotalQuantity = req.session.grandTotal[1]
+            }
+            else {
+                TotalQuantity = 0;
+            }
+            res.render('user/userOrder', { signup: true, data, user, TotalQuantity, category })
+        })
+    }).catch(err => {
+        res.render('user/errorPage', { error: err })
+    })
+}
+exports.addressBook = (req, res) => {
+    let user = req.session.user
+    let userData = req.session.userDatas[0].address
+    let userDetail = req.session.userDatas[0]
+    let TotalQuantity = 0;
+    if (req.session.grandTotal) {
+        TotalQuantity = req.session.grandTotal[1]
+    }
+    else {
+        TotalQuantity = 0;
+    }
+    let addressOne = false;
+    let addresszero = false;
+    if (userData.length === 1) {
+        addressOne = true;
+    }
+    else if (userData.length === 0) {
+        addresszero = true
+    }
+    res.render('user/addressBook', { user, signup: true, userData, addressOne, addresszero, TotalQuantity, userDetail })
+}
+exports.editAddress = (req, res) => {
+    req.session.addressId = req.body.addressId
     let user = req.session.userDatas[0]
-    let deliveryDetail=req.body 
-    userController.getDeliveryAddress(user,deliveryDetail).then(address=>{
-        res.json({address:address.address});
+    let deliveryDetail = req.body
+    userController.getDeliveryAddress(user, deliveryDetail).then(address => {
+        res.json({ address: address.address });
     })
-    .catch(err=>{
-        res.render('user/errorPage')
-    })
+        .catch(err => {
+            res.render('user/errorPage')
+        })
 }
+
+
+
+
 
 
 
@@ -348,13 +412,14 @@ exports.addproducts = (req, res) => {
 exports.addCategory = (req, res) => {
     let checkCat = req.session.catCheck
     res.render('admin/addCategory', { checkCat })
+    req.session.catCheck = null;
 }
 exports.userList = (req, res) => {
     userController.getUser().then(user => {
         categoryController.findCategory().then(category => {
             res.render('admin/userListTable', { user, category })
         })
-    }).catch(err=>{
+    }).catch(err => {
         res.render('user/errorPage')
     })
 }
@@ -363,7 +428,7 @@ exports.categoryList = (req, res) => {
         categoryController.findCategory().then(category => {
             res.render('admin/categoryList', { cat, category })
         })
-    }).catch(err=>{
+    }).catch(err => {
         res.render('user/errorPage')
     })
 }
@@ -377,5 +442,48 @@ exports.orderListTable = (req, res) => {
         res.render('admin/orderList', { order })
     }).catch(err => {
         res.render('user/errorPage', { error: err })
+    })
+}
+exports.coupenList = (req, res) => {
+    coupenController.getCoupen().then(coupen => {
+        if (coupen) {
+            res.render('admin/coupenList', { coupen })
+        }
+        else {
+            res.render('admin/coupenList', { nocoupen: coupen.notCoupen })
+        }
+    }).catch(err => {
+        res.render('user/errorPage')
+    })
+}
+exports.createCouponPage = (req, res) => {
+    let coupenCheck = req.session.coupen
+    res.render('admin/createCoupon', { coupenCheck })
+    req.session.coupen = null;
+}
+exports.editCouponPage = (req, res) => {
+    let id = req.params.id
+    coupenController.getOneCoupon(id).then(coupon => {
+        res.render('admin/createCoupon', { coupon, updating: true })
+        console.log(coupon);
+    })
+}
+exports.showOrderDetail = (req, res) => {
+    let id = req.params.id
+    orderController.getOrderDetails(id).then(data => {
+        let user = req.session.user
+        console.log("it is products", data);
+        categoryController.findCategory().then(category => {
+            let TotalQuantity = 0;
+            if (req.session.grandTotal) {
+                TotalQuantity = req.session.grandTotal[1]
+            }
+            else {
+                TotalQuantity = 0;
+            }
+            res.render('user/orderDetails', { data, category, TotalQuantity })
+        })
+    }).catch(err => {
+        res.render('user/errorPage', { error: err, isUser: true })
     })
 }
