@@ -15,7 +15,17 @@ var productSchema=new mongoose.Schema({
         type:String
     },
     price:{
+        type:String,
+        default:function(){
+            return this.realPrice-((this.realPrice * this.offer)/100)
+        }
+    },
+    realPrice:{
         type:Number
+    },
+    offer:{
+        type:Number,
+        default:0
     },
     quantity:{
         type:Number

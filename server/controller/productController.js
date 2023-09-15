@@ -5,14 +5,14 @@ const fs = require('fs')
 
 //------------------insert------------//
 exports.create = async (req, res) => {
-    // console.log(req.body);
+    console.log(req.body);
     await cropImg.crop(req);
     let product = new productDb({
         productname: req.body.productname,
         brandname: req.body.brandname,
         category: req.body.category,
         color: req.body.color,
-        price: req.body.price,
+        realPrice:req.body.price,
         quantity: req.body.quantity,
         discription: req.body.discription,
         image: [req.files[0].filename, req.files[1].filename]

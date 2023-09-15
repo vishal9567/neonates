@@ -6,6 +6,8 @@ const cartController = require('../controller/cartController');
 const productHelpers = require('../controller/productHelper')
 const orderController = require('../controller/orderController')
 const coupenController = require('../controller/coupenController')
+const bannerController=require('../controller/bannerController')
+
 
 
 
@@ -277,6 +279,12 @@ exports.catED = (req, res) => {
         res.redirect('/admin/categoryList')
     })
 }
+exports.addCatOffer=(req,res)=>{
+    console.log(req.query);
+    productHelpers.addCatOffer(req.query).then(()=>{
+        res.json(true)
+    })
+}
 exports.userED = (req, res) => {
     let id = req.params.id
     let status = req.params.status
@@ -340,24 +348,10 @@ exports.deleteCoupon = (req, res) => {
     }).catch(err => {
         res.render('user/errorPage')
     })
-}                                                                                 //*=======coupen section end//
+}                                                                                 //*=======coupen section end===banner start====//
+exports.createBanner=(req,res)=>{
+    console.log(req.body);
+    bannerController.createBanner(req).then(()=>{
 
-
-
-
-// exports.dashboard = (req, res) => {
-//     res.redirect('/admin')
-// }
-
-
-//-------------------adminlogin-----------//
-// exports.findAdmin=(req,res)=>{
-//     let data=req.body
-//     adminController.findAdmin(req.body).then(result=>{
-//         req.session.AdminLogIn=true;
-//         res.redirect('/admin')
-//     })
-//     .catch(err=>{
-//         res.send(500)
-//     })
-// }
+    })
+}

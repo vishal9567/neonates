@@ -95,5 +95,18 @@ module.exports = {
         catch(err){
             throw new Error(err)
         }
+    },
+    addCatOffer:(data)=>{
+        let catOff=parseInt(data.catOffer)
+        try{
+            return new Promise(async(resolve,reject)=>{
+                await productDb.updateMany({category:data.cat},{$set:{offer:catOff}},{setDefaultsOnInsert:true,upsert:true}).then(()=>{
+                    resolve()
+                })
+            })
+        }
+        catch(err){
+            throw new Error(err)
+        }
     }
 }

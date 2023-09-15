@@ -8,6 +8,8 @@ const cartController = require('../controller/cartController')
 const orderController = require('../controller/orderController')
 const productDb = require('../model/productModel')
 const coupenController = require('../controller/coupenController')
+const bannerController=require('../controller/bannerController')
+
 
 
 
@@ -509,4 +511,7 @@ exports.filterOrderForAdmin = (req, res) => {
     }).catch(err => {
         res.render('user/errorPage')
     })
+}
+exports.addBanner=(req,res)=>{
+    res.render('admin/addBanner')
 }

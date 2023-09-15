@@ -1,0 +1,68 @@
+<center class="text-danger">
+    <h3>Add Banner</h3>
+</center>
+{{!-- <div style="width: 300px; margin: 5px 0px 5px 40vw;" class="bg-warning"> --}}
+    <div style="width: 400px; margin: 50px 0px 0px 37vw; border-radius:10px; background-color:rgb(201, 190, 164)">
+        <form {{#if updating}}action="/admin/updateProduct/{{data._id}}" method="post" enctype="multipart/form-data"
+            {{else}}action="/admin/createBanner" method="post" enctype="multipart/form-data" {{/if}} class="p-5">
+            <!-- 2 column grid layout with text inputs for the first and last names -->
+
+            <!-- Email input -->
+            <div class="form-outline mb-2">
+                <input type="text" id="form3Example3" class="form-control" name="bannername" {{#if updating}}
+                    value="{{data.brandname}}" {{/if}} />
+                <label class="form-label" for="form3Example3">Name</label>
+            </div>
+            <div class="form-outline mb-4">
+                <input type="date" id="form3Example4" class="form-control" name="expiry" {{#if
+                    updating}}value="{{coupon.expiry}}" {{/if}} />
+                <label class="form-label" for="form3Example4">Date</label>
+            </div>
+
+            <!-- Password input -->
+
+            <div class="form-outline mb-2">
+                <input type="file" name="image" multiple>
+            </div>
+            {{#if updating}}
+            <img src="/images/{{data.image.[0]}}" alt="" width="30px">
+            {{/if}}
+
+            <!-- Checkbox -->
+            {{!-- <div class="form-check d-flex justify-content-center mb-4">
+                <input class="form-check-input me-2" type="checkbox" value="" id="form2Example33" checked />
+                <label class="form-check-label" for="form2Example33">
+                    Subscribe to our newsletter
+                </label>
+            </div> --}}
+
+            <!-- Submit button -->
+            <button type="submit" class="btn btn-primary btn-block mb-3">{{#if
+                updating}}Update{{else}}Add{{/if}}</button>
+            <div class="text-center">
+                <a href="/admin/listProduct">Go to...</a>
+            </div>
+
+            <!-- Register buttons -->
+            {{!-- <div class="text-center">
+                <p>or sign up with:</p>
+                <button type="button" class="btn btn-secondary btn-floating mx-1">
+                    <i class="fab fa-facebook-f"></i>
+                </button>
+
+                <button type="button" class="btn btn-secondary btn-floating mx-1">
+                    <i class="fab fa-google"></i>
+                </button>
+
+                <button type="button" class="btn btn-secondary btn-floating mx-1">
+                    <i class="fab fa-twitter"></i>
+                </button>
+
+                <button type="button" class="btn btn-secondary btn-floating mx-1">
+                    <i class="fab fa-github"></i>
+                </button>
+            </div> --}}
+        </form>
+    </div>
+    {{!--
+</div> --}}

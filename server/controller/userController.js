@@ -174,7 +174,7 @@ module.exports = {
     getCurrentUser: (id) => {
         return new Promise(async (resolve, reject) => {
             try {
-                let doc = await userdb.find({ _id: id._id }).lean()
+                await userdb.find({ _id: id._id }).lean()
                     .then(result => {
                         resolve(result)
                     })

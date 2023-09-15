@@ -52,7 +52,7 @@ module.exports = {
     getOrders: (user) => {
         return new Promise(async (resolve, reject) => {
             try {
-                let doc = await orderDb.find({ "userid": new mongoose.Types.ObjectId(user) }).lean()
+                let doc = await orderDb.find({ "userid": new mongoose.Types.ObjectId(user) }).sort({date:-1}).lean()
                     .then(orders => {
                         resolve(orders)
                     })
