@@ -4,7 +4,17 @@
       <div class="col-lg-10 col-xl-8">
         <div class="card" style="border-radius: 10px;">
           <div class="card-header px-4 py-5">
-            <h5 class="text-muted mb-0">Thanks for your Order, <span style="color: #a8729a;">{{data.[0].name}}</span>!</h5>
+             <div class="dropdown">
+            <button type="button" class="btn dropdown-toggle btn btn-primary" data-bs-toggle="dropdown">
+                Options
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" onclick="getStatus(1,'{{data.[0]._id}}')">Place Order</a></li>
+                <li><a class="dropdown-item" onclick="getStatus(2,'{{data.[0]._id}}')">Pending</a></li>
+                <li><a class="dropdown-item" onclick="getStatus(4,'{{data.[0]._id}}')">Cancel</a></li>
+                <li><a class="dropdown-item" onclick="getStatus(5,'{{data.[0]._id}}')">Deliver</a></li>
+            </ul>
+        </div>
           </div>
           <div class="card-body p-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -51,9 +61,8 @@
                       <p class="text-muted mt-1 mb-0 small ms-xl-5">Placed</p>
                       <p class="text-muted mt-1 mb-0 small ms-xl-5">Delivered</p>
                     </div>
+                    {{#if (compare this.status '==' 4)}}<p class="text-center text-danger">order cancelled</p>{{/if}}
                   </div>
-                  {{#if (compare this.status '==' 4)}}<p class="text-center text-danger">order cancelled</p>{{/if}}
-                  {{#if (compare this.status '==' 3)}}<p class="text-center text-danger">Returned</p>{{/if}}
                 </div>
               </div>
             </div>
@@ -88,3 +97,26 @@
     </div>
   </div>
 </section>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+
+<script>
+  function getStatus(status,id){
+    $.ajax({
+      url:'/admin/updateStatus?id='+id+ '&status='+status,
+      method:'get',
+      success:(function(response){
+        Swal.fire({
+            title: 'Status changed Successfully!',
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 2000
+          }).then(()=>{
+          location.reload()
+          })
+      })
+    })
+  }
+</script>

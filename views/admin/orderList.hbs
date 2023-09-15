@@ -339,168 +339,285 @@
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
                         <h6 class="m-0 font-weight-bold text-primary">All Orders</h6>
-                        <!-- <div class="d-flex justify-content-end"><a href="/admin/addProductPage"
-                                class="btn btn-primary">Add Product</a></div>
-                    </div> -->
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered text-center" id="dataTable" width="100%"
-                                    cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th>Order Id</th>
-                                            <th>Customer</th>
-                                            <th>Quantity</th>
-                                            <th>Price</th>
-                                            <th>Order Date</th>
-                                            <th>Payment Method</th>
-                                            <th>Status</th>
-                                            <th>Options</th>
-                                        </tr>
-                                    </thead>
-                                    {{!-- <tfoot>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Email</th>
-                                            <th>Status</th>
-                                            <th>Options</th>
-                                        </tr>
-                                    </tfoot> --}}
-                                    {{#each order}}
-                                    <tbody>
-                                        <tr>
-                                            <td><a href="/admin/showOrderDetail/{{this._id}}"
-                                                    class="text-decoration-none">
-                                                    <h6 class="text-primary">{{this._id}}</h6>
-                                                </a></td>
-                                            <td>{{this.userName}}</td>
-                                            <td>{{this.quantity}}</td>
-                                            <td>
-                                                <h6>{{this.totalAmount}}</h6>
-                                            </td>
-                                            <td>{{this.date}}</td>
-                                            <td>{{this.paymentMethod}}</td>
-                                            <td>
-                                                <div>
-                                                    {{#if this.cancelStatus}}<h6 {{#if this.status}}
-                                                        class="text-success" {{else}} class="text-warning" {{/if}}>{{#if
-                                                        this.status}}Placed{{else}}Pending{{/if}}</h6>{{else}} <h6
-                                                        class="text-danger">Cancelled</h6>{{/if}}
-                                                </div>
-                                            </td>
-                                            
-                                            <td>
-                                                <div class="dropdown">
-                                                    <button type="button" class="btn dropdown-toggle"
-                                                        data-bs-toggle="dropdown">
-
-                                                    </button>
-                                                    <ul class="dropdown-menu">
-                                                        <li><button class="dropdown-item"
-                                                                {{#if this.status}}onclick="changeStat('{{this._id}}','{{this.status}}')"{{/if}}>Pending</button></li>
-                                                        <li><button class="dropdown-item"
-                                                                {{#if this.status}}{{else}}onclick="changeStat('{{this._id}}','{{this.status}}')"{{/if}}>Place
-                                                                order</button></li>
-                                                        <li><button class="dropdown-item"
-                                                                >Cancel</button></li>
-                                                       <li><a class="dropdown-item"
-                                                                href="/admin/showOrderDetail/{{this._id}}">Order Details</a></li>
-                                                       <!-- <li><a class="dropdown-item" href="#">Link 3</a></li>-->
-                                                    </ul>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                    </tbody>
-                                    {{/each}}
-                                </table>
+                        <div class="d-flex justify-content-end">
+                            <div class="dropdown mb-3">
+                                <button type="button" class="btn dropdown-toggle btn btn-primary"
+                                    data-bs-toggle="dropdown">
+                                    Filter Order
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" onclick="getStatus(1)">Placed</a></li>
+                                    <li><a class="dropdown-item" onclick="getStatus(2)">Pending</a></li>
+                                    <li><a class="dropdown-item" onclick="getStatus(3)">Returned</a></li>
+                                    <li><a class="dropdown-item" onclick="getStatus(4)">Cancelled</a></li>
+                                    <li><a class="dropdown-item" onclick="getStatus(5)">Delivered</a></li>
+                                </ul>
                             </div>
                         </div>
                     </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered text-center" id="productsTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Order Id</th>
+                                        <th>Customer</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                        <th>Order Date</th>
+                                        <th>Payment Method</th>
+                                        <th>Status</th>
+                                       
+                                    </tr>
+                                </thead>
+                                {{!-- <tfoot>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Status</th>
+                                        <th>Options</th>
+                                    </tr>
+                                </tfoot> --}}
+                                {{#each order}}
+                                <tbody>
+                                    <tr>
+                                        <td><a href="/admin/showOrderDetail/{{this._id}}" class="text-decoration-none">
+                                                <h6 class="text-primary">{{this._id}}</h6>
+                                            </a></td>
+                                        <td>{{this.userName}}</td>
+                                        <td>{{this.quantity}}</td>
+                                        <td>
+                                            <h6>{{this.totalAmount}}</h6>
+                                        </td>
+                                        <td>{{this.date}}</td>
+                                        <td>{{this.paymentMethod}}</td>
+                                        <td>
+                                            <div>
+                                                {{#if (compare this.status '==' 1)}}<h6 class="text-success">
+                                                Placed</h6>
 
-                </div>
-                <!-- /.container-fluid -->
+                                                </h6>{{/if}}
+                                                {{#if (compare this.status '==' 2)}}<h6 class="text-warning">
+                                                    Pending</h6>
 
-            </div>
-            <!-- End of Main Content -->
+                                                </h6>{{/if}}
+                                                {{#if (compare this.status '==' 3)}}<h6 class="text-info">
+                                                    Returned</h6>
 
-            <!-- Footer -->
-            <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
+                                                </h6>{{/if}}
+                                                {{#if (compare this.status '==' 4)}}<h6 class="text-danger">
+                                                    Cancelled</h6>
 
+                                                </h6>{{/if}}
+                                                {{#if (compare this.status '==' 5)}}<h6 class="text-primary">
+                                                    Delivered</h6>
+
+                                                </h6>{{/if}}
+                                            </div>
+                                        </td>
+
+                                        <!-- <td>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn dropdown-toggle"
+                                                    data-bs-toggle="dropdown">
+
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><button class="dropdown-item" {{#if
+                                                            this.status}}onclick="changeStat('{{this._id}}','{{this.status}}')"
+                                                            {{/if}}>Pending</button></li>
+                                                    <li><button class="dropdown-item" {{#if
+                                                            this.status}}{{else}}onclick="changeStat('{{this._id}}','{{this.status}}')"
+                                                            {{/if}}>Place
+                                                            order</button></li>
+                                                    <li><button class="dropdown-item">Cancel</button></li>
+                                                    <li><a class="dropdown-item"
+                                                            href="/admin/showOrderDetail/{{this._id}}">Order Details</a>
+                                                    </li>
+                                                    <!-- <li><a class="dropdown-item" href="#">Link 3</a></li>--
+                                                </ul>
+                                            </div>
+                                        </td> -->
+                                    </tr>
+
+                                </tbody>
+                                {{/each}}
+                            </table>
+                            <h6 class="text-center" id="notFound"></h6>
+                        </div>
                     </div>
                 </div>
-            </footer>
-            <!-- End of Footer -->
+
+            </div>
+            <!-- /.container-fluid -->
 
         </div>
-        <!-- End of Content Wrapper -->
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+
+                </div>
+            </div>
+        </footer>
+        <!-- End of Footer -->
 
     </div>
-    <!-- End of Page Wrapper -->
+    <!-- End of Content Wrapper -->
 
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
+</div>
+<!-- End of Page Wrapper -->
 
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="/admin/adminLogout">Logout</a>
-                </div>
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Logout Modal-->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" href="/admin/adminLogout">Logout</a>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="/jquery/jquery.min.js"></script>
-    <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap core JavaScript-->
+<script src="/jquery/jquery.min.js"></script>
+<script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Core plugin JavaScript-->
-    <script src="/jquery-easing/jquery.easing.min.js"></script>
+<!-- Core plugin JavaScript-->
+<script src="/jquery-easing/jquery.easing.min.js"></script>
 
-    <!-- Custom scripts for all pages-->
-    <script src="/js/sb-admin-2.min.js"></script>
+<!-- Custom scripts for all pages-->
+<script src="/js/sb-admin-2.min.js"></script>
 
-    <!-- Page level plugins -->
-    <script src="/datatables/jquery.dataTables.min.js"></script>
-    <script src="/datatables/dataTables.bootstrap4.min.js"></script>
+<!-- Page level plugins -->
+<script src="/datatables/jquery.dataTables.min.js"></script>
+<script src="/datatables/dataTables.bootstrap4.min.js"></script>
 
-    <!-- Page level custom scripts -->
-    <script src="/js/demo/datatables-demo.js"></script>
+<!-- Page level custom scripts -->
 
-    <script>
-        function changeStat(orderid, orderStat) {
 
-            $.ajax({
-                url: '/admin/changeStatus',
-                data: {
-                    orderId: orderid,
-                    orderStatus: orderStat
-                },
-                method: 'post',
-                success: (function (response) {
-                    if (response.removeProduct) {
-                        //alert("Status changed")
-                        location.reload()
-                    }
-                    else {
-                        location.reload()
-                    }
-                })
+<script>
+    function changeStat(orderid, orderStat) {
+
+        $.ajax({
+            url: '/admin/changeStatus',
+            data: {
+                orderId: orderid,
+                orderStatus: orderStat
+            },
+            method: 'post',
+            success: (function (response) {
+                if (response.removeProduct) {
+                    //alert("Status changed")
+                    location.reload()
+                }
+                else {
+                    location.reload()
+                }
             })
-        }
-    </script>
+        })
+    }
+</script>
+
+<script>
+    function getStatus(status) {
+        $('#notFound').empty()
+        $.ajax({
+            url: 'findTheOrder?status=' + status,
+            method: 'get',
+            success: (function (response) {
+                if (response.orderNotfound) {
+                    $('#productsTable').empty();
+                    $('#productsTable').append(`
+                <thead>
+                    <tr>
+                        <th>Order Id</th>
+                        <th>Customer</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Order Date</th>
+                        <th>Payment Method</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                `)
+                $('#notFound').append(`Not Found`)
+                }
+                else {
+                    
+                    //alert(response[0].userName)
+                    //response.reverse()
+                    $('#productsTable').empty();
+                    $('#productsTable').append(`
+                <thead>
+                    <tr>
+                        <th>Order Id</th>
+                        <th>Customer</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Order Date</th>
+                        <th>Payment Method</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                `)
+                    for (var i = 0; i < response.length; i++) {
+                        let status = '';
+                        if (response[i].status == 1) {
+                            status = `<h6 class="text-success" ></h6>
+                                Placed</h6>`}
+                        if (response[i].status == 2) {
+                            status = `<h6 class="text-warning" ></h6>
+                                Pending</h6>`}
+                        if (response[i].status == 3) {
+                            status = `<h6 class="text-info" ></h6>
+                                Returned</h6>`}
+                        if (response[i].status == 4) {
+                            status = `<h6 class="text-danger" ></h6>
+                                Cancelled</h6>`}
+                        if (response[i].status == 5) {
+                            status = `<h6 class="text-primary" ></h6>
+                                Delivered</h6>`}
+
+
+                        $('#productsTable').append(` <tbody>
+                <tr>
+                    <td><a href="/admin/showOrderDetail/${response[i]._id}" class="text-decoration-none">
+                            <h6 class="text-primary">${response[i]._id}</h6>
+                        </a></td>
+                    <td>${response[i].userName}</td>
+                    <td>${response[i].quantity}</td>
+                    <td>${response[i].totalAmount}</td>
+                    <td>${response[i].date}</td>
+                    <td>${response[i].paymentMethod}</td>
+                    <td>
+                        <div>
+                            ${status}
+                        </div>
+                    </td>
+                    
+                </tr>
+
+            </tbody>`)
+                    }
+                }
+            })
+        })
+    }
+</script>

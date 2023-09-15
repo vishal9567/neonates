@@ -1,0 +1,77 @@
+<section class="h-100 h-custom" style="background-color: #ffffff;" id="proDiv">
+  <div class="container py-5 " style="width: 60vw;">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-12">
+        <div class="card card-registration card-registration-2" style="border-radius: 15px;">
+          <div class="card-body p-0">
+            <div class="row g-0">
+              <div class="col-lg-8">
+                <div class="p-5">
+                  <div class="d-flex justify-content-between align-items-center mb-5">
+                    <h1 class="fw-bold mb-0 " style="color: rgb(236,79,162);">Wishlist</h1>
+                  </div>
+                  <hr class="my-4">
+                  {{#if wishlisEmpty}}<h3>Wishlist is empty...</h3>{{/if}}
+                  {{#each user.wishlist}}
+                  <div class="row mb-4 d-flex justify-content-between align-items-center" >
+                    <div class="col-md-2 col-lg-2 col-xl-2">
+                      <img src="/images/{{this.image}}" class="img-fluid rounded-3" alt="Cotton T-shirt">
+                    </div>
+                    <div class="col-md-3 col-lg-3 col-xl-3">
+                      <h6 class="text-muted">{{this.productname}}</this>
+                      </h6>
+                      <h6 class="text-black mb-0">{{this.brandname}}</h6>
+                    </div>
+                    <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                   
+                      
+                      <!-- <input id="{{this._id}}" min="0" name="quantity" value="{{this.quantity}}" type="number" style="width: 30px; border-radius:3px; height:35px"/> -->
+                      <span id="{{this.product._id}}">{{this.quantity}}</span>
+                       
+
+                     
+                    </div>
+                    <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                      <h6 class="mb-0">&#x20b9;{{this.price}}</h6>
+                      <h6 id="{{this.product._id}}2" class="pt-1"></h6>
+                    </div>
+                    <button class="col-md-1 col-lg-1 col-xl-1 text-end" data-mdb-toggle="tooltip" title="Back to cart" style="border: none; background-color:white">
+                      <i class="fas fa-long-arrow-alt-left text-success" onclick="backToCart('{{this.productId}}')"></i>
+                    </button>
+                  </div>
+
+                  <hr class="my-4">
+
+                  {{/each}}
+                  <div class="pt-5">
+                    <h6 class="mb-0"><a href="/landing/1" class="text-body"><i
+                          class="fas fa-long-arrow-alt-left me-2 text-success"></i>Back to shop</a></h6>
+                  </div>
+                </div>
+              </div>
+            
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+  
+
+<script>
+  function backToCart(proId){
+      $.ajax({
+      url:'/backToCart?proId='+proId,
+      method:'get',
+      success:(function(response){
+          $('#proDiv').load("wishlist")
+        
+      })
+    })
+  }
+</script>
+

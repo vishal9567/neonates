@@ -34,15 +34,25 @@ router.get('/addToCart/:id', sessionCheck.userAuth, redirect.addToCart)
 router.get('/cart', sessionCheck.userAuth, render.getCart)
 router.get('/proceedToCkeckOut',sessionCheck.userAuth,render.proceedToCheckOut)
 
+//--------======whishlist=====-----//
+router.get('/addToWhishlist', sessionCheck.userAuth, redirect.addToWhishlist)
+router.get('/wishlist',sessionCheck.userAuth,mongoMiddleware.userData,render.showWishlist)
+router.get('/backToCart',sessionCheck.userAuth,mongoMiddleware.userData,redirect.backToCart)
+
 //--------=======address section=====---------//
 router.get('/addAddress2',sessionCheck.userAuth,render.addAdddress2)
 
 //--------=======user dashboard=======-----//
 router.get('/showProducts/:id',sessionCheck.userAuth,cartCount.cartCount,render.showProductsForuser)
-router.get('/userDashBoard',sessionCheck.userAuth,cartCount.cartCount,render.userDashboard)
+router.get('/userDashBoard',sessionCheck.userAuth,mongoMiddleware.userData,cartCount.cartCount,render.userDashboard)
 router.get('/userOrderList',sessionCheck.userAuth,cartCount.cartCount,render.userOrderList)
 router.get('/addressBook',sessionCheck.userAuth,mongoMiddleware.userData,cartCount.cartCount,render.addressBook)
+router.get('/wallet',sessionCheck.userAuth,mongoMiddleware.userData,redirect.wallet)
+router.get('/findOrder',sessionCheck.userAuth,render.filterOrder)
 
+//-------========coupon============--------//
+router.get('/getCoupon',sessionCheck.userAuth,redirect.getCoupon)
+router.get('/findCouponForCart',sessionCheck.userAuth,redirect.findCouponForCart)
 
 
 //!------------------------------------------------------------------post---------------------------------------------------------//
@@ -62,7 +72,7 @@ router.post('/addUserFormSubmit',sessionCheck.userAuth, redirect.addUserFormSubm
 router.post('/deleteCartItem',sessionCheck.userAuth,redirect.deleteCartItem)
 
 //=======order management==============//
-router.post('/placeOrder',sessionCheck.userAuth,redirect.getOrderDetails)
+router.post('/placeOrder',sessionCheck.userAuth,mongoMiddleware.userData,redirect.getOrderDetails)
 router.post('/cancelOrder',sessionCheck.userAuth,redirect.cancelOrder)
 
 //=======address management===========//

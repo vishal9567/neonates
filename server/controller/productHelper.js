@@ -79,4 +79,21 @@ module.exports = {
             }
         })
     },
+    checkInventry:(id)=>{
+        try{
+            return new Promise(async(resolve,reject)=>{
+                let pro=await productDb.findOne({_id:id}).lean()
+                if(pro.quantity<=0){
+                    resolve({productEmpty:true})
+                }
+                else{
+                    console.log(pro.quantity);
+                    resolve()
+                }
+            })
+        }
+        catch(err){
+            throw new Error(err)
+        }
+    }
 }

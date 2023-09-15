@@ -12,14 +12,14 @@ module.exports = {
       quantity: 1
     }
     return new Promise(async (resolve, reject) => {
-      console.log(userId, "addtocart");
+      ///console.log(userId, "addtocart");
       try {
         let userCart = await Cart.findOne({ user: userId });
         if (userCart) {
-          console.log(userCart, "usercart");
+          ////console.log(userCart, "usercart");
           try {
             const proExist = userCart.products.some(product => product.item.toString() === proId.toString());
-            console.log(proExist, "proexisst");
+           //// console.log(proExist, "proexisst");
 
             if (proExist) {
 

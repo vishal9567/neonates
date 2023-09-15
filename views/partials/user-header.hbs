@@ -83,16 +83,18 @@
 
 <script>
   $("#myCart").on('click', function () {
-      alert("Please log in or sign up")
+    alert("Please log in or sign up")
   });
 </script>
 <script>
   function searchProduct() {
     let x = document.getElementById('searchPro')
-    if (x.style.display === "none")
+    if (x.style.display === "none") {
       x.style.display = "flex"
-    else
-      x.style.display = "none"
+    }
+    else if (x.style.display === 'flex') {
+      x.style.display = 'none'
+    }
   }
 </script>
 <script>

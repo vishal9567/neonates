@@ -38,15 +38,12 @@ exports.landing = async (req, res) => {
                             res.render('user/secondLanding', { signup: true, product, category, user, page, perPage, pages })
                             req.session.searchPro = null;
                         }
-    
+
                     })
                 }
             })
         })
         .catch((err) => {
-            // res.status(500).send({
-            //     message: err.message || "Error Occurred while retriving"
-            // })
             res.render('user/errorPage')
         })
 
@@ -161,7 +158,7 @@ exports.home = async (req, res) => {
                 TotalQuantity = 0;
             }
             res.render('user/home', { signup: true, product, category, user, TotalQuantity, page, perPage, pages })
-         
+
         })
     })
 }
@@ -233,18 +230,19 @@ exports.addAddress = (req, res) => {                                     //*====
         res.render('user/errorPage', { error: err })
     })
 }
-exports.proceedToCheckOut = (req, res) => {                                      //*========next stage of checkout is done using the user id fetching the cart details using session=====//
+exports.proceedToCheckOut = async (req, res) => {                                      //*========next stage of checkout is done using the user id fetching the cart details using session=====//
+    console.log("this is query:", req.query);
+    if (req.query.coupon) {
+        await coupenController.pushUserToCoupon(req.query)
+    }
     let userId = req.session.userId
     let user = req.session.user
-    if (userId.address) {                                                   //*========here will show html error while logout the session because id is neccessary, need to improve this stage====//
-        console.log(userId.address);
-        //got the next stage of check out
-        ////let userId = req.session.userId
+    let discountDetail = req.query;
+    if (userId.address) {                                                   
         let cartItem = req.session.cartItem
         let priceAndTotalCount = req.session.grandTotal[0]
         let addressZero = false;
         let addressOne = false;
-        console.log(userId.address.length);
         if (userId.address.length === 0) {
             addressZero = true;
         }
@@ -266,12 +264,10 @@ exports.proceedToCheckOut = (req, res) => {                                     
             else {
                 TotalQuantity = 0;
             }
-            console.log(arr[0].country);
             for (let i = 0; i < result[0].address.length; i++) {
                 address = result[0].address[i]
-
             }
-            res.render('user/checkOut', { signup: true, userId, arr, cartItem, priceAndTotalCount, addressZero, addressOne, user, TotalQuantity })
+            res.render('user/checkOut', { signup: true, userId, arr, cartItem, priceAndTotalCount, addressZero, addressOne, user, TotalQuantity, discountDetail })
         }).catch(err => {
             res.render('user/errorPage', { error: err })
         })
@@ -306,7 +302,8 @@ exports.showProductsForuser = (req, res) => {               //*-------========sh
     })
 }
 exports.userDashboard = (req, res) => {                   //*-------=========user account========------------//
-    let user = req.session.userId
+    let user = req.session.userDatas[0]
+    console.log(user);
     //let cart=req.session.grandTotal
     let TotalQuantity = 0;
     if (req.session.grandTotal) {
@@ -338,6 +335,19 @@ exports.userOrderList = (req, res) => {                 //*-----=========display
         res.render('user/errorPage', { error: err })
     })
 }
+exports.filterOrder = (req, res) => {
+    let user = req.session.userId
+    if (req.query.status == 2) {
+        console.log(req.query);
+
+    }
+    orderController.filterOrder(user._id, req.query.status).then((order) => {
+        console.log(order);
+        res.json(order)
+    }).catch(err => {
+        res.render('user/errorPage')
+    })
+}
 exports.addressBook = (req, res) => {
     let user = req.session.user
     let userData = req.session.userDatas[0].address
@@ -351,12 +361,17 @@ exports.addressBook = (req, res) => {
     }
     let addressOne = false;
     let addresszero = false;
-    if (userData.length === 1) {
-        addressOne = true;
+    if (userData) {
+        if (userData.length === 1) {
+            addressOne = true;
+        }
+        else if (userData.length === 0) {
+            addresszero = true
+        }
     }
-    else if (userData.length === 0) {
-        addresszero = true
-    }
+    else
+        addresszero = true;
+
     res.render('user/addressBook', { user, signup: true, userData, addressOne, addresszero, TotalQuantity, userDetail })
 }
 exports.editAddress = (req, res) => {
@@ -369,6 +384,15 @@ exports.editAddress = (req, res) => {
         .catch(err => {
             res.render('user/errorPage')
         })
+}
+exports.showWishlist = (req, res) => {
+    let user = req.session.userDatas[0]
+    if (user.wishlist) {
+        res.render('user/wishlist', { user })
+    }
+    else {
+        res.render('user/wishlist', { wishlisEmpty: true })
+    }
 }
 
 
@@ -384,9 +408,6 @@ exports.homerout = (req, res) => {
             res.render('admin/dashboard', { category })
         })
             .catch((err) => {
-                // res.status(500).send({
-                //     message: err.message || "Error Occurred while retriving"
-                // })
                 res.render('user/errorPage')
             })
     }
@@ -394,17 +415,11 @@ exports.homerout = (req, res) => {
         res.render('admin/adminLogin')
 }
 
-// exports.productlist=(req,res)=>{
-//    res.render('admin/productlist')
-// }
 exports.addproducts = (req, res) => {
     categoryController.findCategory().then(category => {
         res.render('admin/addProduct', { addProductPage: true, category })
     })
         .catch(err => {
-            // res.status(500).send({
-            //     message: err.message || "Error Occurred while retriving"
-            // })
             res.render('user/errorPage')
         })
 
@@ -433,25 +448,25 @@ exports.categoryList = (req, res) => {
     })
 }
 exports.orderListTable = (req, res) => {
-    // orderController.getOrderDetailsForAdmin().then(orderData=>{
-    //     console.log(orderData);
-    //     res.render('admin/orderList',{orderData})
-    // })
     orderController.getOrderForTable().then(order => {
-        console.log('this is order', order);
-        res.render('admin/orderList', { order })
+        categoryController.findCategory().then(category => {
+            res.render('admin/orderList', { order, category })
+        })
     }).catch(err => {
         res.render('user/errorPage', { error: err })
     })
 }
 exports.coupenList = (req, res) => {
     coupenController.getCoupen().then(coupen => {
-        if (coupen) {
-            res.render('admin/coupenList', { coupen })
-        }
-        else {
-            res.render('admin/coupenList', { nocoupen: coupen.notCoupen })
-        }
+        categoryController.findCategory().then(category => {
+
+            if (coupen) {
+                res.render('admin/coupenList', { coupen, category })
+            }
+            else {
+                res.render('admin/coupenList', { nocoupen: coupen.notCoupen })
+            }
+        })
     }).catch(err => {
         res.render('user/errorPage')
     })
@@ -481,9 +496,17 @@ exports.showOrderDetail = (req, res) => {
             else {
                 TotalQuantity = 0;
             }
-            res.render('user/orderDetails', { data, category, TotalQuantity })
+            res.render('admin/orderDetail', { data, category, TotalQuantity })
         })
     }).catch(err => {
         res.render('user/errorPage', { error: err, isUser: true })
+    })
+}
+exports.filterOrderForAdmin = (req, res) => {
+    orderController.filterOrderForAdmin(req.query.status).then((order) => {
+        //console.log(order);
+        res.json(order)
+    }).catch(err => {
+        res.render('user/errorPage')
     })
 }

@@ -1,4 +1,4 @@
-<section style="margin-top: 150px;">
+<section style="margin-top: 150px;" id="orderDiv">
     <div class="container" style="margin-top: 30px;">
         <!-- <form action="/admin/searchUser" method="post">
             <div class="input-group mb-4">
@@ -12,6 +12,18 @@
         {{#if searchFailed}}
         <center class="text-danger bg-warning">No such entry</center>
         {{/if}}-->
+        <div class="dropdown mb-3">
+            <button type="button" class="btn dropdown-toggle btn btn-primary" data-bs-toggle="dropdown">
+                Filter Order
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" onclick="getStatus(1)">Placed</a></li>
+                <li><a class="dropdown-item" onclick="getStatus(2)">Pending</a></li>
+                <li><a class="dropdown-item" onclick="getStatus(3)">Returned</a></li>
+                <li><a class="dropdown-item" onclick="getStatus(4)">Cancelled</a></li>
+                <li><a class="dropdown-item" onclick="getStatus(5)">Delivered</a></li>
+            </ul>
+        </div>
         <table class="table table-bordered text-center" id="productsTable">
             <thead style="background-color: rgb(236,79,162)">
                 <tr>
@@ -44,19 +56,44 @@
                     <td>{{this.paymentMethod}}</td>
                     <td>
                         <div>
-                            {{#if this.cancelStatus}}<h6 {{#if this.status}} class="text-success" {{else}} class="text-warning" {{/if}}>{{#if
-                                this.status}}Placed{{else}}Pending{{/if}}</h6>{{else}} <h6 class="text-danger">Cancelled</h6>{{/if}}
+                            {{#if (compare this.status '==' 1)}}<h6 class="text-success">
+                            Placed</h6>
+
+                            </h6>{{/if}}
+                            {{#if (compare this.status '==' 2)}}<h6 class="text-warning">
+                                Pending</h6>
+
+                            </h6>{{/if}}
+                            {{#if (compare this.status '==' 3)}}<h6 class="text-primary">
+                                Returned</h6>
+
+                            </h6>{{/if}}
+                            {{#if (compare this.status '==' 4)}}<h6 class="text-danger">
+                                Cancelled</h6>
+
+                            </h6>{{/if}}
+                            {{#if (compare this.status '==' 5)}}<h6 class="text-primary">
+                                Delivered</h6>
+
+                            </h6>{{/if}}
                         </div>
                     </td>
                     <td>
                         <div class="dropdown">
                             <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
-                            
+
                             </button>
                             <ul class="dropdown-menu">
-                                <li><button class="dropdown-item" onclick="cancelOrder('{{this._id}}','{{this.cancelStatus}}')">{{#if cancelStatus}}Cancel Order{{else}}Place order{{/if}}</button></li>
+                                {{#if (compare this.status '!=' 5 )}}{{#if (compare this.status '!=' 4)}}{{#if (compare this.status '!=' 3)}}<li><button class="dropdown-item"
+                                        onclick="cancelOrder('{{this._id}}','{{this.status}}','{{this.paymentMethod}}')">
+                                        Cancel Order</button>
+                                </li>{{/if}}{{/if}}{{/if}}
+                                {{#if (compare this.status '==' 5)}}<li><button class="dropdown-item"
+                                        onclick="cancelOrder('{{this._id}}','{{this.status}}','{{this.paymentMethod}}')">
+                                        Return</button>
+                                </li>{{/if}}
                                 <li><a class="dropdown-item" href="/showProducts/{{this._id}}">Order Details</a></li>
-                                <li><a class="dropdown-item" href="#">Link 3</a></li>
+
                             </ul>
                         </div>
                     </td>
@@ -65,32 +102,136 @@
             </tbody>
             {{/each}}
         </table>
+        <h6 class="text-center" id="notFound"></h6>
 
     </div>
     <div class="container d-flex justify-content-end">
-        <sub class="fas fa-long-arrow-alt-left me-2 text-success"></sub><a class="text-dark " href="/userDashBoard">Back to account</a>
+        <sub class="fas fa-long-arrow-alt-left me-2 text-success"></sub><a class="text-dark " href="/userDashBoard">Back
+            to account</a>
     </div>
 </section>
 
-    <script>
-        function cancelOrder(orderid, orderStat) {
+<script>
+    function cancelOrder(orderid, orderStat, paytype) {
 
-            $.ajax({
-                url: '/cancelOrder',
-                data: {
-                    orderId:orderid,
-                    orderStatus:orderStat
-                },
-                method: 'post',
-                success: (function (response) {
-                    if (response.removeProduct) {
-                        alert("Status changed")
-                        location.reload()
-                    }
-                    else {
-                        location.reload()
-                    }
-                })
+        $.ajax({
+            url: '/cancelOrder',
+            data: {
+                orderId: orderid,
+                orderStatus: orderStat,
+                payType: paytype
+            },
+            method: 'post',
+            success: (function (response) {
+                if (response.removeProduct) {
+                    // alert("Status changed")
+                    location.reload()
+                    // $('#orderDiv').load("userOrderList")
+                }
+                else {
+                    location.reload()
+                    // $('#orderDiv').load("userOrderList")
+                }
             })
-        }
-    </script>
+        })
+    }
+</script>
+<script>
+    function getStatus(status) {
+        $('#notFound').empty()
+        $.ajax({
+            url: 'findOrder?status=' + status,
+            method: 'get',
+            success: (function (response) {
+                if (response.orderNotfound) {
+                    $('#productsTable').empty();
+                    $('#productsTable').append(`
+                <thead style="background-color: rgb(236,79,162)">
+                    <tr>
+                        <th>Order</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Order Date</th>
+                        <th>Payment Method</th>
+                        <th>Order Status</th>
+                        <th>Options</th>
+                    </tr>
+                </thead>
+                `)
+                $('#notFound').append(`Not Found`)
+                }
+                else {
+                    
+                    //alert(response[0].userName)
+                    //response.reverse()
+                    $('#productsTable').empty();
+                    $('#productsTable').append(`
+                <thead style="background-color: rgb(236,79,162)">
+                    <tr>
+                        <th>Order</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Order Date</th>
+                        <th>Payment Method</th>
+                        <th>Order Status</th>
+                        <th>Options</th>
+                    </tr>
+                </thead>
+                `)
+                    for (var i = 0; i < response.length; i++) {
+                        let status = '';
+                        if (response[i].status == 1) {
+                            status = `<h6 class="text-success" ></h6>
+                                Placed</h6>`}
+                        if (response[i].status == 2) {
+                            status = `<h6 class="text-warning" ></h6>
+                                Pending</h6>`}
+                        if (response[i].status == 3) {
+                            status = `<h6 class="text-primary" ></h6>
+                                Returned</h6>`}
+                        if (response[i].status == 4) {
+                            status = `<h6 class="text-danger" ></h6>
+                                Cancelled</h6>`}
+                        if (response[i].status == 5) {
+                            status = `<h6 class="text-primary" ></h6>
+                                Delivered</h6>`}
+
+
+                        $('#productsTable').append(` <tbody>
+                <tr style="background-color: rgb(242, 197, 210);">
+                    <td><a href="/showProducts/${response[i]._id}" class="text-decoration-none">
+                            <h6 class="text-primary">${response[i]._id}</h6>
+                        </a></td>
+                    <td>${response[i].quantity}</td>
+                    <td>${response[i].totalAmount}</td>
+                    <td>${response[i].date}</td>
+                    <td>${response[i].paymentMethod}</td>
+                    <td>
+                        <div>
+                            ${status}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="dropdown">
+                            <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
+
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><button class="dropdown-item"
+                                        onclick="cancelOrder('${response[i]._id}','${response.status}','${response[i].paymentMethod}')">
+                                        Cancel Order</button>
+                                </li>
+                                <li><a class="dropdown-item" href="/showProducts/${response[i]._id}">Order Details</a></li>
+
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+
+            </tbody>`)
+                    }
+                }
+            })
+        })
+    }
+</script>

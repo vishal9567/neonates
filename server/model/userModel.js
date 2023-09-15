@@ -41,7 +41,32 @@ var userSchema=new mongoose.Schema({
                 type:Number
             }
         }
-    ]
+    ],
+    wishlist:[
+        {
+            productId:{
+                type:mongoose.Schema.Types.ObjectId
+            },
+            productname:{
+                type:String
+            },
+            brandname:{
+                type:String
+            },
+            image:{
+                type:String
+            },
+            price:{
+                type:Number
+            }
+        }
+    ],
+    wallet:{
+        type:Number
+    },
+    referalCode:{
+        type:String
+    }
 })
 const Userdb=mongoose.model('users',userSchema);
 module.exports=Userdb;

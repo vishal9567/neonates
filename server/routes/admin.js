@@ -31,6 +31,8 @@ router.get('/adminLogout',redirect.logout);
 //----order list----
 router.get('/orderListTable',sessionCheck.auth,services.orderListTable)
 router.get('/showOrderDetail/:id',sessionCheck.auth,services.showOrderDetail)
+router.get('/findTheOrder',sessionCheck.auth,services.filterOrderForAdmin)
+router.get('/updateStatus',sessionCheck.auth,redirect.updateStatus)
 //----coupen list---
 router.get('/coupenList',sessionCheck.auth,services.coupenList)
 router.get('/createCouponPage',sessionCheck.auth,services.createCouponPage)
@@ -44,7 +46,7 @@ router.post('/addProduct',upload.array('image', 2),sessionCheck.auth,productCont
 router.post('/updateProduct/:id',upload.array('image',2),sessionCheck.auth,productController.update)
 router.post('/adminLogin',adminController.findone)
 router.post('/addToCategory',sessionCheck.auth,redirect.addToCategory)
-router.post('/changeStatus',sessionCheck.auth,redirect.changeStatus)
+router.post('/changeStatus',sessionCheck.auth,redirect.changeStatus) //!-------check-------
 //--coupon management----
 router.post('/submitCoupon',sessionCheck.auth,redirect.createCoupon)
 router.post('/submitUpdate/:id',sessionCheck.auth,redirect.editCoupon)

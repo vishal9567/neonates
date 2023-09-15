@@ -3,9 +3,8 @@ const mongoose = require('mongoose')
 
 module.exports = {
     createCoupen: (data) => {                                                      //*--------==create coupen. checking the unique coupen then insert it---===//
-        // console.log(data);
-        // let date=new Date(data.expiry).toISOString()
-        // console.log(date,"this is date");
+        let dis=parseInt(data.discount);
+        let min=parseInt(data.minimum);
         try {
             let coupenName = (data.coupenName).toUpperCase();
             return new Promise(async (resolve, reject) => {
@@ -16,8 +15,9 @@ module.exports = {
                 else {
                     let doc = await coupenDb.collection.insertOne({
                         coupenName: coupenName,
-                        discount: data.discount,
-                        expiry: data.expiry
+                        discount: dis,
+                        expiry: data.expiry,
+                        minimum: min
                     }).then(result => {
                         resolve(result)
                     }).catch(err => {
@@ -99,6 +99,62 @@ module.exports = {
         }
         catch (err) {
             throw new Error(err);
+        }
+    },
+    getCouponForCart:(price)=>{
+        let amount=parseInt(price)
+        try{
+            return new Promise(async(resolve,reject)=>{
+                let coupon=await coupenDb.find({minimum:{$lte:amount}}).lean()
+                if(coupon){
+                    resolve(coupon)
+                }
+                else
+                    resolve({noCoupon:true})
+            })
+        }
+        catch(err){
+            throw new Error(err)
+        }
+    },
+    findCouponForCart:(data)=>{
+        try{
+            return new Promise(async(resolve,reject)=>{
+                let doc=await coupenDb.findOne({$and:[{"coupenName" : data.coupon},{user:{$elemMatch:{"userId" : data.userId}}}]})
+                if(doc){
+                    console.log('this is doc',doc.user[0].userId);
+                    resolve({used:true})
+                }
+                else{
+                    await coupenDb.findOne({coupenName:data.coupon}).lean().then(data=>{
+                        resolve(data)
+                    })
+                }  
+            })
+        }
+        catch(err){
+            throw new Error(err)
+        }
+    },
+    pushUserToCoupon:(data)=>{
+        let obj={
+            userId:data.userId
+        }
+        try{
+            return new Promise(async(resolve,reject)=>{
+                let doc=await coupenDb.findOne({$and:[{"coupenName" : data.coupon},{user:{$elemMatch:{"userId" : data.userId}}}]})
+                if(doc){
+                    resolve()
+                }
+                else{
+                    await coupenDb.updateOne({coupenName:data.coupon},{$push:{user:obj}}).then(()=>{
+                        resolve()
+                    })  
+                }  
+            })
+        }
+        catch(err){
+            throw new Error(err)
         }
     }
 }

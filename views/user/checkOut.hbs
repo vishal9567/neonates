@@ -78,6 +78,12 @@
                   <p>Razorpay</p>
                   <label for="Razorpay"><img src="/img/razorpay.svg" alt="" style="width: 80px;"></label>
                 </div>
+                <div class="ps-4 col-lg-4 mb-3">
+                  <input class="form-check-input getPayType" type="radio" id="wallet" name="brand" value="wallet">
+                  <p>Use Wallet</p>
+                  <label for="wallet"><img src="/img/icons8-wallet-48.png" alt="" style="width: 55px;"></label>
+                  <span class="text-primary ms-3 btn btn-warning" onclick="wallet()">View</span>
+                </div>
               </div>
             </div>
 
@@ -172,7 +178,7 @@
             </div>-->
 
             <div class="float-end">
-              <a href="/userDashBoard" class="btn btn-info me-5">Dashboard</a>
+
               <!-- <button class="btn btn-light border">Cancel</button> -->
               <button type="button" id="placeOrder" class="btn btn-success shadow-0 border">Place Order</button>
             </div>
@@ -189,7 +195,7 @@
           </div>
           <div class="d-flex justify-content-between">
             <p class="mb-2">Discount:</p>
-            <p class="mb-2 text-danger">- 0.00</p>
+            <p class="mb-2 text-danger">{{discountDetail.dis}}</p>
           </div>
           <div class="d-flex justify-content-between">
             <p class="mb-2">Shipping cost:</p>
@@ -198,7 +204,7 @@
           <hr />
           <div class="d-flex justify-content-between">
             <p class="mb-2">Total price:</p>
-            <p class="mb-2 fw-bold">&#x20b9;<span id="totalPrice">{{priceAndTotalCount}}</span></p>
+            <p class="mb-2 fw-bold">&#x20b9;<span id="totalPrice">{{discountDetail.total}}</span></p>
           </div>
 
           <!--<div class="input-group mt-3 mb-4">
@@ -273,6 +279,7 @@
     let addressId = $('.getAddress:checked').val();
     let paymentType = $('.getPayType:checked').val();
     let totalPrice = $('#totalPrice').text();
+    alert(totalPrice)
     $.ajax({
       url: '/placeOrder',
       data: {
@@ -285,17 +292,26 @@
         if (response.codSuccess) {
           Swal.fire({
             title: 'Order Placed Successfully!',
-            text: 'If you need to see the order go to dashboard',
+            text: 'If you need to view the order go to dashboard',
             icon: 'success',
             showConfirmButton: true,
-            confirmButtonText: "See order"
+            confirmButtonText: "View order"
           }).then(function () {
             window.location.href = "http://localhost:3000/userDashBoard"
 
           })
         }
+        else if (response.insufficientWallet) {
+          Swal.fire({
+            iconHtml: '<img src="/img/icons8-wallet-48.png">',
+            title: "Insufficient Wallet!",
+            showCancelButton: true,
+            showConfirmButton: false
+
+          })
+        }
         else {
-          alert("success")
+         // alert("success")
           razorPayment(response);
         }
       })
@@ -330,7 +346,7 @@
     rzp1.open();
   }
   function verifyPayment(payment, order) {
-    alert("cal comes")
+    //alert("cal comes")
     $.ajax({
       url: '/verifyPayment',
       data: {
@@ -338,17 +354,17 @@
         order
       },
       method: 'post',
-      success:(function (){
-            Swal.fire({
-            title: 'Order Placed Successfully!',
-            text: 'If you need to see the order go to dashboard',
-            icon: 'success',
-            showConfirmButton: true,
-            confirmButtonText: "See order"
-          }).then(function () {
-            window.location.href = "http://localhost:3000/userDashBoard"
+      success: (function () {
+        Swal.fire({
+          title: 'Order Placed Successfully!',
+          text: 'If you need to view the order go to dashboard',
+          icon: 'success',
+          showConfirmButton: true,
+          confirmButtonText: "View order"
+        }).then(function () {
+          window.location.href = "http://localhost:3000/userDashBoard"
 
-          })
+        })
       })
     })
   }
@@ -357,5 +373,37 @@
   window.history.forward();
   function noBack() {
     window.history.forward();
+  }
+</script>
+<script>
+  function wallet() {
+    $.ajax({
+      url: "/wallet",
+      method: 'get',
+      success: (function (response) {
+        if (response.wallet) {
+          Swal.fire({
+            iconHtml: '<img src="/img/icons8-wallet-48.png">',
+            text: response.name,
+            title: "Wallet: Rs." + response.wallet,
+            showCancelButton: true,
+            showConfirmButton: false
+
+          })
+        }
+        else {
+          Swal.fire({
+            iconHtml: '<img src="/img/icons8-wallet-48.png">',
+            title: response.name,
+            text: "Wallet: " + "Empty",
+            showCancelButton: true,
+            showConfirmButton: false
+
+          })
+        }
+
+      })
+    })
+
   }
 </script>

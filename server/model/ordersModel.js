@@ -20,10 +20,7 @@ const orederSchema = new mongoose.Schema({
         type:Array
     },
     status:{
-        type:Boolean
-    },
-    cancelStatus:{
-        type:Boolean
+        type:Number
     },
     quantity:{
         type:Number

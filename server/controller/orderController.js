@@ -17,10 +17,12 @@ module.exports = {
             try {
                 let stat;
                 if (deliveryDetail.payType === 'COD') {
-                    stat = true;
+                    stat = 1;
                 }
+                else if(deliveryDetail.payType === 'wallet')
+                    stat = 1;
                 else if (deliveryDetail.payType === 'Razorpay') {
-                    stat = false;
+                    stat = 2;
                 }
                 const date = new Date();
                 const day = date.getDate();                     //? Returns the day of the month (1-31)
@@ -33,10 +35,9 @@ module.exports = {
                     userName: user,
                     deliveryDetails: getAddress.address,
                     paymentMethod: deliveryDetail.payType,
-                    totalAmount: totalQty[0],
+                    totalAmount: deliveryDetail.total,
                     products: [...cartItem.products],
                     status: stat,
-                    cancelStatus: true,
                     quantity: totalQty[1],
                     date: createdOn,
                 }).then(result => {
@@ -60,6 +61,37 @@ module.exports = {
                 reject(err)
             }
         })
+    },
+    filterOrder:(id,status)=>{
+        try{
+            return new Promise(async(resolve,reject)=>{
+                let doc=await orderDb.find({$and:[{userid:new mongoose.Types.ObjectId(id)},{status:status}]}).lean()
+                if(doc[0]){
+                    resolve(doc)
+                }else{
+                    resolve({orderNotfound:true})
+                }
+            })
+        }
+        catch(err){
+            throw new Error(err)
+        }
+    },
+    filterOrderForAdmin:(status)=>{
+        console.log(status);
+        try{
+            return new Promise(async(resolve,reject)=>{
+                let doc=await orderDb.find({status:status}).lean()
+                if(doc[0]){
+                    resolve(doc)
+                }else{
+                    resolve({orderNotfound:true})
+                }
+            })
+        }
+        catch(err){
+            throw new Error(err)
+        }
     },
     getOrderDetails: (orderId) => {
         return new Promise(async (resolve, reject) => {
@@ -152,12 +184,12 @@ module.exports = {
         })
     },
     changeOrderStatus: (data, status) => {                                //*===========Block or Unblock order==================
-        if (status == "true") {
+        if (status == 1) {
             try {
                 return new Promise(async (resolve, reject) => {
                     let doc = await orderDb.updateOne({ _id: data }, {
                         $set: {
-                            status: false
+                            status: 2
                         }
                     }).then(result => {
                         resolve(result)
@@ -191,12 +223,13 @@ module.exports = {
 
     },
     cacelStatus: (data, status) => {                                //*===========cancel order==================
-        if (status == "true") {
+        console.log('this is status',status);
+        if (status == 1 || status == 2 ) {
             try {
                 return new Promise(async (resolve, reject) => {
                     let doc = await orderDb.updateOne({ _id: data }, {
                         $set: {
-                            cancelStatus: false
+                            status: 4
                         }
                     }).then(result => {
                         resolve(result)
@@ -209,12 +242,12 @@ module.exports = {
                 reject(err)
             }
         }
-        else if (status == "false") {
-            try {
-                return new Promise(async (resolve, reject) => {
+        else if(status == 5){
+            try{
+                return new Promise(async(resolve,reject)=>{
                     let doc = await orderDb.updateOne({ _id: data }, {
                         $set: {
-                            cancelStatus: true
+                            status: 3
                         }
                     }).then(result => {
                         resolve(result)
@@ -223,11 +256,42 @@ module.exports = {
                     })
                 })
             }
-            catch (err) {
-                reject(err)
+            catch(err){
+                throw new Erro(err)
             }
         }
+        // else if (status == "false") {
+        //     try {
+        //         return new Promise(async (resolve, reject) => {
+        //             let doc = await orderDb.updateOne({ _id: data }, {
+        //                 $set: {
+        //                     cancelStatus: true
+        //                 }
+        //             }).then(result => {
+        //                 resolve(result)
+        //             }).catch(err => {
+        //                 reject(err)
+        //             })
+        //         })
+        //     }
+        //     catch (err) {
+        //         reject(err)
+        //     }
+        // }
 
+    },
+    updateStatus:(id,status)=>{
+        let stat=parseInt(status)
+        try{
+            return new Promise(async(resolve,reject)=>{
+                await orderDb.updateOne({_id:id},{$set:{status:stat}}).then(()=>{
+                    resolve()
+                })
+            })
+        }
+        catch(err){
+            throw new Error(err)
+        }
     },
     generateRazorPay:(id,total)=>{
         try{
@@ -272,7 +336,7 @@ module.exports = {
         try{
             return new Promise(async(resolve,reject)=>{
                 let doc= await orderDb.updateOne({_id:id},{
-                    $set:{'status': true}
+                    $set:{'status': 1}
                 }).then(result=>{
                     resolve()
                 }).catch(err=>{
@@ -282,6 +346,20 @@ module.exports = {
         }
         catch(err){
             res.render('user/errorPage')
+        }
+    },
+    getSigleOrder:(id)=>{
+        try{
+            return new Promise(async(resolve,reject)=>{
+                await orderDb.findOne({_id:id}).lean().then(order=>{
+                    resolve(order)
+                }).catch(err=>{
+                    reject()
+                })
+            })
+        }
+        catch(err){
+            throw new Error(err)
         }
     }
 }

@@ -21,6 +21,10 @@
     <input type="date" id="form3Example3" class="form-control" name="expiry" {{#if updating}}value="{{coupon.expiry}}"{{/if}}/>
     <label class="form-label" for="form3Example3">Date</label>
   </div>
+  <div class="form-outline mb-4">
+    <input type="number" id="form3Example4" class="form-control" name="minimum" {{#if updating}}value="{{coupon.minimum}}"{{/if}}/>
+    <label class="form-label" for="form3Example4">Minimum Amount</label>
+  </div>
   {{#if coupenCheck}} <p>Already Exist</p>{{/if}}
 
   <!-- Password input -->
@@ -45,6 +49,7 @@
         let coupon = document.getElementById('form3Example1')
         let dis = document.getElementById('form3Example2')
         let ex = document.getElementById('form3Example3')
+        let min = document.getElementById('form3Example4')
 
         form.addEventListener('submit', validation)
 
@@ -56,6 +61,9 @@
                 e.preventDefault()
             }
             if (ex.value == "") {
+                e.preventDefault()
+            }
+            if (min.value == "") {
                 e.preventDefault()
             }
         }

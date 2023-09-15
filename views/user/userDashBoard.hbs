@@ -280,9 +280,10 @@
 
 
     /* Backgrounds */
-    #lihover:hover{
+    #lihover:hover {
         background-color: red;
     }
+
     .bg-purple {
         background-color: #55009b;
     }
@@ -362,7 +363,7 @@
 </style>
 
 
-<div class="container" style="margin-top: 150px;" >
+<div class="container" style="margin-top: 150px;">
     <div class="row">
         <div class="col-lg-3 my-lg-0 my-md-1">
             <div id="sidebar" class="bg-purple">
@@ -423,30 +424,46 @@
                     <div>Logged in as: {{user.Email}}</div>
                 </div>
                 <div class="d-flex my-4 flex-wrap">
-                    <a href="/userOrderList" class="text-decoration-none"><div class="box me-4 my-1 bg-light">
-                        <img src="https://www.freepnglogos.com/uploads/box-png/cardboard-box-brown-vector-graphic-pixabay-2.png"
-                            alt="">
-                        <div class="d-flex align-items-center mt-2">
-                            <div class="tag">Orders placed</div>
-                            <div class="ms-auto number text-dark">{{orderCount}}</div>
+                    <a href="/userOrderList" class="text-decoration-none">
+                        <div class="box me-4 my-1 bg-light">
+                            <img src="https://www.freepnglogos.com/uploads/box-png/cardboard-box-brown-vector-graphic-pixabay-2.png"
+                                alt="">
+                            <div class="d-flex align-items-center mt-2">
+                                <div class="tag">Orders placed</div>
+                                <div class="ms-auto number text-dark">{{orderCount}}</div>
+                            </div>
                         </div>
-                    </div></a>
-                    <a href="/cart" class="text-decoration-none"><div class="box me-4 my-1 bg-light">
-                        <img src="https://www.freepnglogos.com/uploads/shopping-cart-png/shopping-cart-campus-recreation-university-nebraska-lincoln-30.png"
-                            alt="">
-                        <div class="d-flex align-items-center mt-2">
-                            <div class="tag">Items in Cart</div>
-                            <div class="ms-auto number text-dark">{{TotalQuantity}}</div>
+                    </a>
+                    <a href="/cart" class="text-decoration-none">
+                        <div class="box me-4 my-1 bg-light">
+                            <img src="https://www.freepnglogos.com/uploads/shopping-cart-png/shopping-cart-campus-recreation-university-nebraska-lincoln-30.png"
+                                alt="">
+                            <div class="d-flex align-items-center mt-2">
+                                <div class="tag">Items in Cart</div>
+                                <div class="ms-auto number text-dark">{{TotalQuantity}}</div>
+                            </div>
                         </div>
-                    </div></a>
-                    <div class="box me-4 my-1 bg-light">
-                        <img src="https://www.freepnglogos.com/uploads/love-png/love-png-heart-symbol-wikipedia-11.png"
-                            alt="">
-                        <div class="d-flex align-items-center mt-2">
-                            <div class="tag">Wishlist</div>
-                            <div class="ms-auto number">10</div>
+                    </a>
+                    <a href="/wishlist" class="text-decoration-none">
+                        <div class="box me-4 my-1 bg-light">
+                            <img src="https://www.freepnglogos.com/uploads/love-png/love-png-heart-symbol-wikipedia-11.png"
+                                alt="">
+                            <div class="d-flex align-items-center mt-2">
+                                <div class="tag">Wishlist</div>
+                                <div class="ms-auto number text-dark">{{user.wishlist.length}}</div>
+                            </div>
                         </div>
-                    </div>
+                    </a>
+                    <a href="#" onclick="wallet()" class="text-decoration-none">
+                        <div class="box me-4 my-1 bg-light">
+                            <img src="/img/icons8-wallet-48.png" alt="">
+                            <div class="d-flex align-items-center mt-2">
+                                <div class="tag">Wallet</div>
+                                <div class="ms-auto number text-dark"></div>
+                            </div>
+                        </div>
+                    </a>
+
                 </div>
                 <!-- <div class="text-uppercase">My recent orders</div>
                 <div class="order my-3 bg-light">
@@ -552,3 +569,41 @@
     </div>
 
 </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+
+<script>
+    function wallet() {
+        $.ajax({
+            url: "/wallet",
+            method: 'get',
+            success: (function (response) {
+                if (response.wallet) {
+                    Swal.fire({
+                        iconHtml: '<img src="/img/icons8-wallet-48.png">',
+                        title: response.name,
+                        text: "Wallet: " + response.wallet,
+                        footer: 'Ref:- ' + response.referalCode,
+                        showCancelButton: true,
+                        showConfirmButton: false
+
+                    })
+                }
+                else {
+                    Swal.fire({
+                        iconHtml: '<img src="/img/icons8-wallet-48.png">',
+                        title: response.name,
+                        text: "Wallet: " + "Empty",
+                        showCancelButton: true,
+                        showConfirmButton: false
+
+                    })
+                }
+
+            })
+        })
+
+    }
+</script>

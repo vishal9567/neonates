@@ -1,3 +1,18 @@
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header " style="color: rgb(236,79,162);">
+        <h5 class="modal-title" id="exampleModalLabel">Your Coupons</h5>
+        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body"></div>
+      <!-- <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div> -->
+    </div>
+  </div>
+</div>
 <section class="h-100 h-custom" style="background-color: #d2c9ff;">
   <div class="container py-5 " style="width: 60vw;">
     <div class="row d-flex justify-content-center align-items-center h-100">
@@ -13,7 +28,7 @@
                   </div>
                   <hr class="my-4">
                   {{#if cartIsEmty}}<h1>Cart is empty</h1>{{/if}}
-                   {{#if productNotAvailable}}<h1><span>Oops!....</span>items not available</h1>{{/if}}
+                  {{#if productNotAvailable}}<h1><span>Oops!....</span>items not available</h1>{{/if}}
                   {{#each products}}
                   <div class="row mb-4 d-flex justify-content-between align-items-center">
                     <div class="col-md-2 col-lg-2 col-xl-2">
@@ -33,7 +48,7 @@
 
                       <!-- <input id="{{this._id}}" min="0" name="quantity" value="{{this.quantity}}" type="number" style="width: 30px; border-radius:3px; height:35px"/> -->
                       <span id="{{this.product._id}}">{{this.quantity}}</span>
-                       
+
 
                       <button class="btn btn-link px-2"
                         onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
@@ -47,7 +62,8 @@
                       <h6 id="{{this.product._id}}2" class="pt-1"></h6>
                     </div>
                     <button class="col-md-1 col-lg-1 col-xl-1 text-end" style="border: none; background-color:white">
-                      <i class="fas fa-times" onclick="deleteItem('{{this.product._id}}','{{this._id}}',{{this.quantity}})"></i>
+                      <i class="fas fa-times"
+                        onclick="deleteItem('{{this.product._id}}','{{this._id}}',{{this.quantity}})"></i>
                     </button>
                   </div>
 
@@ -66,40 +82,47 @@
                   <hr class="my-4">
 
                   <div class="d-flex justify-content-between mb-4">
-                    <h5 class="text-uppercase">{{totalCount}} Items</h5>
-                    <h5>&#x20b9; {{grandTotal}}</h5>
+                    <h5 class="text-uppercase pe-5">{{totalCount}} Items</h5>
+                    <span class="fw-bold">&#x20b9;</span><h5 id="totalPrice">{{grandTotal}}</h5>
                   </div>
 
                   <h5 class="text-uppercase mb-3">Shipping</h5>
-
                   <div class="mb-4 pb-2">
+                    <button class="btn btn-success" id="coupon" onclick="getCoupon({{grandTotal}})">Apply
+                      coupon</button>
+                  </div>
+                  <!-- <div class="mb-4 pb-2">
                     <select class="select">
                       <option value="1">Standard-Delivery- &#x20b9;10.00</option>
                       <option value="2">Two</option>
                       <option value="3">Three</option>
                       <option value="4">Four</option>
                     </select>
-                  </div>
+                  </div> -->
 
                   <h5 class="text-uppercase mb-3">Give code</h5>
 
                   <div class="mb-5">
                     <div class="form-outline">
-                      <input type="text" id="form3Examplea2" class="form-control form-control-lg" />
+                      <input type="text" id="form3Examplea2" onpaste="submitCoupon('{{grandTotal}}','{{products.[0].user}}')"
+                        class="form-control form-control-lg" name="coupon" />
                       <label class="form-label" for="form3Examplea2">Enter your code</label>
+                      <P id="hai"></P>
                     </div>
                   </div>
 
                   <hr class="my-4">
 
                   <div class="d-flex justify-content-between mb-5">
-                    <h5 class="text-uppercase">Total price</h5>
-                    <h5>&#x20b9; {{grandTotal}}</h5>
+                    <h5 class="text-uppercase pe-3">Total price</h5>
+                    <span class="fw-bold">&#x20b9;</span><h5 id="totalPrice1">{{grandTotal}}</h5>
                   </div>
 
-                  {{#if productNotAvailable}}<h6>Products not available</h6>{{else}}{{#if cartIsEmty}}<h6>Cart is empty</h6>{{else}}<a href="/proceedToCkeckOut" type="button" class="btn btn-block btn-lg text-uppercase" style="background-color: rgb(236,79,162); color: white"
-                    data-mdb-ripple-color="dark">Proceed to checkout</a>{{/if}}{{/if}}
-                  
+                  {{#if productNotAvailable}}<h6>Products not available</h6>{{else}}{{#if cartIsEmty}}<h6>Cart is empty
+                  </h6>{{else}}<a id="setattr" href="/proceedToCkeckOut?total={{grandTotal}}&dis=0" type="button" class="btn btn-block btn-lg text-uppercase"
+                    style="background-color: rgb(236,79,162); color: white" data-mdb-ripple-color="dark">Proceed to
+                    checkout</a>{{/if}}{{/if}}
+
 
                 </div>
               </div>
@@ -116,12 +139,14 @@
 </script>
 {{/each}}
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-  
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+
 
 <script>
   function changeQuantity(cartId, proId, count) {
-    let quantity=document.getElementById(proId).innerHTML//proId and this.product._id are same
+    let quantity = document.getElementById(proId).innerHTML//proId and this.product._id are same
 
     $.ajax({
       url: '/incItems/decItems',
@@ -129,41 +154,91 @@
         cart: cartId,
         product: proId,
         count: count,
-        quantity:quantity
+        quantity: quantity
       },
       method: 'post',
       success: (function (response) {
-        if(response.removeProduct){
+        if (response.removeProduct) {
           alert("Product Removed from cart")
           location.reload()
         }
-        else{
+        else {
           location.reload()
-          document.getElementById(proId).innerHTML=quantity 
+          document.getElementById(proId).innerHTML = quantity
         }
       })
     })
   }
 </script>
 <script>
-  function deleteItem(proId,cartId,count){
-    let ok=confirm("Do you want to remove this product")
-    if(ok){
+  function deleteItem(proId, cartId, count) {
+    let ok = confirm("Do you want to remove this product")
+    if (ok) {
       $.ajax({
-      url:'/deleteCartItem',
-      data:{
-        cart:cartId,
-        product:proId,
-        count:count
-      },
-      method:'post',
-      success:(function(response){
-        if(response.deleteProduct){
-          location.reload();
-        }
+        url: '/deleteCartItem',
+        data: {
+          cart: cartId,
+          product: proId,
+          count: count
+        },
+        method: 'post',
+        success: (function (response) {
+          if (response.deleteProduct) {
+            location.reload();
+          }
+        })
       })
-    })
-    }
+    } lea2
   }
 </script>
+<script>
+  function getCoupon(price) {
+    $.ajax({
+      url: 'getCoupon?price=' + price,
+      method: 'get',
+      success: (function (response) {
+        $('#exampleModal').modal('show')
+        $('#exampleModal').find('.modal-body').empty();
+        for (let i = 0; i < response.length; i++) {
+          $('#exampleModal').find('.modal-body').append(`<span><input class="fw-bold" style="border:none; color: green" id="${response[i].coupenName}" value="${response[i].coupenName}"></span><span><button style="border:none; background:none;" class="ms-2" onclick="copy('${response[i].coupenName}')"><img src="/img/icons8-copy-24 (1).png"></button></span><p class="fw-bold">Discount:-${response[i].discount}</p>`);
+        }
+        $('.btn-close').click(() => {
+          $('#exampleModal').modal('hide')
+        })
 
+      })
+    })
+  }
+  function copy(val) {
+    let text = document.getElementById(val)
+    text.select();
+    navigator.clipboard.writeText(text.value);
+    //let input=document.getElementById('form3Examplea2');
+    //input.value=text.value;
+  }
+
+</script>
+<script>
+  function submitCoupon(total,id) {
+    let val = document.getElementById('form3Examplea2')
+    setTimeout(() => {
+      //document.getElementById('hai').innerText = id
+      $.ajax({
+        url:'findCouponForCart?coupon='+val.value +'&userId='+id,
+        method:'get',
+        success:(function(response){
+          if(response.used){
+          $("#setattr").attr("href","/proceedToCkeckOut?total="+total+'&dis='+0+'&coupon='+val.value+'&userId='+id)
+          document.getElementById('hai').innerText = "Already Used"
+          }
+         else{
+          let disTotal=total-response.discount
+          document.getElementById('totalPrice1').innerText = disTotal
+          document.getElementById('totalPrice').innerText = disTotal
+          $("#setattr").attr("href","/proceedToCkeckOut?total="+disTotal+'&dis='+response.discount+'&coupon='+val.value+'&userId='+id)
+         }
+        })
+      })
+    }, 1)
+  }
+</script>

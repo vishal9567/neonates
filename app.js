@@ -23,8 +23,16 @@ const hbs=exhbs.create({
             for(let i=1;i<=pages;++i)
                 accum+=options.fn(i)
             return accum;
-        }
-    }
+        },
+        compare: function (variableOne, comparator, variableTwo) {
+            if (eval(variableOne + comparator + variableTwo)) {
+              return true
+            } else {
+              return false
+            }
+          }
+    },
+    
 });
 
 app.use(logger('dev'))
