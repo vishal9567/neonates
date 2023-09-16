@@ -226,7 +226,7 @@ module.exports = {
     deleteAddress: (data) => {
         try {
             return new Promise(async (resolve, reject) => {
-                let doc = await userdb.updateOne({ _id: data.userId }, { $pull: { address: { _id: data.addressId } } })
+                await userdb.updateOne({ _id: data.userId }, { $pull: { address: { _id: data.addressId } } })
                     .then(result => {
                         resolve()
                     }).catch(err => {

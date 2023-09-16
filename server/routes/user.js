@@ -98,32 +98,9 @@ router.post('/verifyPayment',(req,res)=>{
 
 router.post('/searchProducts',render.productSearch)
 
-// router.post('/placeOrder',(req,res)=>{
-//     console.log(req.body);
-//     res.json(true)
-// })
-
-// router.get('/orderList',(req,res)=>{
-//     res.render('user/userOrder',{signup:true})
-// })
-
-
-
-
-
-
-
-
-// router.get('/test',(req,res)=>{
-//     let user = req.session.userId
-//     console.log("this is user detail",user);
-// })
-
-// router.get('/cartPage',(req,res)=>{
-//     let product=req.session.product
-//     console.log(req.session.product);
-//     res.render('user/cartPage',{product})
-// })
+router.get('/getCatProducts',redirect.getCatProducts)
+router.get('/getPriceProducts',redirect.getPriceProducts)
+router.get('/getColorProducts',redirect.getColorProducts)
 
 module.exports = router;
 

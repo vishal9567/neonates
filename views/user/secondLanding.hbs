@@ -1,62 +1,314 @@
-<section style="background-color: #eee; margin-top:100px">
-  <div class="container py-5">
-    <div class="row">
-      {{#each product}}
-      <div class="col-md-6 col-lg-3 mb-4 mb-md-0">
-        <div class="card">
-          <div class="d-flex justify-content-between p-3">
-            <p class="lead mb-0">Today's Offer</p>
-            <div
-              class="bg-info rounded-circle d-flex align-items-center justify-content-center shadow-1-strong"
-              style="width: 35px; height: 35px;">
-              <p class="text-white mb-0 small">{{this.offer}}%<br>off</p>
-            </div>
+<!--filter area-->
+<!--Main Navigation-->
+<div class="container-fluid" id="mainDiv">
+  <div class="row">
+    <div class="col-3">
+      <section style="background-color: #fffafa; margin-top:150px" class="ms-3 d-none d-lg-block">
+        <div class="d-flex justify-content-between border text-secondary">
+          <h6 style="padding: 5px 70px 5px 5px;">Filters</h6>
+          <a  style="padding: 5px 70px 5px 5px;" class="text-decoration-none text-secondary" onclick="clearAll()">Clear All</a>
+        </div>
+        <button type="button" data-bs-toggle="collapse" data-bs-target="#demo"
+          class="accordion-button collapsed text-secondary" aria-expanded="false" aria-controls="flush-collapseOne">
+          Categories</button>
+        <div id="demo" class="collapse p-3">
+          {{#each category}}
+          <div class="form-check ">
+            <a  class="text-decoration-none text-dark" onclick="getCategories('{{this.category}}')"
+              id="{{this.category}}">{{this.category}}</a>
           </div>
-         <!-- <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/Products/5.webp"
+          {{/each}}
+
+        </div>
+        <button type="button" data-bs-toggle="collapse" data-bs-target="#demo1"
+          class="accordion-button collapsed text-secondary" aria-expanded="false" aria-controls="flush-collapseOne">
+          Price</button>
+        <div id="demo1" class="collapse p-3">
+
+          <div class="form-check ">
+            <a  class="text-decoration-none text-dark" onclick="getPriceProducts(0,500)">Upto &#x20b9;500</a>
+          </div>
+          <div class="form-check ">
+            <a  class="text-decoration-none text-dark" onclick="getPriceProducts(500,1000)">&#x20b9;500-1000</a>
+          </div>
+
+        </div>
+        <button type="button" data-bs-toggle="collapse" data-bs-target="#demo2"
+          class="accordion-button collapsed text-secondary" aria-expanded="false" aria-controls="flush-collapseOne">
+          Color</button>
+        <div id="demo2" class="collapse p-3">
+
+          <div class="form-check ">
+            <a  class="text-decoration-none text-dark" onclick="getColorProducts('Red')" value="Red">Red</a>
+
+          </div>
+          <div class="form-check ">
+            <a  class="text-decoration-none text-dark" onclick="getColorProducts('Blue')" value="Blue">Blue</a>
+
+          </div>
+
+        </div>
+        <!-- <button type="button" data-bs-toggle="collapse" data-bs-target="#demo3"
+          class="accordion-button collapsed text-secondary" aria-expanded="false" aria-controls="flush-collapseOne">
+          Discount</button>
+        <div id="demo3" class="collapse p-3">
+
+          <div class="form-check ">
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault5" />
+            <label class="form-check-label" for="flexCheckDefault5">5% and above</label>
+          </div>
+          <div class="form-check ">
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault6" />
+            <label class="form-check-label" for="flexCheckDefault6">10% and above</label>
+          </div>
+
+        </div> -->
+      </section>
+    </div>
+    <div class="col-9">
+      <section style="background-color: #eee; margin-top:100px">
+        <div class="container-fluid py-5">
+          <div class="row" id="cardDiv">
+            {{#each product}}
+            <div class="col-md-6 col-lg-3 mb-4 mb-md-0">
+              <div class="card">
+                <div class="d-flex justify-content-between p-3">
+                  <p class="lead mb-0">Today's Offer</p>
+                  <div class="bg-info rounded-circle d-flex align-items-center justify-content-center shadow-1-strong"
+                    style="width: 35px; height: 35px;">
+                    <p class="text-white mb-0 small">{{this.offer}}%<br>off</p>
+                  </div>
+                </div>
+                <!-- <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/Products/5.webp"
             class="card-img-top" alt="Gaming Laptop" />-->
-             <a href="/productView/{{this._id}}"><img src="/images/{{this.image.[0]}}" class="card-img-top" alt="..."
-                                ></a>
-          <div class="card-body">
-            <div class="d-flex justify-content-between">
-              <p class="small"><a href="#!" class="text-muted">{{this.brandname}}</a></p>
-              {{#if (compare this.offer '=='0)}}{{else}}<p class="small text-danger"><s>&#x20b9;{{this.realPrice}}</s></p>{{/if}}
-            </div>
+                <a href="/productView/{{this._id}}"><img src="/images/{{this.image.[0]}}" class="card-img-top"
+                    alt="..."></a>
+                <div class="card-body">
+                  <div class="d-flex justify-content-between">
+                    <p class="small"><a href="#!" class="text-muted">{{this.brandname}}</a></p>
+                    {{#if (compare this.offer '=='0)}}{{else}}<p class="small text-danger">
+                      <s>&#x20b9;{{this.realPrice}}</s>
+                    </p>{{/if}}
+                  </div>
 
-            <div class="d-flex justify-content-between mb-3">
-              <h5 class="mb-0">{{this.productname}}</h5>
-              <h5 class="text-dark mb-0">&#x20b9;{{this.price}}</h5>
-            </div>
+                  <div class="d-flex justify-content-between mb-3">
+                    <h5 class="mb-0">{{this.productname}}</h5>
+                    <h5 class="text-dark mb-0">&#x20b9;{{this.price}}</h5>
+                  </div>
 
-            <div class="d-flex justify-content-between mb-2">
-              <p class="text-muted mb-0">Available: <span class="fw-bold">{{this.quantity}}</span></p>
-              <div class="ms-auto text-warning">
-                <i class="fa fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
+                  <div class="d-flex justify-content-between mb-2">
+                    <p class="text-muted mb-0">Available: <span class="fw-bold">{{this.quantity}}</span></p>
+                    <div class="ms-auto text-warning">
+                      <i class="fa fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star-half-alt"></i>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
+            {{/each}}
           </div>
         </div>
-      </div>
-      {{/each}}
+        <!--pagination-->
+        <nav aria-label="...">
+          <ul class="pagination justify-content-center">
+            <li class="page-item">
+              <a class="page-link">Previous</a>
+            </li>
+            {{#for pages}}
+            <li class="page-item" aria-current="page">
+              <a class="page-link" href="/landing/{{this}}">{{this}} <span class="visually-hidden">(current)</span></a>
+            </li>
+            {{/for}}
+            <li class="page-item">
+              <a class="page-link" href="/landing/2">Next</a>
+            </li>
+          </ul>
+        </nav>
+      </section>
+
     </div>
   </div>
-  <!--pagination-->
-  <nav aria-label="...">
-  <ul class="pagination justify-content-center">
-    <li class="page-item">
-      <a class="page-link">Previous</a>
-    </li>
-    {{#for pages}}
-    <li class="page-item" aria-current="page">
-      <a class="page-link" href="/landing/{{this}}">{{this}} <span class="visually-hidden">(current)</span></a>
-    </li>
-    {{/for}}
-    <li class="page-item">
-      <a class="page-link" href="/landing/2">Next</a>
-    </li>
-  </ul>
-</nav>
-</section>
+</div>
+<!--Main Navigation-->
+
+<!--Main layout-->
+
+<!--Main layout-->
+<!--product area-->
+<script>
+  function getCategories(cat) {
+    $.ajax({
+      url: '/getCatProducts?cat=' + cat,
+      method: 'get',
+      success: (function (response) {
+        $('#cardDiv').empty();
+        for (let i = 0; i < response.length; i++) {
+          let off = ''
+          if (response[i].offer != 0) {
+            off = `<p class="small text-danger">
+              <s>&#x20b9;${response[i].realPrice}</s>
+            </p>`
+          }
+          $('#cardDiv').append(`
+           <div class="col-md-6 col-lg-3 mb-4 mb-md-0" >
+              <div class="card">
+                <div class="d-flex justify-content-between p-3">
+                  <p class="lead mb-0">Today's Offer</p>
+                  <div class="bg-info rounded-circle d-flex align-items-center justify-content-center shadow-1-strong"
+                    style="width: 35px; height: 35px;">
+                    <p class="text-white mb-0 small">${response[i].offer}%<br>off</p>
+                  </div>
+                </div>
+                <!-- <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/Products/5.webp"
+            class="card-img-top" alt="Gaming Laptop" />-->
+                <a href="/productView/${response[i]._id}"><img src="/images/${response[i].image[0]}" class="card-img-top"
+                    alt="..."></a>
+                <div class="card-body">
+                  <div class="d-flex justify-content-between">
+                    <p class="small"><a href="#!" class="text-muted">${response[i].brandname}</a></p>
+                    ${off}
+                  </div>
+
+                  <div class="d-flex justify-content-between mb-3">
+                    <h5 class="mb-0">${response[i].productname}</h5>
+                    <h5 class="text-dark mb-0">&#x20b9;${response[i].price}</h5>
+                  </div>
+
+                  <div class="d-flex justify-content-between mb-2">
+                    <p class="text-muted mb-0">Available: <span class="fw-bold">${response[i].quantity}</span></p>
+                    <div class="ms-auto text-warning">
+                      <i class="fa fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star-half-alt"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        `)
+        }
+      })
+    })
+  }
+  function getPriceProducts(n1, n2) {
+    $.ajax({
+      url: "/getPriceProducts?n1=" + n1 + "&n2=" + n2,
+      method: 'get',
+      success: (function (response) {
+        $('#cardDiv').empty();
+        for (let i = 0; i < response.length; i++) {
+          let off = ''
+          if (response[i].offer != 0) {
+            off = `<p class="small text-danger">
+              <s>&#x20b9;${response[i].realPrice}</s>
+            </p>`
+          }
+          $('#cardDiv').append(`
+           <div class="col-md-6 col-lg-3 mb-4 mb-md-0" >
+              <div class="card">
+                <div class="d-flex justify-content-between p-3">
+                  <p class="lead mb-0">Today's Offer</p>
+                  <div class="bg-info rounded-circle d-flex align-items-center justify-content-center shadow-1-strong"
+                    style="width: 35px; height: 35px;">
+                    <p class="text-white mb-0 small">${response[i].offer}%<br>off</p>
+                  </div>
+                </div>
+                <!-- <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/Products/5.webp"
+            class="card-img-top" alt="Gaming Laptop" />-->
+                <a href="/productView/${response[i]._id}"><img src="/images/${response[i].image[0]}" class="card-img-top"
+                    alt="..."></a>
+                <div class="card-body">
+                  <div class="d-flex justify-content-between">
+                    <p class="small"><a href="#!" class="text-muted">${response[i].brandname}</a></p>
+                    ${off}
+                  </div>
+
+                  <div class="d-flex justify-content-between mb-3">
+                    <h5 class="mb-0">${response[i].productname}</h5>
+                    <h5 class="text-dark mb-0">&#x20b9;${response[i].price}</h5>
+                  </div>
+
+                  <div class="d-flex justify-content-between mb-2">
+                    <p class="text-muted mb-0">Available: <span class="fw-bold">${response[i].quantity}</span></p>
+                    <div class="ms-auto text-warning">
+                      <i class="fa fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star-half-alt"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        `)
+        }
+      })
+    })
+  }
+  function getColorProducts(color){
+     $.ajax({
+      url: "/getColorProducts?color=" + color,
+      method: 'get',
+      success: (function (response) {
+        $('#cardDiv').empty();
+        for (let i = 0; i < response.length; i++) {
+          let off = ''
+          if (response[i].offer != 0) {
+            off = `<p class="small text-danger">
+              <s>&#x20b9;${response[i].realPrice}</s>
+            </p>`
+          }
+          $('#cardDiv').append(`
+           <div class="col-md-6 col-lg-3 mb-4 mb-md-0" >
+              <div class="card">
+                <div class="d-flex justify-content-between p-3">
+                  <p class="lead mb-0">Today's Offer</p>
+                  <div class="bg-info rounded-circle d-flex align-items-center justify-content-center shadow-1-strong"
+                    style="width: 35px; height: 35px;">
+                    <p class="text-white mb-0 small">${response[i].offer}%<br>off</p>
+                  </div>
+                </div>
+                <!-- <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/Products/5.webp"
+            class="card-img-top" alt="Gaming Laptop" />-->
+                <a href="/productView/${response[i]._id}"><img src="/images/${response[i].image[0]}" class="card-img-top"
+                    alt="..."></a>
+                <div class="card-body">
+                  <div class="d-flex justify-content-between">
+                    <p class="small"><a href="#!" class="text-muted">${response[i].brandname}</a></p>
+                    ${off}
+                  </div>
+
+                  <div class="d-flex justify-content-between mb-3">
+                    <h5 class="mb-0">${response[i].productname}</h5>
+                    <h5 class="text-dark mb-0">&#x20b9;${response[i].price}</h5>
+                  </div>
+
+                  <div class="d-flex justify-content-between mb-2">
+                    <p class="text-muted mb-0">Available: <span class="fw-bold">${response[i].quantity}</span></p>
+                    <div class="ms-auto text-warning">
+                      <i class="fa fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star-half-alt"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        `)
+        }
+      })
+    })
+  }
+  function clearAll(){
+    $('#mainDiv').load('#mainDiv')
+  }
+</script>

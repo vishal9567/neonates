@@ -17,5 +17,17 @@ module.exports={
         catch(err){
             throw new Error(err)
         }
+    },
+    getBanner:()=>{
+        try{
+            return new Promise(async(resolve,reject)=>{
+                await bannerDb.findOne().lean().then(banner=>{
+                    resolve(banner)
+                })
+            })
+        }
+        catch(err){
+            throw new Error(err)
+        }
     }
 }

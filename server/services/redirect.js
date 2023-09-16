@@ -249,11 +249,27 @@ exports.getCoupon=(req,res)=>{
 }
 exports.findCouponForCart=(req,res)=>{
     coupenController.findCouponForCart(req.query).then(data=>{
-        console.log('this is data',data);
         res.json(data)
     })
 }
-
+//find catergory products by ajax call
+exports.getCatProducts=(req,res)=>{
+    productHelpers.getCatProducts(req.query).then(product=>{
+        res.json(product)
+    })
+}
+exports.getPriceProducts=(req,res)=>{
+    productHelpers.getPriceProducts(req.query).then(product=>{
+        res.json(product)
+    })
+}
+exports.getColorProducts=(req,res)=>{
+    console.log(req.query);
+    productHelpers.getColorProducts(req.query).then(product=>{
+        console.log("this is pro:",product);
+        res.json(product)
+    })
+}
 
 
 

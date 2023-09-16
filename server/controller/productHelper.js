@@ -5,7 +5,7 @@ module.exports = {
     showProductDetail: (id) => {  //?to che it is needed or not
         try {
             return new Promise(async (resolve, reject) => {
-                let doc = await productDb.findOne({ _id: id }).lean().then(result => {
+                await productDb.findOne({ _id: id }).lean().then(result => {
                     if (result) {
                         resolve(result);
                     }
@@ -102,6 +102,46 @@ module.exports = {
             return new Promise(async(resolve,reject)=>{
                 await productDb.updateMany({category:data.cat},{$set:{offer:catOff}},{setDefaultsOnInsert:true,upsert:true}).then(()=>{
                     resolve()
+                })
+            })
+        }
+        catch(err){
+            throw new Error(err)
+        }
+    },
+    getCatProducts:(cat)=>{
+        try{
+            return new Promise(async(resolve,reject)=>{
+                await productDb.find({category:cat.cat}).lean().then(product=>{
+                    resolve(product)
+                })
+            })
+        }
+        catch(err){
+            throw new Error(err)
+        }
+    },
+    getPriceProducts:(price)=>{
+        let n1=parseInt(price.n1)
+        let n2=parseInt(price.n2)
+        console.log(n2,n1);
+        try{
+            return new Promise(async(resolve,reject)=>{
+                await productDb.find({$and:[{realPrice:{$gt:n1}},{realPrice:{$lte:n2}}]}).lean() //*---===here price is string-=in schema price is string==---//
+                .then(products=>{
+                    resolve(products)
+                })
+            })
+        }
+        catch(err){
+            throw new Error(err)
+        }
+    },
+    getColorProducts:(color)=>{
+        try{
+            return new Promise(async(resolve,reject)=>{
+                await productDb.find({color:color.color}).lean().then(product=>{
+                    resolve(product)
                 })
             })
         }

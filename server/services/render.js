@@ -170,10 +170,15 @@ exports.productSearch = (req, res) => {  //!---product search----//
     res.json(true)
 
 }
-exports.showProductDetail = (req, res) => {
+exports.showProductDetail = async(req, res) => {
     let id = req.params.id
     let user = req.session.user
+    let banner;
     ////  console.log(`this is user:${user}`);
+    await bannerController.getBanner().then(ban=>{
+        console.log(ban);
+        banner=ban;
+    })
     productHelper.showProductDetail(id).then(product => {
         categoryController.findCategory().then(category => {
             let TotalQuantity = 0;
@@ -183,7 +188,7 @@ exports.showProductDetail = (req, res) => {
             else {
                 TotalQuantity = 0;
             }
-            res.render('user/productPage', { signup: true, product, productDetail: true, user, category, TotalQuantity })
+            res.render('user/productPage', { signup: true, product, productDetail: true, user, category, TotalQuantity,banner })
         })
     }).catch(err => {
         res.render('user/errorPage')

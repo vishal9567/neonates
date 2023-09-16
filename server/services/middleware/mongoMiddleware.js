@@ -1,5 +1,6 @@
 const userController=require('../../controller/userController')
 const productDb = require('../../model/productModel')
+const bannerController=require('../../controller/bannerController')
 
 module.exports={
     userData:(req,res,next)=>{
