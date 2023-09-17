@@ -15,6 +15,7 @@ exports.create = async (req, res) => {
         realPrice:req.body.price,
         quantity: req.body.quantity,
         discription: req.body.discription,
+        wishlistStatus:false,
         image: [req.files[0].filename, req.files[1].filename]
     })
     await product

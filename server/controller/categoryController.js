@@ -22,7 +22,7 @@ module.exports={
     },
     getItems:(perPage,page)=>{
         return new Promise(async(resolve,reject)=>{
-            let doc=await productDb.find().sort({date:-1}).skip(perPage * page -perPage).limit(perPage).lean()
+            await productDb.find().sort({date:-1}).skip(perPage * page -perPage).limit(perPage).lean()
             .then(products=>{
                 resolve(products)
             })

@@ -106,7 +106,7 @@ module.exports = {
         try {
             //// console.log(data.email);
             return new Promise(async (resolve, reject) => {
-                let doc = await userdb.findOne({ Email: data.email }).lean()
+                await userdb.findOne({ Email: data.email }).lean()
                     .then(user => {
 
                         if (user) {
@@ -135,32 +135,32 @@ module.exports = {
         console.log(id, data);
         return new Promise(async (resolve, reject) => {
             try {
-                let user = await userdb.findOne({ _id: id._id }).then(async user => {              //*============ find user using id otherwise each refresh do not get the total address entered =================
+                await userdb.findOne({ _id: id._id }).then(async user => {              //*============ find user using id otherwise each refresh do not get the total address entered =================
                     console.log("this is user", user);
                     try {
-                        if (user.address[0]) {
-                            let doc = await userdb.aggregate([{ $match: { '_id': mongoose.Types.ObjectId.createFromHexString(id._id) } }, { $unwind: "$address" }, { $group: { _id: 0, 'count': { $sum: 1 } } }]).then(async result => {
-                                if (result[0].count >= 2) {                                          //check the count of addresses, 2 address limited
-                                    console.log("count comes in if:", result[0].count);
-                                    resolve({ address: true, validation: true })                                      //============if address present go to the next stage of check out================
-                                }
-                                else {
-                                    console.log("count comes:", result[0].count);
-                                    try {
-                                        let doc = await userdb.updateOne({ _id: id._id }, { $push: { address: data } })
-                                    }
-                                    catch (err) {
-                                    }
-                                }
-                            })
-                        }
-                        else {
-                            try {
-                                let doc = await userdb.updateOne({ _id: id._id }, { $push: { address: data } }) //============if address field is found then push another address================
-                            }
-                            catch (err) {
-                            }
-                        }
+                       // if (user.address[0]) {
+                            await userdb.updateOne({ _id: id._id }, { $push: { address: data } })
+                            // await userdb.aggregate([{ $match: { '_id': mongoose.Types.ObjectId.createFromHexString(id._id) } }, { $unwind: "$address" }, { $group: { _id: 0, 'count': { $sum: 1 } } }]).then(async result => {
+                            //     if (result[0].count >= 2) {                                          //check the count of addresses, 2 address limited
+                            //         console.log("count comes in if:", result[0].count);
+                            //         resolve({ address: true, validation: true })                                      //============if address present go to the next stage of check out================
+                            //     }
+                            //     else {
+                            //         console.log("count comes:", result[0].count);
+                            //         try {
+                            //         }
+                            //         catch (err) {
+                            //         }
+                            //     }
+                            // })
+                       // }
+                        // else {
+                        //     try {
+                        //         await userdb.updateOne({ _id: id._id }, { $push: { address: data } }) //============if address field is found then push another address================
+                        //     }
+                        //     catch (err) {
+                        //     }
+                        // }
                     }
                     catch (err) {
                     }

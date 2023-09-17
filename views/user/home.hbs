@@ -30,7 +30,7 @@
       <div class="col-md-6 col-lg-3 mb-4 mb-md-0">
         <div class="card">
           <div class="d-flex justify-content-between p-3">
-            <p class="lead mb-0">Today's Offer</p>
+            {{#if this.wishlistStatus}}<i class="fa fa-heart text-danger"></i>{{/if}}
             <div
               class="bg-info rounded-circle d-flex align-items-center justify-content-center shadow-1-strong"
               style="width: 35px; height: 35px;">
@@ -76,11 +76,11 @@
     </li>
     {{#for pages}}
     <li class="page-item" aria-current="page">
-      <a class="page-link" href="/home/{{this}}">{{this}} <span class="visually-hidden">(current)</span></a>
+      <a class="page-link" href="/home?page={{this}}">{{this}} <span class="visually-hidden">(current)</span></a>
     </li>
     {{/for}}
     <li class="page-item">
-      <a class="page-link" href="/home/2">Next</a>
+      <a class="page-link" href="/home">Next</a>
     </li>
   </ul>
 </nav>

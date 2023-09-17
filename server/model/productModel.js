@@ -30,6 +30,9 @@ var productSchema=new mongoose.Schema({
     quantity:{
         type:Number
     },
+    wishlistStatus:{
+        type:Boolean
+    },
     discription:{
         type:String
     },

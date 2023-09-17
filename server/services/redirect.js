@@ -7,6 +7,8 @@ const productHelpers = require('../controller/productHelper')
 const orderController = require('../controller/orderController')
 const coupenController = require('../controller/coupenController')
 const bannerController=require('../controller/bannerController')
+const productDb = require('../model/productModel')
+
 
 
 
@@ -149,6 +151,7 @@ exports.getOrderDetails = async (req, res) => {                              //*
                     for (let i = 0; i < cartItem.products.length; i++) {
                         await productHelpers.inventryManagement(cartItem.products[i].item, cartItem.products[i].quantity)
                     }
+                    
                     await orderController.createOrder(getAddress, cartItem, deliveryDetail, totalQty, user.name).then(async order => {
                         await cartController.removeCart(user._id).then(result => {
 
@@ -173,20 +176,27 @@ exports.getOrderDetails = async (req, res) => {                              //*
             // //req.session.deliveryAddress=result.address
             await cartController.getCartItemForLogin(user._id).then(async cartItem => {//here getting the cart details such as product id and count
                 for (let i = 0; i < cartItem.products.length; i++) {
-                    await productHelpers.inventryManagement(cartItem.products[i].item, cartItem.products[i].quantity)
-                }
-                await orderController.createOrder(getAddress, cartItem, deliveryDetail, totalQty, user.name).then(async order => {
-                    await cartController.removeCart(user._id).then(result => {
-                        if (req.body.payType === 'COD')
-                            res.json({ codSuccess: true })
-                        else {
-                            let orderId = order.toString()
-                            orderController.generateRazorPay(orderId, totalQty[0]).then(order => {
-                                res.json(order)
+                    await productHelpers.inventryManagement(cartItem.products[i].item, cartItem.products[i].quantity).then(async info=>{
+                        if(info){
+                            res.json(info)
+                            console.log('this is info',info);
+                        }
+                        else{
+                            await orderController.createOrder(getAddress, cartItem, deliveryDetail, totalQty, user.name).then(async order => {
+                                await cartController.removeCart(user._id).then(result => {
+                                    if (req.body.payType === 'COD')
+                                        res.json({ codSuccess: true })
+                                    else {
+                                        let orderId = order.toString()
+                                        orderController.generateRazorPay(orderId, deliveryDetail.total).then(order => {
+                                            res.json(order)
+                                        })
+                                    }
+                                })
                             })
                         }
                     })
-                })
+                }
 
             })
         }).catch(err => {
@@ -245,22 +255,31 @@ exports.getCoupon=(req,res)=>{
     coupenController.getCouponForCart(req.query.price).then(coupon=>{
         console.log(coupon);
         res.json(coupon)
+    }) .catch(err => {
+        res.render('user/errorPage')
     })
 }
 exports.findCouponForCart=(req,res)=>{
     coupenController.findCouponForCart(req.query).then(data=>{
         res.json(data)
+    }) .catch(err => {
+        res.render('user/errorPage')
     })
 }
 //find catergory products by ajax call
-exports.getCatProducts=(req,res)=>{
-    productHelpers.getCatProducts(req.query).then(product=>{
+exports.getCatProducts=async(req,res)=>{
+    let count = await productDb.count()
+    productHelpers.getCatProducts(req.query,count).then(product=>{
         res.json(product)
+    }) .catch(err => {
+        res.render('user/errorPage')
     })
 }
 exports.getPriceProducts=(req,res)=>{
     productHelpers.getPriceProducts(req.query).then(product=>{
         res.json(product)
+    }) .catch(err => {
+        res.render('user/errorPage')
     })
 }
 exports.getColorProducts=(req,res)=>{
@@ -268,6 +287,8 @@ exports.getColorProducts=(req,res)=>{
     productHelpers.getColorProducts(req.query).then(product=>{
         console.log("this is pro:",product);
         res.json(product)
+    }) .catch(err => {
+        res.render('user/errorPage')
     })
 }
 

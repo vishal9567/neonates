@@ -22,8 +22,8 @@ const mongoMiddleware=require('../services/middleware/mongoMiddleware')
 router.get('/',cartCount.cartCount,render.home)
 router.get('/signUp', render.signUp);
 router.get('/userLogin', render.userLogin)
-router.get('/landing/:page', render.landing)
-router.get('/home/:page', render.home)
+router.get('/landing', render.landing)
+router.get('/home', render.home)
 router.get('/eachCategory/:id', render.categoryProduct)
 router.get('/forgotPassword', render.forgotPassword)
 router.get('/logout', redirect.logOut)
@@ -84,7 +84,7 @@ router.post('/deleteAddress',sessionCheck.userAuth,redirect.deleteAddress)
 
 
 
-router.post('/verifyPayment',(req,res)=>{
+router.post('/verifyPayment',sessionCheck.userAuth,(req,res)=>{
     orderController.verifyPayment(req.body).then(result=>{
         orderController.changeStatusOfOrder(req.body.order.receipt).then(()=>{
             res.json(true)

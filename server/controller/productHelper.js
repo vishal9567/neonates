@@ -48,11 +48,14 @@ module.exports = {
         try {
             return new Promise(async (resolve, reject) => {
                 let pro = await productDb.findOne({ _id: new mongoose.Types.ObjectId(Id)})
-                if (pro) {
-                    let doc = await productDb.updateOne({ _id: new mongoose.Types.ObjectId(Id) }, { $inc: { quantity: count } })
+                if (pro.quantity>=counts) {
+                    await productDb.updateOne({ _id: new mongoose.Types.ObjectId(Id) }, { $inc: { quantity: count } })
                         .then(result => {
                             resolve()
                         })
+                }
+                else{
+                    resolve({quantityEmpty:true,proname:pro.productname})
                 }
             })
         }

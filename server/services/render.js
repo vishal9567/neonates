@@ -20,7 +20,7 @@ exports.landing = async (req, res) => {
     let proSearch = `${req.session.searchPro}`
     const perPage = 4;
     let pages = Math.ceil((count / perPage))
-    let page = parseInt(req.params.page) || 1;
+    let page = parseInt(req.query.page) || 1;
     categoryController.findCategory()
         .then(category => {
             categoryController.getItems(perPage, page).then(products => {
@@ -149,7 +149,7 @@ exports.home = async (req, res) => {
     let user = req.session.user
     const perPage = 4;
     let pages = Math.ceil((count / perPage))
-    let page = parseInt(req.params.page) || 1;
+    let page = parseInt(req.query.page) || 1;
     categoryController.getItems(perPage, page).then(product => {
         categoryController.findCategory().then(category => {
             let TotalQuantity = 0;
@@ -212,15 +212,15 @@ exports.getCart = (req, res) => {
         if (products.length === 0) {                                   //*--===check whether cart is empty or not==--//
             let cartIsEmty = true;
             productNotAvailable = false;
-            res.render('user/cartPage', { products, totalCount, grandTotal, cartIsEmty, user_id: val._id })
+            res.render('user/cartPage', {signup: true, products, totalCount, grandTotal, cartIsEmty, user_id: val._id,user:val._id })
         }
         else {
             productNotAvailable = false;
-            res.render('user/cartPage', { products, totalCount, grandTotal, user_id: val._id })
+            res.render('user/cartPage', {signup:true, products, totalCount, grandTotal, user_id: val._id,user:val._id })
         }
     })
         .catch(err => {
-            res.render('user/cartPage', { productNotAvailable })
+            res.render('user/cartPage', {signup:true, productNotAvailable })
         })
 }
 exports.addAddress = (req, res) => {                                     //*=====this add address will limit the address 2 for every user====//

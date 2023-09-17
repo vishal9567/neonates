@@ -1,3 +1,4 @@
+<!--modal-->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -13,7 +14,8 @@
     </div>
   </div>
 </div>
-<section class="h-100 h-custom" style="background-color: #d2c9ff;">
+<!--modal ends-->
+<section class="h-100 h-custom" style="background-color: #d2c9ff; margin-top:100px">
   <div class="container py-5 " style="width: 60vw;">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-12">
@@ -71,7 +73,7 @@
 
                   {{/each}}
                   <div class="pt-5">
-                    <h6 class="mb-0"><a href="/landing/1" class="text-body"><i
+                    <h6 class="mb-0"><a href="/landing" class="text-body"><i
                           class="fas fa-long-arrow-alt-left me-2 text-success"></i>Back to shop</a></h6>
                   </div>
                 </div>
@@ -232,10 +234,18 @@
           document.getElementById('hai').innerText = "Already Used"
           }
          else{
+          if(total>response.discount){
           let disTotal=total-response.discount
           document.getElementById('totalPrice1').innerText = disTotal
           document.getElementById('totalPrice').innerText = disTotal
           $("#setattr").attr("href","/proceedToCkeckOut?total="+disTotal+'&dis='+response.discount+'&coupon='+val.value+'&userId='+id)
+          }
+          else{
+            alert('you can purchase for free')
+          document.getElementById('totalPrice1').innerText = 0
+          document.getElementById('totalPrice').innerText = 0
+          $("#setattr").attr("href","/proceedToCkeckOut?total="+0+'&dis='+response.discount+'&coupon='+val.value+'&userId='+id)
+          }
          }
         })
       })

@@ -4,7 +4,7 @@
   <nav class="navbar navbar-expand-lg navbar-light fixed-top" style="background-color:rgb(236,79,162)">
     <div class="container-fluid">
       <a href="#" class="navbar-brand">
-        <a class="navbar-brand mt-2 mt-lg-0" href="#">
+        <a class="navbar-brand mt-2 mt-lg-0" href="/home">
           {{!-- <img src="/img/neonatesLogo.png" height="80" alt="MDB Logo" loading="lazy" /> --}}
           <h3 class="p-3" style="font-size: 30px;
   background: -webkit-linear-gradient(#2735b3, #d88a16);
@@ -15,19 +15,11 @@
       <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <a href="/home/1" class="text-white btn rounded-pill mx-2">Home</a>
-      <a href="/landing/1" class="text-white btn  rounded-pill mx-2">All</a>
+      <a href="/home" class="text-white btn rounded-pill mx-2">Home</a>
+      <a href="/landing" class="text-white btn  rounded-pill mx-2">All</a>
       <div class="collapse navbar-collapse" id="navbarCollapse">
         <div class="navbar-nav ms-auto">
-          <div class="nav-item dropdown">
-            <a href="#" class="nav-link dropdown-toggle btn rounded-pill text-light"
-              data-bs-toggle="dropdown">Categories</a>
-            <div class="dropdown-menu">
-              {{#each category}}
-              <a class="dropdown-item" href="/eachCategory/{{this._id}}">{{this.category}}</a>
-              {{/each}}
-            </div>
-          </div>
+          
         </div>
 
 
