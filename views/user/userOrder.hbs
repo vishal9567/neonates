@@ -12,6 +12,7 @@
         {{#if searchFailed}}
         <center class="text-danger bg-warning">No such entry</center>
         {{/if}}-->
+        <div class="d-flex justify-content-between">
         <div class="dropdown mb-3">
             <button type="button" class="btn dropdown-toggle btn btn-primary" data-bs-toggle="dropdown">
                 Filter Order
@@ -23,6 +24,22 @@
                 <li><a class="dropdown-item" onclick="getStatus(4)">Cancelled</a></li>
                 <li><a class="dropdown-item" onclick="getStatus(5)">Delivered</a></li>
             </ul>
+        </div>
+         <!-select-->
+         <div class="d-flex">
+            <p>Show</p>
+          <div class="form-outline mb-2">
+            <select id="limits" name="category" class="form-select px-3 py-1">
+              
+              <option>5</option>
+              <option>10</option>
+              <option>15</option>
+              
+            </select>
+          </div>
+          <p>entries</p>
+          </div>
+          <!-select-->
         </div>
         <table class="table table-bordered text-center" id="productsTable">
             <thead style="background-color: rgb(236,79,162)">
@@ -57,7 +74,7 @@
                     <td>
                         <div>
                             {{#if (compare this.status '==' 1)}}<h6 class="text-success">
-                            Placed</h6>
+                                Placed</h6>
 
                             </h6>{{/if}}
                             {{#if (compare this.status '==' 2)}}<h6 class="text-warning">
@@ -84,7 +101,8 @@
 
                             </button>
                             <ul class="dropdown-menu">
-                                {{#if (compare this.status '!=' 5 )}}{{#if (compare this.status '!=' 4)}}{{#if (compare this.status '!=' 3)}}<li><button class="dropdown-item"
+                                {{#if (compare this.status '!=' 5 )}}{{#if (compare this.status '!=' 4)}}{{#if (compare
+                                this.status '!=' 3)}}<li><button class="dropdown-item"
                                         onclick="cancelOrder('{{this._id}}','{{this.status}}','{{this.paymentMethod}}')">
                                         Cancel Order</button>
                                 </li>{{/if}}{{/if}}{{/if}}
@@ -103,7 +121,21 @@
             {{/each}}
         </table>
         <h6 class="text-center" id="notFound"></h6>
+        <div>
+            <!--pagination-->
+            <nav aria-label="...">
+                <ul class="pagination justify-content-center" id="pagination">
 
+                     {{#for pages}}                   
+                    <li class="page-item" aria-current="page">
+                        <a class="page-link" href="/userOrderList?page={{this}}">{{this}}<span
+                                class="visually-hidden">(current)</span></a>
+                    </li>
+                     {{/for}}
+
+                </ul>
+            </nav>
+        </div>
     </div>
     <div class="container d-flex justify-content-end">
         <sub class="fas fa-long-arrow-alt-left me-2 text-success"></sub><a class="text-dark " href="/userDashBoard">Back
@@ -137,8 +169,10 @@
     }
 </script>
 <script>
-    function getStatus(status) {
+    function getStatus(status, page) {
+        let limit=$('#limits').find(':selected').text()
         $('#notFound').empty()
+        $('#pagination').empty();
         $.ajax({
             url: 'findOrder?status=' + status,
             method: 'get',
@@ -158,10 +192,10 @@
                     </tr>
                 </thead>
                 `)
-                $('#notFound').append(`Not Found`)
+                    $('#notFound').append(`Not Found`)
                 }
                 else {
-                    
+
                     //alert(response[0].userName)
                     //response.reverse()
                     $('#productsTable').empty();
@@ -178,7 +212,17 @@
                     </tr>
                 </thead>
                 `)
-                    for (var i = 0; i < response.length; i++) {
+                    let totalCount = response.length;
+                    let perPage = limit?limit:5;
+                    let pages = Math.ceil(totalCount / perPage);
+                    let start = 0;
+                    if(page){
+                        if(page==1)
+                            start=0
+                        else
+                            start= (page*perPage)-perPage;
+                    }
+                    for (var i = start; i < (page? page*perPage:perPage); i++) {
                         let status = '';
                         if (response[i].status == 1) {
                             status = `<h6 class="text-success" ></h6>
@@ -229,6 +273,15 @@
                 </tr>
 
             </tbody>`)
+                    }
+                    for (let i = 1; i <= pages; i++) {
+                        $('#pagination').append(`
+                <li class="page-item" aria-current="page">
+                        <a class="page-link" onclick="getStatus(${status},this.text)">${i}<span
+                                class="visually-hidden"></span></a>
+                    </li>
+                    
+                `)
                     }
                 }
             })

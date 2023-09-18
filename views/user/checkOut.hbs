@@ -1,3 +1,76 @@
+<!--modal-->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header " style="color: rgb(236,79,162);">
+        <h5 class="modal-title" id="exampleModalLabel">Your Coupons</h5>
+        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!--form-->
+        <form id="addUserForm">
+          <!-- 2 column grid layout with text inputs for the first and last names -->
+          <div class="row mb-4">
+            <div class="col">
+              <div class="form-outline">
+                <input type="text" id="form3Example1" class="form-control" name="country" />
+                <label class="form-label" for="form3Example1">Contry</label>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-outline">
+                <input type="text" id="form3Example2" class="form-control" name="state" />
+                <label class="form-label" for="form3Example2">State</label>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col">
+              <div class="form-outline">
+                <input type="text" id="form3Example3" class="form-control" name="district" />
+                <label class="form-label" for="form3Example3">District</label>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-outline">
+                <input type="text" id="form3Example4" class="form-control" name="city" />
+                <label class="form-label" for="form3Example4">City</label>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col">
+              <div class="form-outline">
+                <input type="number" id="form3Example5" class="form-control" name="pinCode" />
+                <label class="form-label" for="form3Example5">Pin Code</label>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-outline">
+                <input type="number" id="form3Example6" class="form-control" name="phone" />
+                <label class="form-label" for="form3Example6">Phone</label>
+              </div>
+            </div>
+          </div>
+
+
+
+          <!-- Submit button -->
+          <button type="submit" class="btn btn-primary btn-block mb-4">Submit</button>
+
+
+        </form>
+        <!--form ends-->
+      </div>
+      <!-- <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div> -->
+    </div>
+  </div>
+</div>
+<!--modal ends-->
+
 <section class="bg-light py-5" style="margin-top: 100px;">
   <div class="container">
     <div class="row">
@@ -10,7 +83,7 @@
 
             </div>
             <div class="d-flex align-items-center justify-content-center flex-column flex-md-row">
-              <a href="/addAddress2" class="btn btn-outline-primary me-0 me-md-2 mb-2 mb-md-0 w-100">Add</a>
+              <a onclick="addAddress()" class="btn btn-outline-primary me-0 me-md-2 mb-2 mb-md-0 w-100">Add</a>
 
             </div>
           </div>
@@ -402,5 +475,52 @@
       })
     })
 
+  }
+</script>
+
+<!--modal script-->
+<script>
+  function addAddress() {
+    $('#exampleModal').modal('show')
+    $('.btn-close').click(() => {
+      $('#exampleModal').modal('hide')
+    })
+
+  }
+
+  const $form = $('#addUserForm')
+
+  $form.on('submit', submitHandler)
+
+  function submitHandler(e) {
+    e.preventDefault()
+
+    $.ajax({
+      url: '/addUserFormSubmit',
+      type: 'POST',
+      data: $form.serialize()
+    }).done(response => {
+      if (response.validation) {
+        Swal.fire({
+          title: 'Empty fields!',
+          text: 'Fill in all fields',
+          icon: 'info',
+          timer: 5000
+        })
+      }
+
+      else if (response.addressAdd) {
+        $('#exampleModal').modal('hide')
+        Swal.fire({
+          title: 'Address Added!',
+          text: 'Address has been added succesfully.',
+          icon: 'success',
+          timer: 5000
+        }).then(()=>{
+          location.reload();
+        })
+      }
+
+    })
   }
 </script>

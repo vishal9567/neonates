@@ -49,10 +49,10 @@ module.exports = {
             }
         })
     },
-    getOrders: (user) => {
+    getOrders: (user,perPage,page) => {
         return new Promise(async (resolve, reject) => {
             try {
-                let doc = await orderDb.find({ "userid": new mongoose.Types.ObjectId(user) }).sort({date:-1}).lean()
+                await orderDb.find({ "userid": new mongoose.Types.ObjectId(user) }).sort({date:-1}).skip(perPage * page -perPage).limit(perPage).lean()
                     .then(orders => {
                         resolve(orders)
                     })
@@ -65,7 +65,7 @@ module.exports = {
     filterOrder:(id,status)=>{
         try{
             return new Promise(async(resolve,reject)=>{
-                let doc=await orderDb.find({$and:[{userid:new mongoose.Types.ObjectId(id)},{status:status}]}).lean()
+                let doc=await orderDb.find({$and:[{userid:new mongoose.Types.ObjectId(id)},{status:status}]}).sort({date:-1}).lean()
                 if(doc[0]){
                     resolve(doc)
                 }else{

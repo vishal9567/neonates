@@ -64,6 +64,23 @@ var userSchema=new mongoose.Schema({
     wallet:{
         type:Number
     },
+    wallethistory:[
+        {
+            amount:{
+                type:Number,
+            },
+            payType:{
+                type:String
+            },
+            date:{
+                type:Date,
+                default:Date.now
+            },
+            status:{
+                type:Number
+            }
+        }
+    ],
     referalCode:{
         type:String
     }

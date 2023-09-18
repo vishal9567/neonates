@@ -34,13 +34,9 @@ router.get('/addToCart/:id', sessionCheck.userAuth, redirect.addToCart)
 router.get('/cart', sessionCheck.userAuth, render.getCart)
 router.get('/proceedToCkeckOut',sessionCheck.userAuth,render.proceedToCheckOut)
 
-//--------======whishlist=====-----//
-router.get('/addToWhishlist', sessionCheck.userAuth, redirect.addToWhishlist)
-router.get('/wishlist',sessionCheck.userAuth,mongoMiddleware.userData,render.showWishlist)
-router.get('/backToCart',sessionCheck.userAuth,mongoMiddleware.userData,redirect.backToCart)
 
 //--------=======address section=====---------//
-router.get('/addAddress2',sessionCheck.userAuth,render.addAdddress2)
+router.get('/addAddress2',sessionCheck.userAuth,render.addAdddress2)//check if needed or not
 
 //--------=======user dashboard=======-----//
 router.get('/showProducts/:id',sessionCheck.userAuth,cartCount.cartCount,render.showProductsForuser)
@@ -49,6 +45,10 @@ router.get('/userOrderList',sessionCheck.userAuth,cartCount.cartCount,render.use
 router.get('/addressBook',sessionCheck.userAuth,mongoMiddleware.userData,cartCount.cartCount,render.addressBook)
 router.get('/wallet',sessionCheck.userAuth,mongoMiddleware.userData,redirect.wallet)
 router.get('/findOrder',sessionCheck.userAuth,render.filterOrder)
+//--------======whishlist=====-----//
+router.get('/addToWhishlist', sessionCheck.userAuth, redirect.addToWhishlist)
+router.get('/wishlist',sessionCheck.userAuth,mongoMiddleware.userData,render.showWishlist)
+router.get('/backToCart',sessionCheck.userAuth,mongoMiddleware.userData,redirect.backToCart)
 
 //-------========coupon============--------//
 router.get('/getCoupon',sessionCheck.userAuth,redirect.getCoupon)
@@ -101,6 +101,7 @@ router.post('/searchProducts',render.productSearch)
 router.get('/getCatProducts',redirect.getCatProducts)
 router.get('/getPriceProducts',redirect.getPriceProducts)
 router.get('/getColorProducts',redirect.getColorProducts)
+router.get('/walletHistory',sessionCheck.userAuth,render.getWalletHistory)
 
 module.exports = router;
 

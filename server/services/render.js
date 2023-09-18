@@ -8,7 +8,8 @@ const cartController = require('../controller/cartController')
 const orderController = require('../controller/orderController')
 const productDb = require('../model/productModel')
 const coupenController = require('../controller/coupenController')
-const bannerController=require('../controller/bannerController')
+const bannerController = require('../controller/bannerController')
+const orderDb = require('../model/ordersModel')
 
 
 
@@ -73,8 +74,7 @@ exports.categoryProduct = (req, res) => {
 //-----------------nodemailer--------------------//
 exports.userSignup = (req, res) => {
     req.session.userData = req.body
-    let userData = req.session.userData
-
+    //let userData = req.session.userData
     otp = Math.floor(1000 + Math.random() * 9000).toString()
     req.session.otp = otp
     console.log(otp);
@@ -170,14 +170,14 @@ exports.productSearch = (req, res) => {  //!---product search----//
     res.json(true)
 
 }
-exports.showProductDetail = async(req, res) => {
+exports.showProductDetail = async (req, res) => {
     let id = req.params.id
     let user = req.session.user
     let banner;
     ////  console.log(`this is user:${user}`);
-    await bannerController.getBanner().then(ban=>{
+    await bannerController.getBanner().then(ban => {
         console.log(ban);
-        banner=ban;
+        banner = ban;
     })
     productHelper.showProductDetail(id).then(product => {
         categoryController.findCategory().then(category => {
@@ -188,7 +188,7 @@ exports.showProductDetail = async(req, res) => {
             else {
                 TotalQuantity = 0;
             }
-            res.render('user/productPage', { signup: true, product, productDetail: true, user, category, TotalQuantity,banner })
+            res.render('user/productPage', { signup: true, product, productDetail: true, user, category, TotalQuantity, banner })
         })
     }).catch(err => {
         res.render('user/errorPage')
@@ -212,15 +212,15 @@ exports.getCart = (req, res) => {
         if (products.length === 0) {                                   //*--===check whether cart is empty or not==--//
             let cartIsEmty = true;
             productNotAvailable = false;
-            res.render('user/cartPage', {signup: true, products, totalCount, grandTotal, cartIsEmty, user_id: val._id,user:val._id })
+            res.render('user/cartPage', { signup: true, products, totalCount, grandTotal, cartIsEmty, user_id: val._id, user: val._id })
         }
         else {
             productNotAvailable = false;
-            res.render('user/cartPage', {signup:true, products, totalCount, grandTotal, user_id: val._id,user:val._id })
+            res.render('user/cartPage', { signup: true, products, totalCount, grandTotal, user_id: val._id, user: val._id })
         }
     })
         .catch(err => {
-            res.render('user/cartPage', {signup:true, productNotAvailable })
+            res.render('user/cartPage', { signup: true, productNotAvailable })
         })
 }
 exports.addAddress = (req, res) => {                                     //*=====this add address will limit the address 2 for every user====//
@@ -245,7 +245,7 @@ exports.proceedToCheckOut = async (req, res) => {                               
     let userId = req.session.userId
     let user = req.session.user
     let discountDetail = req.query;
-    if (userId.address) {                                                   
+    if (userId.address) {
         let cartItem = req.session.cartItem
         let priceAndTotalCount = req.session.grandTotal[0]
         let addressZero = false;
@@ -308,10 +308,10 @@ exports.showProductsForuser = (req, res) => {               //*-------========sh
         res.render('user/errorPage', { error: err, isUser: true })
     })
 }
-exports.userDashboard = (req, res) => {                   //*-------=========user account========------------//
+exports.userDashboard = async (req, res) => {                   //*-------=========user account========------------//
     let user = req.session.userDatas[0]
+    let count = await orderDb.find({ userid: user._id }).count()
     console.log(user);
-    //let cart=req.session.grandTotal
     let TotalQuantity = 0;
     if (req.session.grandTotal) {
         TotalQuantity = req.session.grandTotal[1]
@@ -319,15 +319,17 @@ exports.userDashboard = (req, res) => {                   //*-------=========use
     else {
         TotalQuantity = 0;
     }
-    orderController.getOrders(user._id).then(order => {
-        categoryController.findCategory().then(category => {
-            res.render('user/userDashBoard', { category, user, signup: true, dashboard: true, dash: true, orderCount: order.length, TotalQuantity })
-        })
+    categoryController.findCategory().then(category => {
+        res.render('user/userDashBoard', { category, user, signup: true, dashboard: true, dash: true, orderCount: count, TotalQuantity })
     })
 }
-exports.userOrderList = (req, res) => {                 //*-----=========display the orderlist for user=========----//
+exports.userOrderList = async (req, res) => {                 //*-----=========display the orderlist for user=========----//
     let user = req.session.userId
-    orderController.getOrders(user._id).then(data => {
+    let count = await orderDb.find({ userid: user._id }).count()
+    const perPage = 4;
+    let pages = Math.ceil((count / perPage))
+    let page = parseInt(req.query.page) || 1;
+    orderController.getOrders(user._id, perPage, page).then(data => {
         categoryController.findCategory().then(category => {
             let TotalQuantity = 0;
             if (req.session.grandTotal) {
@@ -336,7 +338,7 @@ exports.userOrderList = (req, res) => {                 //*-----=========display
             else {
                 TotalQuantity = 0;
             }
-            res.render('user/userOrder', { signup: true, data, user, TotalQuantity, category })
+            res.render('user/userOrder', { signup: true, data, user, TotalQuantity, category, pages })
         })
     }).catch(err => {
         res.render('user/errorPage', { error: err })
@@ -395,11 +397,23 @@ exports.editAddress = (req, res) => {
 exports.showWishlist = (req, res) => {
     let user = req.session.userDatas[0]
     if (user.wishlist) {
-        res.render('user/wishlist', { user })
+        res.render('user/wishlist', { user ,signup:true, common:true})
     }
     else {
-        res.render('user/wishlist', { wishlisEmpty: true })
+        res.render('user/wishlist', { wishlisEmpty: true ,signup:true,common:true})
     }
+}
+exports.getWalletHistory=(req,res)=>{
+    let user = req.session.userId
+    const perPage = 2;
+    let page = parseInt(req.query.page) || 1;
+    userController.getWalletHistory(user._id,perPage,page).then((data)=>{
+        let pages = Math.ceil((data.count.length / perPage))
+        //console.log('this is wallet',data.count.length);
+        res.render('user/walletHistory',{signup:true,history:data.history,user,pages})
+    }).catch(err=>{
+        res.render('user/errorPage')
+    })
 }
 
 
@@ -517,6 +531,6 @@ exports.filterOrderForAdmin = (req, res) => {
         res.render('user/errorPage')
     })
 }
-exports.addBanner=(req,res)=>{
+exports.addBanner = (req, res) => {
     res.render('admin/addBanner')
 }

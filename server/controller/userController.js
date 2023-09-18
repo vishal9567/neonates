@@ -139,7 +139,9 @@ module.exports = {
                     console.log("this is user", user);
                     try {
                        // if (user.address[0]) {
-                            await userdb.updateOne({ _id: id._id }, { $push: { address: data } })
+                            await userdb.updateOne({ _id: id._id }, { $push: { address: data } }).then(()=>{
+                                resolve({addressAdd:true})
+                            })
                             // await userdb.aggregate([{ $match: { '_id': mongoose.Types.ObjectId.createFromHexString(id._id) } }, { $unwind: "$address" }, { $group: { _id: 0, 'count': { $sum: 1 } } }]).then(async result => {
                             //     if (result[0].count >= 2) {                                          //check the count of addresses, 2 address limited
                             //         console.log("count comes in if:", result[0].count);
@@ -284,10 +286,16 @@ module.exports = {
         }
     },
     addToWallet: (id, order) => {
-        // console.log(order.paymentMethod);
+        console.log('this is order for wallet',order);
+        let history={
+            amount:order.totalAmount,
+            payType:order.paymentMethod,
+            status:order.status
+        }
         try {
             return new Promise(async (resolve, reject) => {
                 if (order.paymentMethod === 'Razorpay' || order.paymentMethod === 'wallet') {
+                    await userdb.updateOne({_id:id},{$push:{wallethistory:history}})
                     let user = await userdb.findOne({ _id: id }).lean()
                     if (user.wallet) {
                         await userdb.updateOne({ _id: id }, { $inc: { wallet: order.totalAmount } }).then(() => {
@@ -328,6 +336,32 @@ module.exports = {
             })
         }
         catch (err) {
+            throw new Error(err)
+        }
+    },
+    getWalletHistory:(id,perPage,page)=>{
+        try{
+            return new Promise(async(resolve,reject)=>{
+                let count=await userdb.aggregate([
+                    {$match:{"_id" : mongoose.Types.ObjectId.createFromHexString(id)}},
+                    {$unwind:'$wallethistory'},
+                    {$project:{'wallethistory.amount':1,'wallethistory.payType':1,'wallethistory.status':1,'wallethistory.date':1,'wallethistory.realdate':1,wallet:1}},
+                    {$sort:{'wallethistory.date':-1}}
+                    ])
+                   // console.log('from contorl',count.length);
+                await userdb.aggregate([
+                    {$match:{"_id" : mongoose.Types.ObjectId.createFromHexString(id)}},
+                    {$unwind:'$wallethistory'},
+                    {$project:{'wallethistory.amount':1,'wallethistory.payType':1,'wallethistory.status':1,'wallethistory.date':1,'wallethistory.realdate':1,wallet:1}},
+                    {$sort:{'wallethistory.date':-1}},
+                    {$skip:page},
+                    {$limit:perPage}
+                    ]).then((history)=>{
+                        resolve({history,count})
+                    })
+            })
+        }
+        catch(err){
             throw new Error(err)
         }
     }

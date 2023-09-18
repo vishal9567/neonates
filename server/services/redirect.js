@@ -121,17 +121,17 @@ exports.addUserFormSubmit = (req, res) => {                          //*=======i
     let data = req.body
 
     if (req.body.country == "")
-        res.json({ validation: false })
+        res.json({ validation: true })
     else if (req.body.state == "")
-        res.json({ validation: false })
+        res.json({ validation: true })
     else if (req.body.district == "")
-        res.json({ validation: false })
+        res.json({ validation: true })
     else if (req.body.city == "")
-        res.json({ validation: false })
+        res.json({ validation: true })
     else if (req.body.pinCode == "")
-        res.json({ validation: false })
+        res.json({ validation: true })
     else if (req.body.phone == "")
-        res.json({ validation: false })
+        res.json({ validation: true })
     else {
         console.log("current data:", data);
         userController.addAddress(userId, data).then(result => {
