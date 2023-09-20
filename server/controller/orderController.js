@@ -170,10 +170,10 @@ module.exports = {
             }
         });
     },
-    getOrderForTable: (user) => {
+    getOrderForTable: (perPage,page) => {
         return new Promise(async (resolve, reject) => {
             try {
-                let doc = await orderDb.find({}).lean()
+                await orderDb.find({}).skip(page*perPage -perPage).limit(perPage).lean()
                     .then(orders => {
                         resolve(orders)
                     })

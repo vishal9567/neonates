@@ -10,6 +10,8 @@ const productDb = require('../model/productModel')
 const coupenController = require('../controller/coupenController')
 const bannerController = require('../controller/bannerController')
 const orderDb = require('../model/ordersModel')
+const catDb=require('../model/categoryModel')
+const couponDb=require('../model/coupenModel')
 
 
 
@@ -226,16 +228,27 @@ exports.getCart = (req, res) => {
 exports.addAddress = (req, res) => {                                     //*=====this add address will limit the address 2 for every user====//
     let userId = req.session.userId
     let data = req.body
-    userController.addAddress(userId, data).then(result => {
-        if (result.address) {
-            let userId = req.session.userId
-            res.render('user/userAddress', { email: userId.Email, dashboard: true, TotalPrice: req.session.grandTotal, ptag: true })
-        }
-
-
-    }).catch(err => {
-        res.render('user/errorPage', { error: err })
-    })
+    console.log(data);
+    if (req.body.country == "")
+        res.json({ validation: false })
+    else if (req.body.state == "")
+        res.json({ validation: false })
+    else if (req.body.district == "")
+        res.json({ validation: false })
+    else if (req.body.city == "")
+        res.json({ validation: false })
+    else if (req.body.pinCode == "")
+        res.json({ validation: false })
+    else if (req.body.phone == "")
+        res.json({ validation: false })
+    else {
+        userController.addAddress(userId, data).then(result => {
+            res.json({ validation: true })
+        }).catch(err => {
+            res.render('user/errorPage')
+        })
+    }
+    
 }
 exports.proceedToCheckOut = async (req, res) => {                                      //*========next stage of checkout is done using the user id fetching the cart details using session=====//
     console.log("this is query:", req.query);
@@ -245,25 +258,10 @@ exports.proceedToCheckOut = async (req, res) => {                               
     let userId = req.session.userId
     let user = req.session.user
     let discountDetail = req.query;
-    if (userId.address) {
         let cartItem = req.session.cartItem
         let priceAndTotalCount = req.session.grandTotal[0]
-        let addressZero = false;
-        let addressOne = false;
-        if (userId.address.length === 0) {
-            addressZero = true;
-        }
-        else if (userId.address.length === 1) {
-            addressOne = true;
-        }
-        else {
-            addressZero = false;
-            addressOne = false;
-        }
-
         userController.getCurrentUser(userId).then(result => {
-            let address;
-            let arr = result[0].address
+            let arr = result[0].address?result[0].address:false;
             let TotalQuantity = 0;
             if (req.session.grandTotal) {
                 TotalQuantity = req.session.grandTotal[1]
@@ -271,17 +269,13 @@ exports.proceedToCheckOut = async (req, res) => {                               
             else {
                 TotalQuantity = 0;
             }
-            for (let i = 0; i < result[0].address.length; i++) {
-                address = result[0].address[i]
-            }
-            res.render('user/checkOut', { signup: true, userId, arr, cartItem, priceAndTotalCount, addressZero, addressOne, user, TotalQuantity, discountDetail })
+           
+            res.render('user/checkOut', { signup: true, userId, arr, cartItem, priceAndTotalCount, user, TotalQuantity, discountDetail })
         }).catch(err => {
             res.render('user/errorPage', { error: err })
         })
-    }
-    else {
-        res.render('user/userAddress', { email: userId.Email, dashboard: true, TotalPrice: req.session.grandTotal })
-    }
+    
+    
 }
 exports.addAdddress2 = (req, res) => {
     let userId = req.session.userId
@@ -409,7 +403,7 @@ exports.getWalletHistory=(req,res)=>{
     let page = parseInt(req.query.page) || 1;
     userController.getWalletHistory(user._id,perPage,page).then((data)=>{
         let pages = Math.ceil((data.count.length / perPage))
-        //console.log('this is wallet',data.count.length);
+        console.log('this is wallet',data.history);
         res.render('user/walletHistory',{signup:true,history:data.history,user,pages})
     }).catch(err=>{
         res.render('user/errorPage')
@@ -438,7 +432,7 @@ exports.homerout = (req, res) => {
 
 exports.addproducts = (req, res) => {
     categoryController.findCategory().then(category => {
-        res.render('admin/addProduct', { addProductPage: true, category })
+        res.render('admin/addProduct', { addProductPage: true, category,added:req.session.addProduct })
     })
         .catch(err => {
             res.render('user/errorPage')
@@ -450,39 +444,55 @@ exports.addCategory = (req, res) => {
     res.render('admin/addCategory', { checkCat })
     req.session.catCheck = null;
 }
-exports.userList = (req, res) => {
-    userController.getUser().then(user => {
+exports.userList = async(req, res) => {
+    let count=await userdb.find().count()
+    const perPage=5;
+    let pages = Math.ceil((count / perPage))
+    let page=parseInt(req.query.page) || 1;
+    userController.getUser(perPage,page).then(user => {
         categoryController.findCategory().then(category => {
-            res.render('admin/userListTable', { user, category })
+            res.render('admin/userListTable', { user, category,pages })
         })
     }).catch(err => {
         res.render('user/errorPage')
     })
 }
-exports.categoryList = (req, res) => {
-    categoryController.findCatForTable().then(cat => {
+exports.categoryList = async(req, res) => {
+    let count=await catDb.find().count()
+    const perPage=5;
+    let pages = Math.ceil((count / perPage))
+    let page=parseInt(req.query.page) || 1;
+    categoryController.findCatForTable(perPage,page).then(cat => {
         categoryController.findCategory().then(category => {
-            res.render('admin/categoryList', { cat, category })
+            res.render('admin/categoryList', { cat, category,pages })
         })
     }).catch(err => {
         res.render('user/errorPage')
     })
 }
-exports.orderListTable = (req, res) => {
-    orderController.getOrderForTable().then(order => {
+exports.orderListTable = async(req, res) => {
+    let count=await orderDb.find().count()
+    const perPage=5;
+    let pages = Math.ceil((count / perPage))
+    let page=parseInt(req.query.page) || 1;
+    orderController.getOrderForTable(perPage,page).then(order => {
         categoryController.findCategory().then(category => {
-            res.render('admin/orderList', { order, category })
+            res.render('admin/orderList', { order, category,pages })
         })
     }).catch(err => {
         res.render('user/errorPage', { error: err })
     })
 }
-exports.coupenList = (req, res) => {
-    coupenController.getCoupen().then(coupen => {
+exports.coupenList = async(req, res) => {
+    let count=await couponDb.find().count()
+    const perPage=5;
+    let pages = Math.ceil((count / perPage))
+    let page=parseInt(req.query.page) || 1;
+    coupenController.getCoupen(perPage,page).then(coupen => {
         categoryController.findCategory().then(category => {
 
             if (coupen) {
-                res.render('admin/coupenList', { coupen, category })
+                res.render('admin/coupenList', { coupen, category,pages })
             }
             else {
                 res.render('admin/coupenList', { nocoupen: coupen.notCoupen })

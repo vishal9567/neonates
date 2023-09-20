@@ -31,10 +31,10 @@ module.exports = {
             throw new Error(err);
         }
     },
-    getCoupen: () => {
+    getCoupen: (perPage,page) => {
         try {
             return new Promise(async (resolve, reject) => {
-                let coupen = await coupenDb.find().lean()
+                let coupen = await coupenDb.find().skip(page*perPage -perPage).limit(perPage).lean()
                 if (coupen) {
                     resolve(coupen)
                 }

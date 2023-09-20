@@ -99,18 +99,23 @@
                 {{!-- <i class="fas fa-fw fa-chart-area"></i> --}}
                 <span>Add Category</span></a>
         </li>
-         <li class="nav-item">
+        <li class="nav-item">
             <a class="nav-link" href="/admin/addBanner">
                 {{!-- <i class="fas fa-fw fa-table"></i> --}}
                 <span>Add Banner</span></a>
         </li>
+           <li class="nav-item">
+            <a class="nav-link" href="/admin/createCouponPage">
+                {{!-- <i class="fas fa-fw fa-table"></i> --}}
+                <span>Add coupon</span></a>
+        </li>
 
         <!-- Nav Item - Tables -->
-        {{!-- <li class="nav-item active">
+        <!-- <li class="nav-item active">
             <a class="nav-link" href="tables.html">
                 <i class="fas fa-fw fa-table"></i>
                 <span>Tables</span></a>
-        </li> --}}
+        </li> -->
 
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
@@ -362,8 +367,9 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered text-center" id="productsTable" width="100%" cellspacing="0">
-                                <thead>
+                            <table class="table table-bordered text-center" id="productsTable" width="100%"
+                                cellspacing="0">
+                                <thead class="bg-primary text-light">
                                     <tr>
                                         <th>Order Id</th>
                                         <th>Customer</th>
@@ -372,7 +378,7 @@
                                         <th>Order Date</th>
                                         <th>Payment Method</th>
                                         <th>Status</th>
-                                       
+
                                     </tr>
                                 </thead>
                                 {{!-- <tfoot>
@@ -384,7 +390,7 @@
                                     </tr>
                                 </tfoot> --}}
                                 {{#each order}}
-                                <tbody>
+                                <tbody style="background-color: rgb(187, 187, 223);">
                                     <tr>
                                         <td><a href="/admin/showOrderDetail/{{this._id}}" class="text-decoration-none">
                                                 <h6 class="text-primary">{{this._id}}</h6>
@@ -399,7 +405,7 @@
                                         <td>
                                             <div>
                                                 {{#if (compare this.status '==' 1)}}<h6 class="text-success">
-                                                Placed</h6>
+                                                    Placed</h6>
 
                                                 </h6>{{/if}}
                                                 {{#if (compare this.status '==' 2)}}<h6 class="text-warning">
@@ -450,6 +456,24 @@
                             </table>
                             <h6 class="text-center" id="notFound"></h6>
                         </div>
+                        <!--pagination-->
+                        <nav aria-label="...">
+                            <ul class="pagination justify-content-center">
+
+                                <!-- <li class="page-item">
+                    <a class="page-link">Previous</a>
+                </li> -->
+                                {{#for pages}}
+                                <li class="page-item" aria-current="page">
+                                    <a class="page-link" href="/admin/orderListTable?page={{this}}">{{this}} <span
+                                            class="visually-hidden">(current)</span></a>
+                                </li>
+                                {{/for}}
+                                <!-- <li class="page-item">
+                    <a class="page-link" href="/admin/listProduct">Next</a>
+                </li> -->
+                            </ul>
+                        </nav>
                     </div>
                 </div>
 
@@ -550,7 +574,7 @@
                 if (response.orderNotfound) {
                     $('#productsTable').empty();
                     $('#productsTable').append(`
-                <thead>
+                <thead class="bg-primary text-light">
                     <tr>
                         <th>Order Id</th>
                         <th>Customer</th>
@@ -562,15 +586,15 @@
                     </tr>
                 </thead>
                 `)
-                $('#notFound').append(`Not Found`)
+                    $('#notFound').append(`Not Found`)
                 }
                 else {
-                    
+
                     //alert(response[0].userName)
                     //response.reverse()
                     $('#productsTable').empty();
                     $('#productsTable').append(`
-                <thead>
+                <thead class="bg-primary text-light">
                     <tr>
                         <th>Order Id</th>
                         <th>Customer</th>
@@ -601,7 +625,7 @@
                                 Delivered</h6>`}
 
 
-                        $('#productsTable').append(` <tbody>
+                        $('#productsTable').append(` <tbody style="background-color: rgb(187, 187, 223);">
                 <tr>
                     <td><a href="/admin/showOrderDetail/${response[i]._id}" class="text-decoration-none">
                             <h6 class="text-primary">${response[i]._id}</h6>

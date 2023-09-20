@@ -143,6 +143,10 @@ exports.getOrderDetails = async (req, res) => {                              //*
     let user = req.session.userId
     let deliveryDetail = req.body //contains payment type total price address id
     let totalQty = req.session.grandTotal//contains totalqty total price
+    console.log("body data",req.body);
+    if(req.body.payType == "" || req.body.addressId == "")
+        res.json({fieldsEmpty:true})
+    else{
     if (req.body.payType === 'wallet') {                                      //*----this if block only for wallet------//
         if (parseInt(req.body.total) <= req.session.userDatas[0].wallet) {
             await userController.getDeliveryAddress(user, deliveryDetail).then(async getAddress => {//here getting the selected address
@@ -164,14 +168,14 @@ exports.getOrderDetails = async (req, res) => {                              //*
 
                 })
             }).catch(err => {
-
+                throw new Error(err)
             })
         }
         else
             res.json({ insufficientWallet: true })
 
     }
-    else {                                                              //*-----this else block for both COD and online payment-----//
+    else{                                 //*-----this else block for both COD and online payment-----//
         await userController.getDeliveryAddress(user, deliveryDetail).then(async getAddress => {//here getting the selected address
             // //req.session.deliveryAddress=result.address
             await cartController.getCartItemForLogin(user._id).then(async cartItem => {//here getting the cart details such as product id and count
@@ -203,6 +207,7 @@ exports.getOrderDetails = async (req, res) => {                              //*
 
         })
     }
+}
 }
 exports.deleteCartItem = (req, res) => {
     let proId = req.body.count
@@ -301,10 +306,16 @@ exports.logout = (req, res) => {
     res.redirect('/admin')
 }
 exports.addToCategory = (req, res) => {
-    addcategory.create(req.body).then(result => {
-        req.session.catCheck = result.cats
-        res.redirect('/admin/addCategory')
-    })
+    if(req.body.categoryname == ''){
+        res.json({empty:true})
+    }
+    else{
+        addcategory.create(req.body).then(result => {
+            //req.session.catCheck = result.cats
+           // res.redirect('/admin/addCategory')
+            res.json(result)
+        })
+    }
 }
 exports.dashboar = (req, res) => {
     res.redirect('/admin')

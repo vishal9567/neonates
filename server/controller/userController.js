@@ -73,9 +73,9 @@ module.exports = {
         }
 
     },
-    getUser: () => {                                                          //*=============Findout the user during login or other purpose===============
+    getUser: (perPage,page) => {                                                          //*=============Findout the user during login or other purpose===============
         return new Promise(async (resolve, reject) => {
-            let doc = await userdb.find().lean()
+            await userdb.find().skip(perPage * page -perPage).limit(perPage).lean()
                 .then(result => {
                     resolve(result)
                 }).catch(err => {
@@ -340,21 +340,22 @@ module.exports = {
         }
     },
     getWalletHistory:(id,perPage,page)=>{
+        let skip = perPage*page - perPage;
         try{
             return new Promise(async(resolve,reject)=>{
                 let count=await userdb.aggregate([
                     {$match:{"_id" : mongoose.Types.ObjectId.createFromHexString(id)}},
                     {$unwind:'$wallethistory'},
-                    {$project:{'wallethistory.amount':1,'wallethistory.payType':1,'wallethistory.status':1,'wallethistory.date':1,'wallethistory.realdate':1,wallet:1}},
+                    {$project:{'wallethistory.amount':1,'wallethistory.payType':1,'wallethistory.status':1,'wallethistory.date':1,'wallet':1}},
                     {$sort:{'wallethistory.date':-1}}
                     ])
-                   // console.log('from contorl',count.length);
+                    console.log('from contorl',count.length);
                 await userdb.aggregate([
                     {$match:{"_id" : mongoose.Types.ObjectId.createFromHexString(id)}},
                     {$unwind:'$wallethistory'},
-                    {$project:{'wallethistory.amount':1,'wallethistory.payType':1,'wallethistory.status':1,'wallethistory.date':1,'wallethistory.realdate':1,wallet:1}},
+                    {$project:{'wallethistory.amount':1,'wallethistory.payType':1,'wallethistory.status':1,'wallethistory.date':1,'wallet':1}},
                     {$sort:{'wallethistory.date':-1}},
-                    {$skip:page},
+                    {$skip:skip},
                     {$limit:perPage}
                     ]).then((history)=>{
                         resolve({history,count})

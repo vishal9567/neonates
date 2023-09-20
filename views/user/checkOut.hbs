@@ -3,7 +3,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header " style="color: rgb(236,79,162);">
-        <h5 class="modal-title" id="exampleModalLabel">Your Coupons</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Add Address</h5>
         <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -93,7 +93,7 @@
         <!-- Checkout -->
         <div class="card shadow-0 border">
           <div class="p-4">
-            <h5 class="card-title mb-3">Shipping info</h5>
+            <h5 class="card-title mb-3">Shipping info</h5>{{#if arr}}{{else}} <p class="text-info">is empty add address</p>{{/if}}
             <div class="row mb-3">
               {{#each arr}}
               <div class="col-lg-6 mb-3">
@@ -338,16 +338,24 @@
     let addressId = $('.getAddress:checked').val();
     let paymentType = $('.getPayType:checked').val();
     let totalPrice = $('#totalPrice').text();
-    alert(totalPrice)
     $.ajax({
       url: '/placeOrder',
       data: {
-        addressId: addressId,
-        payType: paymentType,
+        addressId: addressId?addressId:null,
+        payType: paymentType?paymentType:null,
         total: totalPrice
       },
       method: 'post',
       success: (function (response) {
+        if(response.fieldsEmpty){
+           Swal.fire({
+            title: 'Oops...!',
+            html: '<h6>Select all fields</h6> <h5>Payment Option or shiping info missing',
+            icon: 'info',
+            showConfirmButton: true,
+          })
+        }
+        else{
         if (response.codSuccess) {
           Swal.fire({
             title: 'Order Placed Successfully!',
@@ -380,10 +388,11 @@
             window.location.href = "http://localhost:3000/cart"
           })
         }
-        else {
+        else if(!response.fieldsEmpty) {
           // alert("success")
           razorPayment(response);
         }
+      }
       })
     })
   })

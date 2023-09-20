@@ -55,4 +55,8 @@ router.post('/changeStatus',sessionCheck.auth,redirect.changeStatus) //!-------c
 router.post('/submitCoupon',sessionCheck.auth,redirect.createCoupon)
 router.post('/submitUpdate/:id',sessionCheck.auth,redirect.editCoupon)
 
+router.get('/test',(req,res)=>{
+    res.render('admin/addProduct1')
+})
+
 module.exports=router;

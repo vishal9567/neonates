@@ -21,7 +21,9 @@ exports.create = async (req, res) => {
     await product
         .save()
         .then(result => {
+            req.session.addProduct=true
             res.redirect('/admin/addProductPage')
+            req.session.addProduct=false;
 
         })
         .catch(err => {
@@ -32,12 +34,14 @@ exports.create = async (req, res) => {
 }
 //-------------find()-----------//
 exports.get = async (req, res) => {                             //*----===========for admin page product list=======---------//
-    const perPage=3;
-    let page=parseInt(req.params.page) || 1;
-    let product = await productDb.find().sort({ date: -1 }).lean()////.skip(perPage * page -perPage).limit(perPage).lean()
+    let count=await productDb.find().count()
+    const perPage=5;
+    let pages = Math.ceil((count / perPage))
+    let page=parseInt(req.query.page) || 1;
+    await productDb.find().skip(perPage * page -perPage).limit(perPage).sort({date:-1}).lean()
         .then(products => {
             categoryController.findCategory().then(category => {
-                res.render('admin/productlist', { products, category })
+                res.render('admin/productlist', { products, category,pages })
             })
         })
         .catch(err => {

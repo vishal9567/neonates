@@ -10,7 +10,7 @@ module.exports={
                 resolve({cats:true})
             }
             else{
-                let doc=await categoryDb.collection.insertOne({
+                await categoryDb.collection.insertOne({
                     category:categoryName,
                     status:true
                 }).then(result=>{
@@ -30,15 +30,15 @@ module.exports={
     },
     findCategory:()=>{
         return new Promise(async(resolve,reject)=>{
-            let doc=await categoryDb.find({status:true}).lean()
+            await categoryDb.find({status:true}).lean()
             .then(category=>{
                 resolve(category)
             })
         })
     },
-    findCatForTable:()=>{
+    findCatForTable:(perPage,page)=>{
         return new Promise(async(resolve,reject)=>{
-            await categoryDb.find().lean()
+            await categoryDb.find().skip(perPage*page - perPage).limit(perPage).lean()
             .then(category=>{
                 resolve(category)
             })
