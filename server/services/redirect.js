@@ -6,7 +6,7 @@ const cartController = require('../controller/cartController');
 const productHelpers = require('../controller/productHelper')
 const orderController = require('../controller/orderController')
 const coupenController = require('../controller/coupenController')
-const bannerController=require('../controller/bannerController')
+const bannerController = require('../controller/bannerController')
 const productDb = require('../model/productModel')
 
 
@@ -74,14 +74,14 @@ exports.logOut = (req, res) => {
 }
 exports.addToCart = (req, res) => {
     let val = req.session.userId
-    productHelpers.checkInventry(req.params.id).then(data=>{
-        if(data){
+    productHelpers.checkInventry(req.params.id).then(data => {
+        if (data) {
             console.log(data);
             res.json(data)
-        }else{
+        } else {
 
             cartController.addToCart(req.params.id, val._id).then(result => {
-                res.json({cartAdded:true})   
+                res.json({ cartAdded: true })
             })
                 .catch(err => {
                     console.log(err, "message from addtocart catch");
@@ -143,71 +143,71 @@ exports.getOrderDetails = async (req, res) => {                              //*
     let user = req.session.userId
     let deliveryDetail = req.body //contains payment type total price address id
     let totalQty = req.session.grandTotal//contains totalqty total price
-    console.log("body data",req.body);
-    if(req.body.payType == "" || req.body.addressId == "")
-        res.json({fieldsEmpty:true})
-    else{
-    if (req.body.payType === 'wallet') {                                      //*----this if block only for wallet------//
-        if (parseInt(req.body.total) <= req.session.userDatas[0].wallet) {
+    console.log("body data", req.body);
+    if (req.body.payType == "" || req.body.addressId == "")
+        res.json({ fieldsEmpty: true })
+    else {
+        if (req.body.payType === 'wallet') {                                      //*----this if block only for wallet------//
+            if (parseInt(req.body.total) <= req.session.userDatas[0].wallet) {
+                await userController.getDeliveryAddress(user, deliveryDetail).then(async getAddress => {//here getting the selected address
+                    // //req.session.deliveryAddress=result.address
+                    await cartController.getCartItemForLogin(user._id).then(async cartItem => {//here getting the cart details such as product id and count
+                        for (let i = 0; i < cartItem.products.length; i++) {
+                            await productHelpers.inventryManagement(cartItem.products[i].item, cartItem.products[i].quantity)
+                        }
+
+                        await orderController.createOrder(getAddress, cartItem, deliveryDetail, totalQty, user.name).then(async order => {
+                            await cartController.removeCart(user._id).then(result => {
+
+                                userController.updateWallet(user._id, parseInt(req.body.total) * -1).then(() => {
+                                    res.json({ codSuccess: true })
+                                })
+
+                            })
+                        })
+
+                    })
+                }).catch(err => {
+                    throw new Error(err)
+                })
+            }
+            else
+                res.json({ insufficientWallet: true })
+
+        }
+        else {                                 //*-----this else block for both COD and online payment-----//
             await userController.getDeliveryAddress(user, deliveryDetail).then(async getAddress => {//here getting the selected address
                 // //req.session.deliveryAddress=result.address
                 await cartController.getCartItemForLogin(user._id).then(async cartItem => {//here getting the cart details such as product id and count
                     for (let i = 0; i < cartItem.products.length; i++) {
-                        await productHelpers.inventryManagement(cartItem.products[i].item, cartItem.products[i].quantity)
-                    }
-                    
-                    await orderController.createOrder(getAddress, cartItem, deliveryDetail, totalQty, user.name).then(async order => {
-                        await cartController.removeCart(user._id).then(result => {
-
-                            userController.updateWallet(user._id, parseInt(req.body.total) * -1).then(() => {
-                                res.json({codSuccess:true})
-                            })
-
+                        await productHelpers.inventryManagement(cartItem.products[i].item, cartItem.products[i].quantity).then(async info => {
+                            if (info) {
+                                res.json(info)
+                                console.log('this is info', info);
+                            }
+                            else {
+                                await orderController.createOrder(getAddress, cartItem, deliveryDetail, totalQty, user.name).then(async order => {
+                                    await cartController.removeCart(user._id).then(result => {
+                                        if (req.body.payType === 'COD')
+                                            res.json({ codSuccess: true })
+                                        else {
+                                            let orderId = order.toString()
+                                            orderController.generateRazorPay(orderId, deliveryDetail.total).then(order => {
+                                                res.json(order)
+                                            })
+                                        }
+                                    })
+                                })
+                            }
                         })
-                    })
+                    }
 
                 })
             }).catch(err => {
-                throw new Error(err)
+
             })
         }
-        else
-            res.json({ insufficientWallet: true })
-
     }
-    else{                                 //*-----this else block for both COD and online payment-----//
-        await userController.getDeliveryAddress(user, deliveryDetail).then(async getAddress => {//here getting the selected address
-            // //req.session.deliveryAddress=result.address
-            await cartController.getCartItemForLogin(user._id).then(async cartItem => {//here getting the cart details such as product id and count
-                for (let i = 0; i < cartItem.products.length; i++) {
-                    await productHelpers.inventryManagement(cartItem.products[i].item, cartItem.products[i].quantity).then(async info=>{
-                        if(info){
-                            res.json(info)
-                            console.log('this is info',info);
-                        }
-                        else{
-                            await orderController.createOrder(getAddress, cartItem, deliveryDetail, totalQty, user.name).then(async order => {
-                                await cartController.removeCart(user._id).then(result => {
-                                    if (req.body.payType === 'COD')
-                                        res.json({ codSuccess: true })
-                                    else {
-                                        let orderId = order.toString()
-                                        orderController.generateRazorPay(orderId, deliveryDetail.total).then(order => {
-                                            res.json(order)
-                                        })
-                                    }
-                                })
-                            })
-                        }
-                    })
-                }
-
-            })
-        }).catch(err => {
-
-        })
-    }
-}
 }
 exports.deleteCartItem = (req, res) => {
     let proId = req.body.count
@@ -256,47 +256,108 @@ exports.wallet = (req, res) => {
     console.log(user);
     res.json(user)
 }
-exports.getCoupon=(req,res)=>{
-    coupenController.getCouponForCart(req.query.price).then(coupon=>{
+exports.getCoupon = (req, res) => {
+    coupenController.getCouponForCart(req.query.price).then(coupon => {
         console.log(coupon);
         res.json(coupon)
-    }) .catch(err => {
+    }).catch(err => {
         res.render('user/errorPage')
     })
 }
-exports.findCouponForCart=(req,res)=>{
-    coupenController.findCouponForCart(req.query).then(data=>{
+exports.findCouponForCart = (req, res) => {
+    coupenController.findCouponForCart(req.query).then(data => {
         res.json(data)
-    }) .catch(err => {
+    }).catch(err => {
         res.render('user/errorPage')
     })
 }
 //find catergory products by ajax call
-exports.getCatProducts=async(req,res)=>{
+exports.getCatProducts = async (req, res) => {
     let count = await productDb.count()
-    productHelpers.getCatProducts(req.query,count).then(product=>{
+    productHelpers.getCatProducts(req.query, count).then(product => {
         res.json(product)
-    }) .catch(err => {
+    }).catch(err => {
         res.render('user/errorPage')
     })
 }
-exports.getPriceProducts=(req,res)=>{
-    productHelpers.getPriceProducts(req.query).then(product=>{
+exports.getPriceProducts = (req, res) => {
+    productHelpers.getPriceProducts(req.query).then(product => {
         res.json(product)
-    }) .catch(err => {
+    }).catch(err => {
         res.render('user/errorPage')
     })
 }
-exports.getColorProducts=(req,res)=>{
+exports.getColorProducts = (req, res) => {
     console.log(req.query);
-    productHelpers.getColorProducts(req.query).then(product=>{
-        console.log("this is pro:",product);
+    productHelpers.getColorProducts(req.query).then(product => {
+        console.log("this is pro:", product);
         res.json(product)
-    }) .catch(err => {
+    }).catch(err => {
         res.render('user/errorPage')
     })
 }
+exports.invoice = async (req, res) => {                         //*---=====invoice section====-----//
+    //console.log('this is data',req.query);
+    let product;
+    let userData;
+    await orderController.getOrderDetails(req.query.id).then(data => {
+        //console.log("this is data",data);
+        userData = data;
+        product = data.map((item, i) => {
+            return {
+                quantity: parseInt(item.quantity),
+                description: item.order.productname,
+                price: parseInt(req.query.price),
+                total: parseInt(item.order.price),
+                "tax-rate": 0
+            }
+        })
+        data = {
+            sender: {
+                "company": "Neonates",
+                "address": "Kollam",
+                "zip": "1234 AB",
+                "city": "Kollam",
+                "country": "India"
+            },
+            client: {
+                "company": userData[0].name,
+                "address": userData[0].address.state,
+                "zip": "4567 CD",
+                "city": userData[0].address.district,
+                "country": userData[0].address.country
+            },
+            information: {
+                // Invoice number
+                "number": userData[0]._id,
+                // Invoice data
+                "date": userData[0].date,
+                // Invoice due date
+                //"due-date": "31-12-2021"
+            },
+            products: product,
+            "bottom-notice": "Kindly pay your invoice within 15 days.",
+            "settings": {
+                "currency": "INR", // See documentation 'Locales and Currency' for more info. Leave empty for no currency.
 
+            }
+        };
+        console.log(data);
+        res.json(data)
+    })
+}
+exports.likeProduct = async (req, res) => {             //!----this method is wrong try onother---//
+    let user = req.session.userId
+    let count = await orderController.getCount(req.query.proId)
+    if(count >0){
+        productHelpers.updateLike(user._id,req.query.proId).then(result=>{
+            res.json(result)
+        })
+    }
+    else{
+        res.json({notBuy:true})
+    }
+}
 
 
 //!----------------admin--------------------------------------------------admin----------------------------------------------------------*//
@@ -306,19 +367,19 @@ exports.logout = (req, res) => {
     res.redirect('/admin')
 }
 exports.addToCategory = (req, res) => {
-    if(req.body.categoryname == ''){
-        res.json({empty:true})
+    if (req.body.categoryname == '') {
+        res.json({ empty: true })
     }
-    else{
+    else {
         addcategory.create(req.body).then(result => {
             //req.session.catCheck = result.cats
-           // res.redirect('/admin/addCategory')
+            // res.redirect('/admin/addCategory')
             res.json(result)
         })
     }
 }
 exports.dashboar = (req, res) => {
-    res.redirect('/admin')
+    res.redirect('/admin', { data })
 }
 exports.catED = (req, res) => {
     let id = req.params.id
@@ -327,9 +388,9 @@ exports.catED = (req, res) => {
         res.redirect('/admin/categoryList')
     })
 }
-exports.addCatOffer=(req,res)=>{
+exports.addCatOffer = (req, res) => {
     console.log(req.query);
-    productHelpers.addCatOffer(req.query).then(()=>{
+    productHelpers.addCatOffer(req.query).then(() => {
         res.json(true)
     })
 }
@@ -350,11 +411,11 @@ exports.changeStatus = (req, res) => {
         res.json(true)
     })
 }
-exports.updateStatus=(req,res)=>{
-    console.log('status',req.query.status);
-    console.log('status',req.query.id);
+exports.updateStatus = (req, res) => {
+    console.log('status', req.query.status);
+    console.log('status', req.query.id);
     console.log("welcome");
-    orderController.updateStatus(req.query.id,req.query.status).then(()=>{
+    orderController.updateStatus(req.query.id, req.query.status).then(() => {
         res.json(true);
     })
 }
@@ -397,9 +458,9 @@ exports.deleteCoupon = (req, res) => {
         res.render('user/errorPage')
     })
 }                                                                                 //*=======coupen section end===banner start====//
-exports.createBanner=(req,res)=>{
+exports.createBanner = (req, res) => {
     console.log(req.body);
-    bannerController.createBanner(req).then(()=>{
+    bannerController.createBanner(req).then(() => {
 
     })
 }

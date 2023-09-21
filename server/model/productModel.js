@@ -42,6 +42,12 @@ var productSchema=new mongoose.Schema({
     },
     image:{
         type:Array
+    },
+    rating:{
+        type:Number
+    },
+    user:{
+        type:Array
     }
 })
 const productsDb=mongoose.model('products',productSchema);

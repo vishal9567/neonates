@@ -417,10 +417,13 @@ exports.getWalletHistory=(req,res)=>{
 
 
 //?------===============admin============---------------======================admin===========================-----------------------------------*//
-exports.homerout = (req, res) => {
+exports.homerout = async(req, res) => {
     if (req.session.AdminLogIn) {
+        let data=await  orderController.getForChart()
+        console.log(data);
+        data=JSON.stringify(data)
         categoryController.findCategory().then(category => {
-            res.render('admin/dashboard', { category })
+            res.render('admin/dashboard', { category,data })
         })
             .catch((err) => {
                 res.render('user/errorPage')

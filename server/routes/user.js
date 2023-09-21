@@ -102,6 +102,8 @@ router.get('/getCatProducts',redirect.getCatProducts)
 router.get('/getPriceProducts',redirect.getPriceProducts)
 router.get('/getColorProducts',redirect.getColorProducts)
 router.get('/walletHistory',sessionCheck.userAuth,render.getWalletHistory)
+router.get('/invoice',redirect.invoice)
+router.get('/likeProduct',redirect.likeProduct)
 
 module.exports = router;
 

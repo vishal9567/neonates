@@ -173,7 +173,7 @@ module.exports = {
     getOrderForTable: (perPage,page) => {
         return new Promise(async (resolve, reject) => {
             try {
-                await orderDb.find({}).skip(page*perPage -perPage).limit(perPage).lean()
+                await orderDb.find({}).skip(page*perPage -perPage).limit(perPage).sort({date:-1}).lean()
                     .then(orders => {
                         resolve(orders)
                     })
@@ -356,6 +356,29 @@ module.exports = {
                 }).catch(err=>{
                     reject()
                 })
+            })
+        }
+        catch(err){
+            throw new Error(err)
+        }
+    },
+    getForChart:()=>{
+        try{
+            return new Promise(async(resolve,reject)=>{
+                await orderDb.aggregate([{$group:{_id:'$date',count:{$sum:1}}}]).then(data=>{
+                    resolve(data)
+                })
+            })
+        }
+        catch(err){
+            throw new Error(err)
+        }
+    },
+    getCount:(id)=>{
+        try{
+            return new Promise(async(resolve,reject)=>{
+                let count=await orderDb.find({products:{$elemMatch:{item: new mongoose.Types.ObjectId(id)}}}).count()
+                resolve(count)
             })
         }
         catch(err){

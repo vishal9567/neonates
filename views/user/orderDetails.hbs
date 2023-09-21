@@ -1,23 +1,56 @@
+<!--modal-->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      {{!-- <div class="modal-header " style="color: rgb(236,79,162);">
+        <h5 class="modal-title" id="exampleModalLabel">Your Coupons</h5>
+        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div> --}}
+      <div class="modal-body" id="pdf"></div>
+      <!-- <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div> -->
+    </div>
+  </div>
+</div>
+<!--modal ends-->
 <section class="h-100 gradient-custom" style="margin-top: 100px;">
   <div class="container py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-lg-10 col-xl-8">
         <div class="card" style="border-radius: 10px;">
           <div class="card-header px-4 py-5">
-            <h5 class="text-muted mb-0">Thanks for your Order, <span style="color: #a8729a;">{{data.[0].name}}</span>!</h5>
+            <div class="d-flex justify-content-between">
+              <div>
+                <h5 class="text-muted mb-0">Thanks for your Order, <span
+                    style="color: #a8729a;">{{data.[0].name}}</span>!</h5>
+              </div>
+              
+
+              <div class="dropdown mb-3">
+                <button type="button" class="btn dropdown-toggle btn btn-primary" data-bs-toggle="dropdown">
+                  Invoice
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" onclick="viewInvoice('{{data.[0]._id}}','{{data.[0].totalPrice}}')">View</a></li>
+                  <li><a class="dropdown-item" onclick="submitInvoice('{{data.[0]._id}}','{{data.[0].totalPrice}}')">Download</a></li>
+                </ul>
+              </div>
+
+            </div>
           </div>
           <div class="card-body p-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
               <p class="lead fw-normal mb-0" style="color: #a8729a;">Order id : {{data.[0]._id}}</p>
               <h5 class="small text-dark fw-bold mb-0">Pay Type: {{data.[0].payType}}</h5>
             </div>
-        {{#each data}}
+            {{#each data}}
             <div class="card shadow-0 border mb-4">
               <div class="card-body">
                 <div class="row">
                   <div class="col-md-2">
-                    <img src="/images/{{this.order.image.[0]}}"
-                      class="img-fluid" alt="Phone">
+                    <img src="/images/{{this.order.image.[0]}}" class="img-fluid" alt="Phone">
                   </div>
                   <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
                     <p class="text-muted mb-0">{{this.order.productname}}</p>
@@ -43,8 +76,8 @@
                   <div class="col-md-10">
                     <div class="progress" style="height: 6px; border-radius: 16px;">
                       <div class="progress-bar" role="progressbar"
-                        style="{{#if (compare this.status '==' 2)}}width: 34%;{{/if}} {{#if (compare this.status '==' 1)}}width: 68%;{{/if}} {{#if (compare this.status '==' 5)}}width: 100%;{{/if}} border-radius: 16px; background-color: #a8729a;" aria-valuenow="20"
-                        aria-valuemin="0" aria-valuemax="100"></div>
+                        style="{{#if (compare this.status '==' 2)}}width: 34%;{{/if}} {{#if (compare this.status '==' 1)}}width: 68%;{{/if}} {{#if (compare this.status '==' 5)}}width: 100%;{{/if}} border-radius: 16px; background-color: #a8729a;"
+                        aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                     <div class="d-flex justify-content-around mb-1">
                       <p class="text-muted mt-1 mb-0 small ms-xl-5">Pending</p>
@@ -57,7 +90,7 @@
                 </div>
               </div>
             </div>
-        {{/each}}
+            {{/each}}
             <div class="d-flex justify-content-between pt-2">
               <p class="fw-bold mb-0">Address</p>
               <p class="text-muted mb-0"><span class="fw-bold me-4"></span></p>
@@ -69,7 +102,9 @@
             </div>
 
             <div class="d-flex justify-content-between">
-              <p class="text-muted mb-0">{{data.[0].address.state}},{{data.[0].address.district}},{{data.[0].address.city}},Pin:{{data.[0].address.pinCode}}</p>
+              <p class="text-muted mb-0">
+                {{data.[0].address.state}},{{data.[0].address.district}},{{data.[0].address.city}},Pin:{{data.[0].address.pinCode}}
+              </p>
               <p class="text-muted mb-0"><span class="fw-bold me-4"></span></p>
             </div>
 
@@ -88,3 +123,51 @@
     </div>
   </div>
 </section>
+<script src="https://unpkg.com/easyinvoice/dist/easyinvoice.min.js"></script>
+<script src="https://unpkg.com/pdfjs-dist/build/pdf.min.js"></script>
+<script src="https://unpkg.com/pdfjs-dist/build/pdf.worker.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  function submitInvoice(Data,price) {
+    $.ajax({
+      url: '/invoice?id=' + Data+'&price='+price,
+      method: 'get',
+      success: (function (response) {
+        alert('Please Wait download is progressing')
+        easyinvoice.createInvoice(response, function (result) {
+          easyinvoice.download('myInvoice.pdf', result.pdf);
+          //	you can download like this as well:
+          //	easyinvoice.download();
+          //	easyinvoice.download('myInvoice.pdf');   
+          alert("Invoice download completed")
+        });
+      })
+    })
+
+  }
+  function viewInvoice(Data,price) {
+    $.ajax({
+      url: '/invoice?id=' + Data + '&price='+price,
+      method: 'get',
+      success: (function (response) {
+        Swal.fire({
+          title: 'Please wait!',
+          timer: 1500
+        })
+        let elementId = 'pdf';
+        easyinvoice.createInvoice(response, function (result) {
+          easyinvoice.render(elementId, result.pdf, function () {
+            $('#exampleModal').modal('show')
+            $('.btn-close').click(() => {
+              $('#exampleModal').modal('hide')
+            })
+
+          });
+        });
+      })
+    })
+  }
+</script>
