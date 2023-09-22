@@ -1,0 +1,116 @@
+<!-- Navbar -->
+
+<div>
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" style="background-color:rgb(236,79,162)">
+    <div class="container-fluid">
+      <a href="#" class="navbar-brand">
+        <a class="navbar-brand mt-2 mt-lg-0" href="/home">
+          {{!-- <img src="/img/neonatesLogo.png" height="80" alt="MDB Logo" loading="lazy" /> --}}
+          <h3 class="p-3" style="font-size: 30px;
+  background: -webkit-linear-gradient(#2735b3, #d88a16);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;">neonates</h3>
+        </a>
+      </a>
+      <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a href="/home" class="text-white btn rounded-pill mx-2">Home</a>
+      <a href="/landing" class="text-white btn  rounded-pill mx-2">All</a>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav ms-auto">
+          
+        </div>
+
+
+
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <div class="navbar-nav ms-auto">
+
+            <div class="input-group mb-3" id="searchPro" style="display: none;">
+              <input id="inputSearch" type="text" class="form-control" placeholder="Search here"
+                aria-label="Recipient's username" aria-describedby="basic-addon2" name="Item" />
+              <button style="border:none;" class="input-group-text text-decoration-none"
+                id="basic-addon2">Search</button>
+            </div>
+
+            <button class="text-light " style="border:none; background:none;" onclick="searchProduct()"><span
+                class="material-symbols-outlined p-2">
+                search
+              </span></button>
+            <a {{#if user}}href="/cart" {{else}} id="myCart" href="" {{/if}} onclick="showModal()"
+              class="text-light"><span class="material-symbols-outlined p-2">
+                shopping_cart{{#if user}}<sub
+                  style="font-size: x-small; background-color:red; border-radius:20px;padding:1px">{{TotalQuantity}}</sub>{{/if}}
+              </span></a>
+            <div class="nav-item dropdown">
+              <a href="#" class="nav-link dropdown-toggle btn rounded-pill text-light"
+                data-bs-toggle="dropdown">Options</a>
+              <div class="dropdown-menu">
+                {{#if user}}<a href="/userDashBoard" class="dropdown-item">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Account</a>{{else}}
+                <a href="/signUp" class="dropdown-item">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  SignUp</a>{{/if}}
+                <a class="dropdown-item" {{#if user}}href="/logout" data-toggle="modal" data-target="#logoutModal"
+                  {{else}}href="/userLogin" {{/if}}>
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  {{#if user}}Logout{{else}}Login{{/if}}
+                </a>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+  </nav>
+</div>
+<section style="margin-top:100px;">
+    <div class="container">
+        <div class="p-5 d-flex justify-content-center text-secondary">
+            {{#if login}}<h1>User name or password incorrect</h1>{{/if}}
+        </div>
+    </div>
+</section>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+
+<script>
+  $("#myCart").on('click', function () {
+    alert("Please log in or sign up")
+  });
+</script>
+<script>
+  function searchProduct() {
+    let x = document.getElementById('searchPro')
+    if (x.style.display === "none") {
+      x.style.display = "flex"
+    }
+    else if (x.style.display === 'flex') {
+      x.style.display = 'none'
+    }
+  }
+</script>
+<script>
+  $('#basic-addon2').click(function () {
+    let item = $('#inputSearch').val()
+    $.ajax({
+      url: '/searchProducts',
+      data: {
+        Item: item
+      },
+      method: 'post',
+      success: (function () {
+        window.location.href = "http://localhost:3000/landing/1"
+      })
+    })
+  })
+</script>
+
+
+

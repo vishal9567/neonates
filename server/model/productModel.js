@@ -43,12 +43,21 @@ var productSchema=new mongoose.Schema({
     image:{
         type:Array
     },
-    rating:{
+    rating: [
+        {
+          user: {
+            type: mongoose.Schema.Types.ObjectId
+          }, 
+          rated: {
+            type: Number,
+            
+          }
+        }
+      ],
+    actualRating:{
         type:Number
-    },
-    user:{
-        type:Array
     }
+    
 })
 const productsDb=mongoose.model('products',productSchema);
 module.exports=productsDb;

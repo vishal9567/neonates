@@ -137,7 +137,7 @@ exports.userSignup = (req, res) => {
         res.render('user/forgotPassword')
     },
     exports.userLogin = (req, res) => {
-        res.render('user/userLogin')
+        res.render('user/userLogin',{signup:true})
     }
 
 //*------------------------user signup----------------------------------//

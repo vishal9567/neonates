@@ -152,22 +152,74 @@ module.exports = {
             throw new Error(err)
         }
     },
-    updateLike:(userId,proId)=>{              //!----this idea is wrong change to right way----//
+    // updateLike:(userId,proId)=>{              //!----this idea is wrong change to right way----//
+    //     try{
+    //         return new Promise(async(resolve,reject)=>{
+    //             await productDb.findOne({_id: new mongoose.Types.ObjectId(proId),user:userId}).then(async data=>{
+    //                 console.log('this is like data',data);
+    //                 if(data){
+    //                     resolve({liked:true})
+    //                 }
+    //                 else{
+    //                     await productDb.updateOne({_id: new mongoose.Types.ObjectId(proId)},{$push:{user:userId}}).then(async()=>{
+    //                         await productDb.updateOne({_id: new mongoose.Types.ObjectId(proId)},{$inc:{rating:1}}).then(()=>{
+    //                             resolve({rating:true})
+    //                         })
+    //                     })
+    //                 }
+    //             })
+    //         })
+    //     }
+    //     catch(err){
+    //         throw new Error(err)
+    //     }
+    // },
+    updateLike:(userId,proId,rating)=>{
+        let Rating=parseInt(rating)
+        let obj={
+            user:userId,
+            rated:parseInt(rating)
+        }
         try{
             return new Promise(async(resolve,reject)=>{
-                await productDb.findOne({_id: new mongoose.Types.ObjectId(proId),user:userId}).then(async data=>{
-                    console.log('this is like data',data);
-                    if(data){
-                        resolve({liked:true})
-                    }
-                    else{
-                        await productDb.updateOne({_id: new mongoose.Types.ObjectId(proId)},{$push:{user:userId}}).then(async()=>{
-                            await productDb.updateOne({_id: new mongoose.Types.ObjectId(proId)},{$inc:{rating:1}}).then(()=>{
-                                resolve({rating:true})
-                            })
+                let product=await productDb.findOne({_id: new mongoose.Types.ObjectId(proId)})
+                console.log(product);
+                if(product){
+                    const userExist = product.rating.some(users=>users.user.toString()=== userId.toString())
+                    if(userExist){
+                        await productDb.updateOne(
+                            {_id:new mongoose.Types.ObjectId(proId), 'rating.user': new mongoose.Types.ObjectId(userId)},
+                            {$set:{'rating.$.rated':Rating}}
+                        ).then(()=>{
+                            resolve()
                         })
                     }
-                })
+                    else{
+                        await productDb.updateOne(
+                            {_id:new mongoose.Types.ObjectId(proId)},
+                            {$push:{rating:obj}}
+                        ).then(()=>{
+                            resolve()
+                        })
+                    }
+                }
+              
+            })
+        }
+        catch(err){
+            throw new Error(err)
+        }
+    },
+    storeUpdate:(proId)=>{
+        try{
+            return new Promise(async(resolve,reject)=>{
+                    let data=await productDb.aggregate([{$match:{"_id" : new mongoose.Types.ObjectId(proId)}},
+                    {$project:{_id:0,count:{$size:'$rating'},totalvalue:{$sum:{$sum:'$rating.rated'}}}}])
+                    console.log(data);
+
+                    let actRating=parseInt(data[0].totalvalue)/parseInt(data[0].count)
+                    await productDb.updateOne({_id:new mongoose.Types.ObjectId(proId)},{$set:{actualRating:actRating}})
+                    resolve()
             })
         }
         catch(err){

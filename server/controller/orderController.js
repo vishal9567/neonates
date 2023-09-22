@@ -374,15 +374,15 @@ module.exports = {
             throw new Error(err)
         }
     },
-    getCount:(id)=>{
-        try{
-            return new Promise(async(resolve,reject)=>{
-                let count=await orderDb.find({products:{$elemMatch:{item: new mongoose.Types.ObjectId(id)}}}).count()
-                resolve(count)
-            })
-        }
-        catch(err){
-            throw new Error(err)
-        }
-    }
+    // getCount:(id)=>{
+    //     try{
+    //         return new Promise(async(resolve,reject)=>{
+    //             let count=await orderDb.find({products:{$elemMatch:{item: new mongoose.Types.ObjectId(id)}}}).count()
+    //             resolve(count)
+    //         })
+    //     }
+    //     catch(err){
+    //         throw new Error(err)
+    //     }
+    // }
 }

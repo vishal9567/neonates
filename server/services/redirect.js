@@ -29,29 +29,14 @@ exports.findUser = (req, res) => {
         if (result) {
             req.session.user = true
             req.session.userId = result
-            isUser = req.session.user
-            // let totalQuantity=0;
-            // if(req.session.grandTotal){
-            //     totalQuantity=req.session.grandTotal[1]
-            // }
-            // else{
-            //     totalQuantity=0;
-            // }
-            // cartController.getCartItemForLogin(result._id).then(result=>{
-            //     let totalQuantity=0
-            //     for(let i=0;i<result.products.length;i++){
-            //         totalQuantity += result.products[i].quantity;
-            //     }
-            //     req.session.totalQuantityDuringLogin=totalQuantity;
-            //     res.redirect('/')
-            // })  
+            isUser = req.session.user  
             res.redirect('/')
         }
 
     })
         .catch((err) => {
             //res.send('User name or password incorrect or you are inactive')
-            res.render('user/errorPage', { isUser })
+            res.render('user/oopsPage', { isUser,login:true })
         })
 }
 exports.UserRedirect = (req, res) => {
@@ -346,17 +331,33 @@ exports.invoice = async (req, res) => {                         //*---=====invoi
         res.json(data)
     })
 }
-exports.likeProduct = async (req, res) => {             //!----this method is wrong try onother---//
+exports.likeProduct = async (req, res) => {             //*-----===add rating to each product if user is present===------//
     let user = req.session.userId
-    let count = await orderController.getCount(req.query.proId)
-    if(count >0){
-        productHelpers.updateLike(user._id,req.query.proId).then(result=>{
-            res.json(result)
+    if(user){
+        console.log('query',req.query);
+        productHelpers.updateLike(user._id, req.query.proId,req.query.rating).then(()=>{
+            productHelpers.storeUpdate(req.query.proId).then(()=>{
+                res.json(true)
+            })
+        }).catch(err=>{
+            res.render('user/errorPage')
         })
     }
     else{
-        res.json({notBuy:true})
+        res.json({notLogged:true})
     }
+
+}
+exports.varifyPayment = (req,res)=>{                    //*-------=====payment varification=============-------//
+    orderController.verifyPayment(req.body).then(result=>{
+        orderController.changeStatusOfOrder(req.body.order.receipt).then(()=>{
+            res.json(true)
+        }).catch(err=>{
+            res.render('user/errorPage')
+        })
+    }).catch(err=>{
+        res.render('user/errorPage')
+    })
 }
 
 

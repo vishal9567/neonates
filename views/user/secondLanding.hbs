@@ -100,11 +100,9 @@
                   <div class="d-flex justify-content-between mb-2">
                     <p class="text-muted mb-0">Available: <span class="fw-bold">{{this.quantity}}</span></p>
                     <div class="ms-auto text-warning">
+                      {{#for this.actualRating}}
                       <i class="fa fa-star"></i>
-                      <i class="fas fa-star"></i>
-                      <i class="fas fa-star"></i>
-                      <i class="fas fa-star"></i>
-                      <i class="fas fa-star-half-alt"></i>
+                      {{/for}}
                     </div>
                   </div>
                 </div>
@@ -157,6 +155,12 @@
               <s>&#x20b9;${response[i].realPrice}</s>
             </p>`
           }
+          let star=''
+          if(response[i].actualRating){
+          for(let j=0;j<response[i].actualRating;j++){
+              star += `<i class="fa fa-star"></i>`
+          }
+          }
           $('#cardDiv').append(`
            <div class="col-md-6 col-lg-3 mb-4 mb-md-0" >
               <div class="card">
@@ -184,11 +188,7 @@
                   <div class="d-flex justify-content-between mb-2">
                     <p class="text-muted mb-0">Available: <span class="fw-bold">${response[i].quantity}</span></p>
                     <div class="ms-auto text-warning">
-                      <i class="fa fa-star"></i>
-                      <i class="fas fa-star"></i>
-                      <i class="fas fa-star"></i>
-                      <i class="fas fa-star"></i>
-                      <i class="fas fa-star-half-alt"></i>
+                      ${star}
                     </div>
                   </div>
                 </div>

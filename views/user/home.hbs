@@ -55,11 +55,14 @@
             <div class="d-flex justify-content-between mb-2">
               <p class="text-muted mb-0">Available: <span class="fw-bold">{{this.quantity}}</span></p>
               <div class="ms-auto text-warning">
+                {{#for this.actualRating}}
                 <i class="fa fa-star"></i>
+                {{/for}}
+
+                <!-- <i class="fas fa-star"></i>
                 <i class="fas fa-star"></i>
                 <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
+                <i class="fas fa-star-half-alt"></i> -->
               </div>
             </div>
           </div>

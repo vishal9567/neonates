@@ -51,7 +51,7 @@ module.exports = {
     updateCoupen: (data,id) => {
         try {
             return new Promise(async (resolve, reject) => {
-                let doc=await coupenDb.updateOne({ _id:new mongoose.Types.ObjectId(id) },
+                await coupenDb.updateOne({ _id:new mongoose.Types.ObjectId(id) },
                     {
                         $set: {
                             coupenName: data.coupenName,

@@ -51,7 +51,9 @@ app.use(nocache());
 app.use('/',userRout)
 app.use('/admin',admin)
 
-
+app.use(function(req,res){
+    res.status(404).render('user/errorPage');
+});
 //-----------------mongodb connnection---------------//
 const port = process.env.PORT || 3000
 main().catch(err => console.log(err));

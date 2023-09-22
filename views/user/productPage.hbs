@@ -59,7 +59,7 @@
                                     whishlist</button>
                             </div>
 
-                            <div class="pt-5 pe-5">
+                            {{#if user}}<div class="pt-5 pe-5">
                                 <div class="d-flex  mb-2">
                                     <span class="text-secondary fw-bold">Apply rating:</span>
                                     <div class="ms-auto pe-5" id="mainDiv">
@@ -70,7 +70,7 @@
                                         <i class="fas fa-star" id="5" onclick="applyRating(5, '{{product._id}}')"></i>
                                     </div>
                                 </div>
-                            </div>
+                            </div>{{/if}}
                         </div>
                     </div>
                 </div>
@@ -241,24 +241,13 @@
         }
 
     }
-
-    function likeProduct(proId) {
-        $.ajax({
-            url: '/likeProduct?proId=' + proId,
-            method: 'get',
-            success: (function (response) {
-                if (response.liked)
-                    alert('Already liked')
-            })
-        })
-    }
     function applyRating(rating, proId) {
         let value = document.getElementById(rating).className
         document.getElementById(rating).className = 'fas fa-star text-warning'
         if (value == 'fas fa-star text-warning') {
             document.getElementById(rating).className = 'fas fa-star'
             let nodeId = document.querySelector('#mainDiv').querySelectorAll('i')
-            let flag = 0;
+            var flag = 0;
             for (let i = 0; i < nodeId.length; i++) {
                 if (nodeId[i].className != 'fas fa-star text-warning') {
                     flag = 1
@@ -270,15 +259,37 @@
         }
         else {
             let nodeId = document.querySelector('#mainDiv').querySelectorAll('i')
-            let flag = 0;
+            var flag1 = 0;
             for (let i = 0; i < nodeId.length; i++) {
                 if (nodeId[i].className != 'fas fa-star text-warning') {
-                    flag = 1
+                    flag1 = 1
                 }
-                if (flag == 1) {
+                if (flag1 == 1) {
                     nodeId[i].className = 'fas fa-star'
                 }
             }
+            if(flag1==1){
+               let nodeId = document.querySelector('#mainDiv').querySelectorAll('i')
+               let rateFlag=0;
+                for(let i=0;i<nodeId.length;i++){
+                    if(nodeId[i].className != 'fas fa-star text-warning' && rating > i+1){
+                        rateFlag=1;
+                        break;
+                    }
+                }
+                if(rateFlag==0){
+                    $.ajax({
+                        url:'/likeProduct?rating='+rating+'&proId='+proId,
+                        method:'get',
+                        success:(function(response){
+                            if(response.notLogged)
+                                alert('You are not logged in yet')
+                        })
+                    })
+                }
+            }
+          
         }
+     
     }
 </script>

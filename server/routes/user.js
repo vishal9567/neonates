@@ -44,6 +44,7 @@ router.get('/userDashBoard',sessionCheck.userAuth,mongoMiddleware.userData,cartC
 router.get('/userOrderList',sessionCheck.userAuth,cartCount.cartCount,render.userOrderList)
 router.get('/addressBook',sessionCheck.userAuth,mongoMiddleware.userData,cartCount.cartCount,render.addressBook)
 router.get('/wallet',sessionCheck.userAuth,mongoMiddleware.userData,redirect.wallet)
+router.get('/walletHistory',sessionCheck.userAuth,render.getWalletHistory)
 router.get('/findOrder',sessionCheck.userAuth,render.filterOrder)
 //--------======whishlist=====-----//
 router.get('/addToWhishlist', sessionCheck.userAuth, redirect.addToWhishlist)
@@ -53,6 +54,13 @@ router.get('/backToCart',sessionCheck.userAuth,mongoMiddleware.userData,redirect
 //-------========coupon============--------//
 router.get('/getCoupon',sessionCheck.userAuth,redirect.getCoupon)
 router.get('/findCouponForCart',sessionCheck.userAuth,redirect.findCouponForCart)
+//-------========pagination using ajax===-----//
+router.get('/getCatProducts',redirect.getCatProducts)
+router.get('/getPriceProducts',redirect.getPriceProducts)
+router.get('/getColorProducts',redirect.getColorProducts)
+//-------=======invoice======-----------//
+router.get('/invoice',redirect.invoice)
+router.get('/likeProduct',redirect.likeProduct)
 
 
 //!------------------------------------------------------------------post---------------------------------------------------------//
@@ -62,7 +70,6 @@ router.post('/loginCheck', redirect.findUser)
 router.post('/sendMobOtp', render.sendTwillio)
 router.post('/verifyMobOtp', sessionCheck.mobOtpAuth, redirect.UserRedirect)
 router.post('/incItems/decItems',sessionCheck.userAuth, redirect.incrementItems)
-
 
 //==========user address section=========//
 router.post('/addAddress',sessionCheck.userAuth, render.addAddress)
@@ -74,36 +81,19 @@ router.post('/deleteCartItem',sessionCheck.userAuth,redirect.deleteCartItem)
 //=======order management==============//
 router.post('/placeOrder',sessionCheck.userAuth,mongoMiddleware.userData,redirect.getOrderDetails)
 router.post('/cancelOrder',sessionCheck.userAuth,redirect.cancelOrder)
+router.post('/verifyPayment',sessionCheck.userAuth,redirect.varifyPayment)
 
 //=======address management===========//
 router.post('/editAddress',sessionCheck.userAuth,render.editAddress)
 router.post('/editAddressSubmit',sessionCheck.userAuth,redirect.submitEditAddress)
 router.post('/deleteAddress',sessionCheck.userAuth,redirect.deleteAddress)
 
+//=======product search==============//
+router.post('/searchProducts',render.productSearch)
 //!--------------------------------------------------------------------------------------------------------------------------------//
 
 
 
-router.post('/verifyPayment',sessionCheck.userAuth,(req,res)=>{
-    orderController.verifyPayment(req.body).then(result=>{
-        orderController.changeStatusOfOrder(req.body.order.receipt).then(()=>{
-            res.json(true)
-        }).catch(err=>{
-            res.render('user/errorPage')
-        })
-    }).catch(err=>{
-        res.render('user/errorPage')
-    })
-})
-
-router.post('/searchProducts',render.productSearch)
-
-router.get('/getCatProducts',redirect.getCatProducts)
-router.get('/getPriceProducts',redirect.getPriceProducts)
-router.get('/getColorProducts',redirect.getColorProducts)
-router.get('/walletHistory',sessionCheck.userAuth,render.getWalletHistory)
-router.get('/invoice',redirect.invoice)
-router.get('/likeProduct',redirect.likeProduct)
 
 module.exports = router;
 
