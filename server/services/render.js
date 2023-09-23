@@ -1,6 +1,5 @@
 const categoryController = require('../controller/categoryController')
 const nodemailer = require("nodemailer");
-const secret = require('../../config/secret');
 const userController = require('../controller/userController');
 const userdb = require('../model/userModel')
 const productHelper = require('../controller/productHelper')
@@ -12,6 +11,7 @@ const bannerController = require('../controller/bannerController')
 const orderDb = require('../model/ordersModel')
 const catDb=require('../model/categoryModel')
 const couponDb=require('../model/coupenModel')
+require('dotenv').config()
 
 
 
@@ -83,8 +83,8 @@ exports.userSignup = (req, res) => {
     const transport = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: secret.email,
-            pass: secret.password
+            user: process.env.EMAIL,
+            pass: process.env.PASSWORD
         }
     })
     var mailObj = {
@@ -99,7 +99,7 @@ exports.userSignup = (req, res) => {
             res.render('user/errorPage')
         }
         else {
-            res.render('user/otpcard')
+            res.render('user/otpcard',{signup:true})
             console.log("otp send");
         }
     })
@@ -114,8 +114,8 @@ exports.userSignup = (req, res) => {
             req.session.Email = req.body.email
             req.session.otpMob = otp;
             req.session.mobNumber = req.body.mobNumber;
-            const accountSid = secret.TWILIO_SID;
-            const authToken = secret.TWILIO_AUTH_TOKEN;
+            const accountSid = process.env.TWILIO_SID;
+            const authToken = process.env.TWILIO_AUTH_TOKEN;
             const client = require('twilio')(accountSid, authToken);
             client.messages
                 .create({
@@ -125,7 +125,7 @@ exports.userSignup = (req, res) => {
                 })
                 .then((message) => {
                     console.log("otp send");
-                    res.render('user/mobOtpCard')
+                    res.render('user/mobOtpCard',{signup:true})
                 })
                 .catch(message => {
                     // res.send("Netwok issue")
@@ -134,7 +134,7 @@ exports.userSignup = (req, res) => {
         }
     },
     exports.forgotPassword = (req, res) => {
-        res.render('user/forgotPassword')
+        res.render('user/forgotPassword',{signup:true})
     },
     exports.userLogin = (req, res) => {
         res.render('user/userLogin',{signup:true})
@@ -143,7 +143,7 @@ exports.userSignup = (req, res) => {
 //*------------------------user signup----------------------------------//
 
 exports.signUp = (req, res) => {
-    res.render('user/userSignUp')
+    res.render('user/userSignUp',{signup:true})
 }
 exports.home = async (req, res) => {
     let count = await productDb.count()
@@ -167,7 +167,7 @@ exports.home = async (req, res) => {
     })
 }
 exports.productSearch = (req, res) => {  //!---product search----//
-    console.log('product', req.body.Item);
+    //console.log('product', req.body.Item);
     req.session.searchPro = req.body.Item
     res.json(true)
 

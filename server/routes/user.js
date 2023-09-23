@@ -92,7 +92,12 @@ router.post('/deleteAddress',sessionCheck.userAuth,redirect.deleteAddress)
 router.post('/searchProducts',render.productSearch)
 //!--------------------------------------------------------------------------------------------------------------------------------//
 
-
+router.get('/viewProduct',(req,res)=>{
+    res.render('user/viewProduct')
+})
+router.get('/test',(req,res)=>{
+    res.render('user/forgotPassword',{signup:true})
+})
 
 
 module.exports = router;

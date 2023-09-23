@@ -128,10 +128,7 @@ exports.getOrderDetails = async (req, res) => {                              //*
     let user = req.session.userId
     let deliveryDetail = req.body //contains payment type total price address id
     let totalQty = req.session.grandTotal//contains totalqty total price
-    console.log("body data", req.body);
-    if (req.body.payType == "" || req.body.addressId == "")
-        res.json({ fieldsEmpty: true })
-    else {
+
         if (req.body.payType === 'wallet') {                                      //*----this if block only for wallet------//
             if (parseInt(req.body.total) <= req.session.userDatas[0].wallet) {
                 await userController.getDeliveryAddress(user, deliveryDetail).then(async getAddress => {//here getting the selected address
@@ -160,7 +157,7 @@ exports.getOrderDetails = async (req, res) => {                              //*
                 res.json({ insufficientWallet: true })
 
         }
-        else {                                 //*-----this else block for both COD and online payment-----//
+        else if(req.body.payType === 'COD' || req.body.payType ==='Razorpay') {                                 //*-----this else block for both COD and online payment-----//
             await userController.getDeliveryAddress(user, deliveryDetail).then(async getAddress => {//here getting the selected address
                 // //req.session.deliveryAddress=result.address
                 await cartController.getCartItemForLogin(user._id).then(async cartItem => {//here getting the cart details such as product id and count
@@ -192,7 +189,10 @@ exports.getOrderDetails = async (req, res) => {                              //*
 
             })
         }
-    }
+        else{
+            res.json({Notselect:true})
+        }
+    
 }
 exports.deleteCartItem = (req, res) => {
     let proId = req.body.count
