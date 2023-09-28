@@ -106,12 +106,12 @@
                 {{!-- <i class="fas fa-fw fa-table"></i> --}}
                 <span>Add category</span></a>
         </li>
-          <li class="nav-item">
+        <li class="nav-item">
             <a class="nav-link" href="/admin/addBanner">
                 {{!-- <i class="fas fa-fw fa-table"></i> --}}
                 <span>Add Banner</span></a>
         </li>
-          <li class="nav-item">
+        <li class="nav-item">
             <a class="nav-link" href="/admin/createCouponPage">
                 {{!-- <i class="fas fa-fw fa-table"></i> --}}
                 <span>Add coupon</span></a>
@@ -138,7 +138,6 @@
 
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
-
         <!-- Main Content -->
         <div id="content">
 
@@ -348,7 +347,8 @@
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                    <a href="#"
+                        class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                             class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
                 </div>
 
@@ -522,6 +522,8 @@
                     <div class="col-lg-6 mb-4">
 
                         <!-- Project Card Example -->
+                        <iframe id="if"  title="neonates">
+</iframe>
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">Projects</h6>
@@ -678,7 +680,7 @@
         <footer class="sticky-footer bg-white">
             <div class="container my-auto">
                 <div class="copyright text-center my-auto">
-            
+
                 </div>
             </div>
         </footer>
@@ -734,32 +736,34 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  const ctx = document.getElementById('myChart');
-    const data=document.getElementById('data').value
-    let value=JSON.parse('{{{data}}}')
-    let lab=[]
-    let datas=[]
-    for(let i=0;i<value.length;i++){
+    const ctx = document.getElementById('myChart');
+    const data = document.getElementById('data').value
+    let value = JSON.parse('{{{data}}}')
+    let lab = []
+    let datas = []
+    for (let i = 0; i < value.length; i++) {
         lab.push(value[i]._id)
         datas.push(value[i].count)
     }
-  new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: lab,
-      datasets: [{
-        label: '# of Votes',
-        data: datas,
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: lab,
+            datasets: [{
+                label: '# of Votes',
+                data: datas,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
         }
-      }
-    }
-  });
+    });
 </script>
-
+<script>
+    
+</script>

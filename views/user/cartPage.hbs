@@ -15,7 +15,7 @@
   </div>
 </div>
 <!--modal ends-->
-<section class="h-100 h-custom" style="background-color: #d2c9ff; margin-top:100px">
+<section class="h-100 h-custom" style="background-color: #d2c9ff; margin-top:100px" id="cartDiv">
   <div class="container py-5 " style="width: 60vw;">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-12">
@@ -165,8 +165,9 @@
           location.reload()
         }
         else {
-          location.reload()
+          $('#cartDiv').load("cart")
           document.getElementById(proId).innerHTML = quantity
+          setInterval('location.reload()', 3000); 
         }
       })
     })

@@ -8,6 +8,9 @@ const orderController = require('../controller/orderController')
 const coupenController = require('../controller/coupenController')
 const bannerController = require('../controller/bannerController')
 const productDb = require('../model/productModel')
+const PDFDocument = require('pdfkit');
+const blobStream = require('blob-stream');
+const fs = require('fs');
 
 
 
@@ -29,14 +32,14 @@ exports.findUser = (req, res) => {
         if (result) {
             req.session.user = true
             req.session.userId = result
-            isUser = req.session.user  
+            isUser = req.session.user
             res.redirect('/')
         }
 
     })
         .catch((err) => {
             //res.send('User name or password incorrect or you are inactive')
-            res.render('user/oopsPage', { isUser,login:true })
+            res.render('user/oopsPage', { isUser, login: true })
         })
 }
 exports.UserRedirect = (req, res) => {
@@ -129,70 +132,70 @@ exports.getOrderDetails = async (req, res) => {                              //*
     let deliveryDetail = req.body //contains payment type total price address id
     let totalQty = req.session.grandTotal//contains totalqty total price
 
-        if (req.body.payType === 'wallet') {                                      //*----this if block only for wallet------//
-            if (parseInt(req.body.total) <= req.session.userDatas[0].wallet) {
-                await userController.getDeliveryAddress(user, deliveryDetail).then(async getAddress => {//here getting the selected address
-                    // //req.session.deliveryAddress=result.address
-                    await cartController.getCartItemForLogin(user._id).then(async cartItem => {//here getting the cart details such as product id and count
-                        for (let i = 0; i < cartItem.products.length; i++) {
-                            await productHelpers.inventryManagement(cartItem.products[i].item, cartItem.products[i].quantity)
-                        }
-
-                        await orderController.createOrder(getAddress, cartItem, deliveryDetail, totalQty, user.name).then(async order => {
-                            await cartController.removeCart(user._id).then(result => {
-
-                                userController.updateWallet(user._id, parseInt(req.body.total) * -1).then(() => {
-                                    res.json({ codSuccess: true })
-                                })
-
-                            })
-                        })
-
-                    })
-                }).catch(err => {
-                    throw new Error(err)
-                })
-            }
-            else
-                res.json({ insufficientWallet: true })
-
-        }
-        else if(req.body.payType === 'COD' || req.body.payType ==='Razorpay') {                                 //*-----this else block for both COD and online payment-----//
+    if (req.body.payType === 'wallet') {                                      //*----this if block only for wallet------//
+        if (parseInt(req.body.total) <= req.session.userDatas[0].wallet) {
             await userController.getDeliveryAddress(user, deliveryDetail).then(async getAddress => {//here getting the selected address
                 // //req.session.deliveryAddress=result.address
                 await cartController.getCartItemForLogin(user._id).then(async cartItem => {//here getting the cart details such as product id and count
                     for (let i = 0; i < cartItem.products.length; i++) {
-                        await productHelpers.inventryManagement(cartItem.products[i].item, cartItem.products[i].quantity).then(async info => {
-                            if (info) {
-                                res.json(info)
-                                console.log('this is info', info);
-                            }
-                            else {
-                                await orderController.createOrder(getAddress, cartItem, deliveryDetail, totalQty, user.name).then(async order => {
-                                    await cartController.removeCart(user._id).then(result => {
-                                        if (req.body.payType === 'COD')
-                                            res.json({ codSuccess: true })
-                                        else {
-                                            let orderId = order.toString()
-                                            orderController.generateRazorPay(orderId, deliveryDetail.total).then(order => {
-                                                res.json(order)
-                                            })
-                                        }
-                                    })
-                                })
-                            }
-                        })
+                        await productHelpers.inventryManagement(cartItem.products[i].item, cartItem.products[i].quantity)
                     }
+
+                    await orderController.createOrder(getAddress, cartItem, deliveryDetail, totalQty, user.name).then(async order => {
+                        await cartController.removeCart(user._id).then(result => {
+
+                            userController.updateWallet(user._id, parseInt(req.body.total) * -1).then(() => {
+                                res.json({ codSuccess: true })
+                            })
+
+                        })
+                    })
 
                 })
             }).catch(err => {
-
+                throw new Error(err)
             })
         }
-        else{
-            res.json({Notselect:true})
-        }
-    
+        else
+            res.json({ insufficientWallet: true })
+
+    }
+    else if (req.body.payType === 'COD' || req.body.payType === 'Razorpay') {                                 //*-----this else block for both COD and online payment-----//
+        await userController.getDeliveryAddress(user, deliveryDetail).then(async getAddress => {//here getting the selected address
+            // //req.session.deliveryAddress=result.address
+            await cartController.getCartItemForLogin(user._id).then(async cartItem => {//here getting the cart details such as product id and count
+                for (let i = 0; i < cartItem.products.length; i++) {
+                    await productHelpers.inventryManagement(cartItem.products[i].item, cartItem.products[i].quantity).then(async info => {
+                        if (info) {
+                            res.json(info)
+                            console.log('this is info', info);
+                        }
+                        else {
+                            await orderController.createOrder(getAddress, cartItem, deliveryDetail, totalQty, user.name).then(async order => {
+                                await cartController.removeCart(user._id).then(result => {
+                                    if (req.body.payType === 'COD')
+                                        res.json({ codSuccess: true })
+                                    else {
+                                        let orderId = order.toString()
+                                        orderController.generateRazorPay(orderId, deliveryDetail.total).then(order => {
+                                            res.json(order)
+                                        })
+                                    }
+                                })
+                            })
+                        }
+                    })
+                }
+
+            })
+        }).catch(err => {
+
+        })
+    }
+    else {
+        res.json({ Notselect: true })
+    }
+
 }
 exports.deleteCartItem = (req, res) => {
     let proId = req.body.count
@@ -333,29 +336,29 @@ exports.invoice = async (req, res) => {                         //*---=====invoi
 }
 exports.likeProduct = async (req, res) => {             //*-----===add rating to each product if user is present===------//
     let user = req.session.userId
-    if(user){
-        console.log('query',req.query);
-        productHelpers.updateLike(user._id, req.query.proId,req.query.rating).then(()=>{
-            productHelpers.storeUpdate(req.query.proId).then(()=>{
+    if (user) {
+        console.log('query', req.query);
+        productHelpers.updateLike(user._id, req.query.proId, req.query.rating).then(() => {
+            productHelpers.storeUpdate(req.query.proId).then(() => {
                 res.json(true)
             })
-        }).catch(err=>{
+        }).catch(err => {
             res.render('user/errorPage')
         })
     }
-    else{
-        res.json({notLogged:true})
+    else {
+        res.json({ notLogged: true })
     }
 
 }
-exports.varifyPayment = (req,res)=>{                    //*-------=====payment varification=============-------//
-    orderController.verifyPayment(req.body).then(result=>{
-        orderController.changeStatusOfOrder(req.body.order.receipt).then(()=>{
+exports.varifyPayment = (req, res) => {                    //*-------=====payment varification=============-------//
+    orderController.verifyPayment(req.body).then(result => {
+        orderController.changeStatusOfOrder(req.body.order.receipt).then(() => {
             res.json(true)
-        }).catch(err=>{
+        }).catch(err => {
             res.render('user/errorPage')
         })
-    }).catch(err=>{
+    }).catch(err => {
         res.render('user/errorPage')
     })
 }
@@ -463,5 +466,7 @@ exports.createBanner = (req, res) => {
     console.log(req.body);
     bannerController.createBanner(req).then(() => {
 
+    }).catch(err => {
+        res.render('user/oopsPage')
     })
 }
