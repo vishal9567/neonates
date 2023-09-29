@@ -146,11 +146,8 @@ exports.signUp = (req, res) => {
     res.render('user/userSignUp',{signup:true})
 }
 exports.home = async (req, res) => {
-    let banner;
-    await bannerController.getBanner().then(ban => {
-        //console.log(ban);
-        banner = ban;
-    })
+    let banner= await bannerController.getBanner()
+    console.log(banner)
     let count = await productDb.count()
     // let doc=req.session.TotalProduct
     let user = req.session.user
