@@ -55,8 +55,8 @@ router.post('/changeStatus',sessionCheck.auth,redirect.changeStatus)
 router.post('/submitCoupon',sessionCheck.auth,redirect.createCoupon)
 router.post('/submitUpdate/:id',sessionCheck.auth,redirect.editCoupon)
 
-router.get('/test',(req,res)=>{
-    res.render('admin/categoryList')
-})
+// router.get('/test',(req,res)=>{
+//     res.render('admin/categoryList')
+// })
 
 module.exports=router;
