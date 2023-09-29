@@ -33,7 +33,7 @@ exports.landing = async (req, res) => {
                 console.log("check search", proSearch);
                 if (typeof req.session.searchPro == undefined || req.session.searchPro == null) {
                     product = products
-                    console.log("this is produect", product);
+                    console.log("this is product", product);
                     res.render('user/secondLanding', { signup: true, product, category, user, page, perPage, pages })
                 }
                 else {
