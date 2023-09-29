@@ -152,6 +152,11 @@ exports.home = async (req, res) => {
     const perPage = 4;
     let pages = Math.ceil((count / perPage))
     let page = parseInt(req.query.page) || 1;
+    let banner;
+    await bannerController.getBanner().then(ban => {
+        //console.log(ban);
+        banner = ban;
+    })
     categoryController.getItems(perPage, page).then(product => {
         categoryController.findCategory().then(category => {
             let TotalQuantity = 0;
@@ -161,7 +166,7 @@ exports.home = async (req, res) => {
             else {
                 TotalQuantity = 0;
             }
-            res.render('user/home', { signup: true, product, category, user, TotalQuantity, page, perPage, pages })
+            res.render('user/home', { signup: true, product, category, user, TotalQuantity, page, perPage, pages,banner })
 
         })
     })
@@ -178,7 +183,7 @@ exports.showProductDetail = async (req, res) => {
     let banner;
     ////  console.log(`this is user:${user}`);
     await bannerController.getBanner().then(ban => {
-        console.log(ban);
+        //console.log(ban);
         banner = ban;
     })
     productHelper.showProductDetail(id).then(product => {
