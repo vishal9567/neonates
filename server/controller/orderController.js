@@ -40,6 +40,7 @@ module.exports = {
                     status: stat,
                     quantity: totalQty[1],
                     date: createdOn,
+                    DateNow: date
                 }).then(result => {
                     resolve(result.insertedId)
                 })
@@ -52,7 +53,7 @@ module.exports = {
     getOrders: (user,perPage,page) => {
         return new Promise(async (resolve, reject) => {
             try {
-                await orderDb.find({ "userid": new mongoose.Types.ObjectId(user) }).sort({date:-1}).skip(perPage * page -perPage).limit(perPage).lean()
+                await orderDb.find({ "userid": new mongoose.Types.ObjectId(user) }).sort({DateNow:-1}).skip(perPage * page -perPage).limit(perPage).lean()
                     .then(orders => {
                         resolve(orders)
                     })
