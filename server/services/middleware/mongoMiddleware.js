@@ -11,5 +11,10 @@ module.exports={
         }).catch(err=>{
             res.render('user/errorPage')
         })
+    },
+    getPrevPage:(req,res,next)=>{
+        req.session.currentUrl=req.originalUrl;
+        console.log("this is current url",req.session.currentUrl);
+        next();
     }
 }

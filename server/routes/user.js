@@ -19,17 +19,17 @@ const mongoMiddleware=require('../services/middleware/mongoMiddleware')
 
 
 //!----------------------------------------------------------------get----------------------------------------------------------//
-router.get('/',cartCount.cartCount,render.home)
+router.get('/',mongoMiddleware.getPrevPage,cartCount.cartCount,render.home)
 router.get('/signUp', render.signUp);
-router.get('/userLogin', render.userLogin)
-router.get('/landing', render.landing)
-router.get('/home', render.home)
-router.get('/eachCategory/:id', render.categoryProduct)
-router.get('/forgotPassword', render.forgotPassword)
-router.get('/logout', redirect.logOut)
+router.get('/userLogin',sessionCheck.loginAuth, render.userLogin)
+router.get('/landing',mongoMiddleware.getPrevPage, render.landing)
+router.get('/home',mongoMiddleware.getPrevPage, render.home)
+router.get('/eachCategory/:id',mongoMiddleware.getPrevPage, render.categoryProduct)
+router.get('/forgotPassword',mongoMiddleware.getPrevPage, render.forgotPassword)
+router.get('/logout',mongoMiddleware.getPrevPage, redirect.logOut)
 
 //--------======cart=======--------//
-router.get('/productView/:id', render.showProductDetail)
+router.get('/productView/:id',mongoMiddleware.getPrevPage, render.showProductDetail)
 router.get('/addToCart/:id', sessionCheck.userAuth, redirect.addToCart)
 router.get('/cart', sessionCheck.userAuth, render.getCart)
 router.get('/proceedToCkeckOut',sessionCheck.userAuth,render.proceedToCheckOut)

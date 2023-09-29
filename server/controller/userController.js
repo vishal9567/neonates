@@ -115,7 +115,7 @@ module.exports = {
                                 if (user.status === true && result)
                                     resolve(user)
                                 else
-                                    reject()
+                                    resolve()
                             })
                         }
                         else {

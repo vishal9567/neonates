@@ -27,19 +27,29 @@ exports.createUser = (req, res) => {
         })
 }
 exports.findUser = (req, res) => {
-    let isUser;
     userController.validateUser(req.body).then(result => {
         if (result) {
             req.session.user = true
             req.session.userId = result
             isUser = req.session.user
-            res.redirect('/')
+            if(req.session.currentUrl){
+                console.log("url is",req.session.currentUrl);
+                let url=req.session.currentUrl
+                req.session.currentUrl=null;
+                res.redirect(url)
+            }
+            else{
+                console.log('call is here');
+                res.redirect('/')
+            }
+        }
+        else{
+            res.render('user/userLogin',{userNotValid:true})
         }
 
     })
         .catch((err) => {
-            //res.send('User name or password incorrect or you are inactive')
-            res.render('user/oopsPage', { isUser, login: true })
+            res.render('user/errorPage')
         })
 }
 exports.UserRedirect = (req, res) => {
