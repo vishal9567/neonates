@@ -8,7 +8,7 @@ module.exports={
             const inputFilePath=req.files[i].path;
             
             sharp(inputFilePath)
-            .resize(150, 150, {
+            .resize(1024, 1024, {
                 kernel: sharp.kernel.nearest,
                 fit: 'fill',
                 position: 'right top',
