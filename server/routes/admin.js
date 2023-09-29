@@ -50,13 +50,13 @@ router.post('/updateProduct/:id',upload.array('image',2),sessionCheck.auth,produ
 router.post('/createBanner',upload.array('image',3),sessionCheck.auth,redirect.createBanner)
 router.post('/adminLogin',adminController.findone)
 router.post('/addToCategory',sessionCheck.auth,redirect.addToCategory)
-router.post('/changeStatus',sessionCheck.auth,redirect.changeStatus) //!-------check-------
+router.post('/changeStatus',sessionCheck.auth,redirect.changeStatus)
 //--coupon management----
 router.post('/submitCoupon',sessionCheck.auth,redirect.createCoupon)
 router.post('/submitUpdate/:id',sessionCheck.auth,redirect.editCoupon)
 
-// router.get('/test',(req,res)=>{
-//     res.render('admin/addProduct1')
-// })
+router.get('/test',(req,res)=>{
+    res.render('admin/categoryList')
+})
 
 module.exports=router;
