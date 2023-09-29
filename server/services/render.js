@@ -146,17 +146,17 @@ exports.signUp = (req, res) => {
     res.render('user/userSignUp',{signup:true})
 }
 exports.home = async (req, res) => {
+    let banner;
+    await bannerController.getBanner().then(ban => {
+        //console.log(ban);
+        banner = ban;
+    })
     let count = await productDb.count()
     // let doc=req.session.TotalProduct
     let user = req.session.user
     const perPage = 4;
     let pages = Math.ceil((count / perPage))
     let page = parseInt(req.query.page) || 1;
-    let banner;
-    await bannerController.getBanner().then(ban => {
-        //console.log(ban);
-        banner = ban;
-    })
     categoryController.getItems(perPage, page).then(product => {
         categoryController.findCategory().then(category => {
             let TotalQuantity = 0;
