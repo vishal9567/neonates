@@ -6,7 +6,7 @@ const fs = require('fs')
 //------------------insert------------//
 exports.create = async (req, res) => {
     console.log(req.body);
-    await cropImg.crop(req);
+    //await cropImg.crop(req);
     let product = new productDb({
         productname: req.body.productname,
         brandname: req.body.brandname,

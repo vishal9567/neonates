@@ -6,7 +6,7 @@ var storage=multer.diskStorage({
         cb(null,'public/images')
     },
     filename:(req,file,cb)=>{
-        cb(null,file.fieldname + '-' + Date.now()+".jpg")
+        cb(null,file.fieldname + '-' + Date.now()+Math.floor(Math.random() * 1000)+".jpg")
     }
 });
 var upload= multer({storage: storage});
