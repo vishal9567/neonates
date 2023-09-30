@@ -66,7 +66,7 @@ module.exports = {
     filterOrder:(id,status)=>{
         try{
             return new Promise(async(resolve,reject)=>{
-                let doc=await orderDb.find({$and:[{userid:new mongoose.Types.ObjectId(id)},{status:status}]}).sort({date:-1}).lean()
+                let doc=await orderDb.find({$and:[{userid:new mongoose.Types.ObjectId(id)},{status:status}]}).sort({DateNow:-1}).lean()
                 if(doc[0]){
                     resolve(doc)
                 }else{

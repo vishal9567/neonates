@@ -30,7 +30,6 @@ const orederSchema = new mongoose.Schema({
     },
     DateNow:{
         type:Date,
-        default:Date.now
     }
 })
 
