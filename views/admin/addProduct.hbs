@@ -424,7 +424,7 @@
               </div>
 
               <div class="form-outline mb-2">
-                <input id="file" type="file" name="image" multiple>
+                <input id="file" type="file" name="image" {{#if updating}}{{else}} required {{/if}} multiple>
               </div>
               {{#if updating}}
               <img src="/images/{{data.image.[0]}}" alt="" width="30px">
@@ -561,12 +561,7 @@
     else if(dis.value == ""){
       e.preventDefault();
       error.innerText="Enter discription"
-    }
-    else if(file.files.length == 0){
-      e.preventDefault();
-      error.innerText="choose file"
-    }
-   
+    }  
   }
   
 </script>
