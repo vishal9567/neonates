@@ -38,7 +38,7 @@ exports.get = async (req, res) => {                             //*----=========
     const perPage=5;
     let pages = Math.ceil((count / perPage))
     let page=parseInt(req.query.page) || 1;
-    await productDb.find().skip(perPage * page -perPage).limit(perPage).sort({date:-1}).lean()
+    await productDb.find().skip(perPage * page -perPage).limit(perPage).sort({DateNow:-1}).lean()
         .then(products => {
             categoryController.findCategory().then(category => {
                 res.render('admin/productlist', { products, category,pages })
