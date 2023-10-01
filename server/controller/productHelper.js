@@ -152,28 +152,6 @@ module.exports = {
             throw new Error(err)
         }
     },
-    // updateLike:(userId,proId)=>{              //!----this idea is wrong change to right way----//
-    //     try{
-    //         return new Promise(async(resolve,reject)=>{
-    //             await productDb.findOne({_id: new mongoose.Types.ObjectId(proId),user:userId}).then(async data=>{
-    //                 console.log('this is like data',data);
-    //                 if(data){
-    //                     resolve({liked:true})
-    //                 }
-    //                 else{
-    //                     await productDb.updateOne({_id: new mongoose.Types.ObjectId(proId)},{$push:{user:userId}}).then(async()=>{
-    //                         await productDb.updateOne({_id: new mongoose.Types.ObjectId(proId)},{$inc:{rating:1}}).then(()=>{
-    //                             resolve({rating:true})
-    //                         })
-    //                     })
-    //                 }
-    //             })
-    //         })
-    //     }
-    //     catch(err){
-    //         throw new Error(err)
-    //     }
-    // },
     updateLike:(userId,proId,rating)=>{
         let Rating=parseInt(rating)
         let obj={

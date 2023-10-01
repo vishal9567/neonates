@@ -15,7 +15,7 @@
   </div>
 </div>
 <!--modal ends-->
-<section class="h-100 h-custom" style="background-color: #d2c9ff; margin-top:100px" id="cartDiv">
+<section class="h-100 h-custom" style="background-color: #ffffff; margin-top:100px" id="cartDiv">
   <div class="container py-5 " style="width: 60vw;">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-12">
@@ -45,7 +45,7 @@
                       <button class="btn btn-link px-2"
                         onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
                         <i class="fas fa-minus" id="minus"
-                          onclick="changeQuantity('{{this._id}}','{{this.product._id}}',-1)"></i>
+                          onclick="changeQuantity('{{this._id}}','{{this.product._id}}',-1,'{{this.product.quantity}}')"></i>
                       </button>
 
                       <!-- <input id="{{this._id}}" min="0" name="quantity" value="{{this.quantity}}" type="number" style="width: 30px; border-radius:3px; height:35px"/> -->
@@ -55,7 +55,7 @@
                       <button class="btn btn-link px-2"
                         onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
                         <i class="fas fa-plus" id="plus"
-                          onclick="changeQuantity('{{this._id}}','{{this.product._id}}',1)"></i>
+                          onclick="changeQuantity('{{this._id}}','{{this.product._id}}',1,'{{this.product.quantity}}')"></i>
                       </button>
                     </div>
                     <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
@@ -85,7 +85,8 @@
 
                   <div class="d-flex justify-content-between mb-4">
                     <h5 class="text-uppercase pe-5">{{totalCount}} Items</h5>
-                    <span class="fw-bold">&#x20b9;</span><h5 id="totalPrice">{{grandTotal}}</h5>
+                    <span class="fw-bold">&#x20b9;</span>
+                    <h5 id="totalPrice">{{grandTotal}}</h5>
                   </div>
 
                   <h5 class="text-uppercase mb-3">Shipping</h5>
@@ -106,7 +107,8 @@
 
                   <div class="mb-5">
                     <div class="form-outline">
-                      <input type="text" id="form3Examplea2" onpaste="submitCoupon('{{grandTotal}}','{{products.[0].user}}')"
+                      <input type="text" id="form3Examplea2"
+                        onpaste="submitCoupon('{{grandTotal}}','{{products.[0].user}}')"
                         class="form-control form-control-lg" name="coupon" />
                       <label class="form-label" for="form3Examplea2">Enter your code</label>
                       <P id="hai"></P>
@@ -117,12 +119,14 @@
 
                   <div class="d-flex justify-content-between mb-5">
                     <h5 class="text-uppercase pe-3">Total price</h5>
-                    <span class="fw-bold">&#x20b9;</span><h5 id="totalPrice1">{{grandTotal}}</h5>
+                    <span class="fw-bold">&#x20b9;</span>
+                    <h5 id="totalPrice1">{{grandTotal}}</h5>
                   </div>
 
                   {{#if productNotAvailable}}<h6>Products not available</h6>{{else}}{{#if cartIsEmty}}<h6>Cart is empty
-                  </h6>{{else}}<a id="setattr" href="/proceedToCkeckOut?total={{grandTotal}}&dis=0" type="button" class="btn btn-block btn-lg text-uppercase"
-                    style="background-color: rgb(236,79,162); color: white" data-mdb-ripple-color="dark">Proceed to
+                  </h6>{{else}}<a id="setattr" href="/proceedToCkeckOut?total={{grandTotal}}&dis=0" type="button"
+                    class="btn btn-block btn-lg text-uppercase" style="background-color: rgb(236,79,162); color: white"
+                    data-mdb-ripple-color="dark">Proceed to
                     checkout</a>{{/if}}{{/if}}
 
 
@@ -147,30 +151,42 @@
 
 
 <script>
-  function changeQuantity(cartId, proId, count) {
+  function changeQuantity(cartId, proId, count, qty) {
     let quantity = document.getElementById(proId).innerHTML//proId and this.product._id are same
-
-    $.ajax({
-      url: '/incItems/decItems',
-      data: {
-        cart: cartId,
-        product: proId,
-        count: count,
-        quantity: quantity
-      },
-      method: 'post',
-      success: (function (response) {
-        if (response.removeProduct) {
-          alert("Product Removed from cart")
-          location.reload()
-        }
-        else {
-          $('#cartDiv').load("cart")
-          document.getElementById(proId).innerHTML = quantity
-          setInterval('location.reload()', 3000); 
-        }
+    if (quantity >= qty && count == 1) {
+      swal.fire({
+        html: `<p style="color:red">Your quantity exceeds stock on hand. The maximum quantity that can be added is <strong>${qty}</strong></p>`,
+        timer: 5000
       })
-    })
+    }
+    else {
+
+      $.ajax({
+        url: '/incItems/decItems',
+        data: {
+          cart: cartId,
+          product: proId,
+          count: count,
+          quantity: quantity
+        },
+        method: 'post',
+        success: (function (response) {
+          if (response.removeProduct) {
+            swal.fire({
+              html: `<p style="color:red">Product removing from cart</p>`,
+              timer: 5000
+            }).then(()=>{
+              location.reload()
+            })
+          }
+          else {
+            $('#cartDiv').load("cart")
+            document.getElementById(proId).innerHTML = quantity
+            setInterval('location.reload()', 3000);
+          }
+        })
+      })
+    }
   }
 </script>
 <script>
@@ -222,32 +238,32 @@
 
 </script>
 <script>
-  function submitCoupon(total,id) {
+  function submitCoupon(total, id) {
     let val = document.getElementById('form3Examplea2')
     setTimeout(() => {
       //document.getElementById('hai').innerText = id
       $.ajax({
-        url:'findCouponForCart?coupon='+val.value +'&userId='+id,
-        method:'get',
-        success:(function(response){
-          if(response.used){
-          $("#setattr").attr("href","/proceedToCkeckOut?total="+total+'&dis='+0+'&coupon='+val.value+'&userId='+id)
-          document.getElementById('hai').innerText = "Already Used"
+        url: 'findCouponForCart?coupon=' + val.value + '&userId=' + id,
+        method: 'get',
+        success: (function (response) {
+          if (response.used) {
+            $("#setattr").attr("href", "/proceedToCkeckOut?total=" + total + '&dis=' + 0 + '&coupon=' + val.value + '&userId=' + id)
+            document.getElementById('hai').innerText = "Already Used"
           }
-         else{
-          if(total>response.discount){
-          let disTotal=total-response.discount
-          document.getElementById('totalPrice1').innerText = disTotal
-          document.getElementById('totalPrice').innerText = disTotal
-          $("#setattr").attr("href","/proceedToCkeckOut?total="+disTotal+'&dis='+response.discount+'&coupon='+val.value+'&userId='+id)
+          else {
+            if (total > response.discount) {
+              let disTotal = total - response.discount
+              document.getElementById('totalPrice1').innerText = disTotal
+              document.getElementById('totalPrice').innerText = disTotal
+              $("#setattr").attr("href", "/proceedToCkeckOut?total=" + disTotal + '&dis=' + response.discount + '&coupon=' + val.value + '&userId=' + id)
+            }
+            else {
+              alert('you can purchase for free')
+              document.getElementById('totalPrice1').innerText = 0
+              document.getElementById('totalPrice').innerText = 0
+              $("#setattr").attr("href", "/proceedToCkeckOut?total=" + 0 + '&dis=' + response.discount + '&coupon=' + val.value + '&userId=' + id)
+            }
           }
-          else{
-            alert('you can purchase for free')
-          document.getElementById('totalPrice1').innerText = 0
-          document.getElementById('totalPrice').innerText = 0
-          $("#setattr").attr("href","/proceedToCkeckOut?total="+0+'&dis='+response.discount+'&coupon='+val.value+'&userId='+id)
-          }
-         }
         })
       })
     }, 1)
