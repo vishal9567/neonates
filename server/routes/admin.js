@@ -41,6 +41,8 @@ router.get('/editCoupon/:id',sessionCheck.auth,services.editCouponPage)
 router.get('/deleteCoupon/:id',sessionCheck.auth,redirect.deleteCoupon)
 //----banner--------
 router.get('/addBanner',sessionCheck.auth,services.addBanner)
+//----sales report--
+router.get('/salesReport',sessionCheck.auth,redirect.salesReport)
 
 
 
@@ -55,8 +57,6 @@ router.post('/changeStatus',sessionCheck.auth,redirect.changeStatus)
 router.post('/submitCoupon',sessionCheck.auth,redirect.createCoupon)
 router.post('/submitUpdate/:id',sessionCheck.auth,redirect.editCoupon)
 
-// router.get('/test',(req,res)=>{
-//     res.render('admin/categoryList')
-// })
+
 
 module.exports=router;

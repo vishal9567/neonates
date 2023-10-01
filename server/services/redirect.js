@@ -141,7 +141,7 @@ exports.getOrderDetails = async (req, res) => {                              //*
     let user = req.session.userId
     let deliveryDetail = req.body //contains payment type total price address id
     let totalQty = req.session.grandTotal//contains totalqty total price
-    let flag=0;
+    let flag = 0;
     if (!deliveryDetail.addressId || deliveryDetail.addressId == null) {
         res.json({ addressNotSelect: true })
     }
@@ -153,13 +153,13 @@ exports.getOrderDetails = async (req, res) => {                              //*
                     for (let i = 0; i < cartItem.products.length; i++) {
                         await productHelpers.inventryManagement(cartItem.products[i].item, cartItem.products[i].quantity).then(async info => {
                             if (info) {
-                                flag=1;
+                                flag = 1;
                                 res.json(info)
                                 console.log('this is info', info);
                             }
                         })
                     }
-                    if(flag == 0){
+                    if (flag == 0) {
                         await orderController.createOrder(getAddress, cartItem, deliveryDetail, totalQty, user.name).then(async order => {
                             await cartController.removeCart(user._id).then(result => {
                                 userController.updateWallet(user._id, parseInt(req.body.total) * -1).then(() => {
@@ -183,13 +183,13 @@ exports.getOrderDetails = async (req, res) => {                              //*
                 for (let i = 0; i < cartItem.products.length; i++) {
                     await productHelpers.inventryManagement(cartItem.products[i].item, cartItem.products[i].quantity).then(async info => {
                         if (info) {
-                            flag=1;
+                            flag = 1;
                             res.json(info)
                             console.log('this is info', info);
                         }
                     })
                 }
-                if(flag == 0){
+                if (flag == 0) {
                     await orderController.createOrder(getAddress, cartItem, deliveryDetail, totalQty, user.name).then(async order => {
                         await cartController.removeCart(user._id).then(result => {
                             if (req.body.payType === 'COD')
@@ -483,4 +483,95 @@ exports.createBanner = (req, res) => {
     }).catch(err => {
         res.render('user/oopsPage')
     })
+}
+exports.salesReport = async (req, res) => {                                                  //*==========sales report===========//
+    let orders = await orderController.getOrderDetailsForAdmin()
+    console.log(orders);
+    let salesData = []
+    const PDFDocument = require('pdfkit');
+
+    // Create a document
+    const doc = new PDFDocument();
+
+    // Pipe its output somewhere, like to a file or HTTP response
+    // See below for browser usage
+    doc.pipe(res);
+    // Title
+    doc.fontSize(20).text("Sales Report", { align: "center" });
+    doc.moveDown();
+
+    //row data
+    orders.forEach((order, index) => {
+        const quantity = order.Tquantity;
+        const total = order.totalPrice;
+        const discount = 0;
+        const orderId = order._id;
+        const date = order.date;
+
+        salesData.push({
+            index: index++,
+            date,
+            orderId,
+            quantity,
+            total,
+            discount,
+        });
+    });
+
+    // Add an image, constrain it to a given size, and center it vertically and horizontally
+    // Define table headers
+    const headers = [
+        "Index",
+        "Date",
+        "Order Id",
+        "Qnty",
+        "Total",
+        "Discount",
+        "Final Price",
+    ];
+    // Calculate column widths
+    const colWidths = [40, 60, 180, 50, 70, 70, 70];
+
+    // Set initial position for drawing
+    let x = 50;
+    let y = doc.y;
+
+    // Draw table headers
+    headers.forEach((header, index) => {
+        doc
+            .font("Helvetica-Bold")
+            .fontSize(12)
+            .text(header, x, y, { width: colWidths[index], align: "left" });
+        x += colWidths[index];
+    });
+    //draw table raw
+    salesData.forEach((sale) => {
+        x = 50;
+        y += 20;
+
+        const finalPrice = sale.total - sale.discount;
+
+
+        // Create an array of row data with the Indian Rupee symbol and formatted prices
+        const rowData = [
+            sale.index,
+            sale.date,
+            sale.orderId,
+            sale.quantity,
+            sale.total, // Format total price
+            sale.discount, // Format discount
+            finalPrice, // Format final price
+        ];
+
+        // Draw row data
+        rowData.forEach((value, index) => {
+            doc.font("Helvetica").fontSize(12).text(value.toString(), x, y, {
+                width: colWidths[index],
+                align: "left",
+            });
+            x += colWidths[index];
+        });
+    });
+    // Finalize PDF file
+    doc.end();
 }
