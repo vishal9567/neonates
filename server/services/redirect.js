@@ -44,7 +44,7 @@ exports.findUser = (req, res) => {
             }
         }
         else {
-            res.render('user/userLogin', { userNotValid: true })
+            res.render('user/userLogin', {signup:true, userNotValid: true })
         }
 
     })
