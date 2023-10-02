@@ -5,8 +5,7 @@ const upload=require('../services/middleware/multer')
 const sessionCheck=require('../services/middleware/sessionCheck')
 const productController=require('../controller/productController')
 const adminController=require('../controller/adminController')
-const orderController=require('../controller/orderController')
-const coupenController = require('../controller/coupenController')
+
 
 
 //----homeroutes-----

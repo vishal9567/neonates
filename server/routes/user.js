@@ -3,13 +3,6 @@ const render = require('../services/render')
 const redirect = require('../services/redirect')
 const sessionCheck = require('../services/middleware/sessionCheck')
 const cartCount=require('../services/middleware/cartCount')
-const categoryController = require('../controller/cartController');
-const cartController = require('../controller/cartController');
-const { response } = require('express');
-const orderController=require('../controller/orderController')
-const fs=require('fs');
-const path = require('path')
-const userController = require('../controller/userController')
 const mongoMiddleware=require('../services/middleware/mongoMiddleware')
 
 
@@ -43,7 +36,7 @@ router.get('/showProducts/:id',sessionCheck.userAuth,cartCount.cartCount,render.
 router.get('/userDashBoard',sessionCheck.userAuth,mongoMiddleware.userData,cartCount.cartCount,render.userDashboard)
 router.get('/userOrderList',sessionCheck.userAuth,cartCount.cartCount,render.userOrderList)
 router.get('/addressBook',sessionCheck.userAuth,mongoMiddleware.userData,cartCount.cartCount,render.addressBook)
-router.get('/wallet',sessionCheck.userAuth,mongoMiddleware.userData,redirect.wallet)
+router.get('/wallet',sessionCheck.userAuthPlaceOrder,mongoMiddleware.userData,redirect.wallet)
 router.get('/walletHistory',sessionCheck.userAuth,render.getWalletHistory)
 router.get('/findOrder',sessionCheck.userAuth,render.filterOrder)
 //--------======whishlist=====-----//
@@ -73,13 +66,13 @@ router.post('/incItems/decItems',sessionCheck.userAuth, redirect.incrementItems)
 
 //==========user address section=========//
 router.post('/addAddress',sessionCheck.userAuth, render.addAddress)
-router.post('/addUserFormSubmit',sessionCheck.userAuth, redirect.addUserFormSubmit)
+router.post('/addUserFormSubmit',sessionCheck.userAuthPlaceOrder, redirect.addUserFormSubmit)
 
 //=======delete the item using delete button in cart page======//
 router.post('/deleteCartItem',sessionCheck.userAuth,redirect.deleteCartItem)
 
 //=======order management==============//
-router.post('/placeOrder',sessionCheck.userAuth,mongoMiddleware.userData,redirect.getOrderDetails)
+router.post('/placeOrder',sessionCheck.userAuthPlaceOrder,mongoMiddleware.userData,redirect.getOrderDetails)
 router.post('/cancelOrder',sessionCheck.userAuth,redirect.cancelOrder)
 router.post('/verifyPayment',sessionCheck.userAuth,redirect.varifyPayment)
 
@@ -92,23 +85,8 @@ router.post('/deleteAddress',sessionCheck.userAuth,redirect.deleteAddress)
 router.post('/searchProducts',render.productSearch)
 //!--------------------------------------------------------------------------------------------------------------------------------//
 
-// router.get('/viewProduct',(req,res)=>{
-//     res.render('user/viewProduct')
-// })
 
 
 
 module.exports = router;
 
-
-
-
-
-
-
-
-// router.get('/otp',(req,res)=>{
-//     res.render('user/otpcard')
-// })
-
-//eqiogfaetdzvethu--password nodemailer

@@ -41,12 +41,12 @@ module.exports = {
         else
             res.redirect('/')
     },
-    // userDashAuth:(req,res,next)=>{
-    //     if(!req.session.userDash){
-    //         next();
-    //     }
-    //     else{
-    //         res.redirect('/userDashBoard')
-    //     }
-    // }
+    userAuthPlaceOrder:(req,res,next)=>{
+        if(req.session.user){
+            next()
+        }
+        else{
+            res.json({notuser:true})
+        }
+    }
 }

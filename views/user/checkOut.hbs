@@ -93,7 +93,8 @@
         <!-- Checkout -->
         <div class="card shadow-0 border">
           <div class="p-4">
-            <h5 class="card-title mb-3">Shipping info</h5>{{#if arr}}{{else}} <p class="text-info">is empty add address</p>{{/if}}
+            <h5 class="card-title mb-3">Shipping info</h5>{{#if arr}}{{else}} <p class="text-info">is empty add address
+            </p>{{/if}}
             <div class="row mb-3">
               {{#each arr}}
               <div class="col-lg-6 mb-3">
@@ -341,8 +342,8 @@
     $.ajax({
       url: '/placeOrder',
       data: {
-        addressId: addressId?addressId:null,
-        payType: paymentType?paymentType:null,
+        addressId: addressId ? addressId : null,
+        payType: paymentType ? paymentType : null,
         total: totalPrice
       },
       method: 'post',
@@ -379,26 +380,29 @@
             window.location.href = "/cart"
           })
         }
-        else if(response.Notselect){
+        else if (response.Notselect) {
           // alert("success")
-            Swal.fire({
+          Swal.fire({
             title: 'Oops!...',
             html: 'Select PaymentMethod',
             icon: 'info',
             showConfirmButton: true,
           })
-        } 
-        else if(response.addressNotSelect) {
-           Swal.fire({
+        }
+        else if (response.addressNotSelect) {
+          Swal.fire({
             title: 'Oops!...',
             html: 'Select shiping info',
             icon: 'info',
             showConfirmButton: true,
           })
         }
-        else{
+        else if (response.notuser) {
+          location.reload()
+        }
+        else {
           razorPayment(response);
-        }  
+        }
       })
     })
   })
@@ -476,6 +480,9 @@
 
           })
         }
+        else if (response.notuser) {
+          location.reload()
+        }
         else {
           Swal.fire({
             iconHtml: '<img src="/img/icons8-wallet-48.png">',
@@ -531,9 +538,12 @@
           text: 'Address has been added succesfully.',
           icon: 'success',
           timer: 5000
-        }).then(()=>{
+        }).then(() => {
           location.reload();
         })
+      }
+      else if (response.notuser) {
+        location.reload()
       }
 
     })
