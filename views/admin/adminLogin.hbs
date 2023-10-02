@@ -17,7 +17,7 @@
     <div class="row mb-4">
       <div class="col d-flex justify-content-center">
         <!-- Checkbox -->
-        
+        <p id="error" class="text-danger"></p>
       </div>
 
       {{!-- <div class="col">
@@ -52,4 +52,20 @@
   </form>
 </div>
 
-{{!-- //------------js------------// --}}
+<script>
+  let email=document.getElementById('email')
+  let pass=document.getElementById('password')
+  let error=document.getElementById('error')
+  let form=document.querySelector('form')
+  form.addEventListener('submit',validate)
+  function validate(e){
+    if(email.value == ""){
+      e.preventDefault()
+      error.innerText="Please Enter User name"
+    }
+    else if(pass.value==""){
+      e.preventDefault()
+      error.innerText="Please Enter password"
+    }
+  }
+</script>
