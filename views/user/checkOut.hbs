@@ -346,7 +346,7 @@
         total: totalPrice
       },
       method: 'post',
-      success: function (response) {
+      success: (function (response) {
         if (response.codSuccess) {
           Swal.fire({
             title: 'Order Placed Successfully!',
@@ -396,13 +396,10 @@
             showConfirmButton: true,
           })
         }
-        else if(response.nouser){
-          location.reload()
-        }
         else{
           razorPayment(response);
         }  
-      }
+      })
     })
   })
   function razorPayment(order) {

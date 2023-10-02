@@ -142,10 +142,7 @@ exports.getOrderDetails = async (req, res) => {                              //*
     let deliveryDetail = req.body //contains payment type total price address id
     let totalQty = req.session.grandTotal//contains totalqty total price
     let flag = 0;
-    if(req.session.user != true){
-        res.json({nouser:true})
-    }
-    else if (!deliveryDetail.addressId || deliveryDetail.addressId == null) {
+    if (!deliveryDetail.addressId || deliveryDetail.addressId == null) {
         res.json({ addressNotSelect: true })
     }
     else if (req.body.payType === 'wallet') {                                      //*----this if block only for wallet------//
