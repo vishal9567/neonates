@@ -396,6 +396,9 @@
             showConfirmButton: true,
           })
         }
+        else if(response.nouser){
+          location.reload()
+        }
         else{
           razorPayment(response);
         }  
